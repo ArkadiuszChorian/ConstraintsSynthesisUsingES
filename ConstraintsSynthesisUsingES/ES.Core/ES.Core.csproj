@@ -30,19 +30,124 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Accord, Version=3.4.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Accord.3.4.0\lib\net45\Accord.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Accord.Math, Version=3.4.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Accord.Math.3.4.0\lib\net45\Accord.Math.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Accord.Math.Core, Version=3.4.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Accord.Math.3.4.0\lib\net45\Accord.Math.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Accord.Statistics, Version=3.4.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Accord.Statistics.3.4.0\lib\net45\Accord.Statistics.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ExperimentDatabase">
+      <HintPath>..\CSUES.Database\ExperimentDatabase.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Data.Sqlite, Version=1.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Data.Sqlite.1.1.1\lib\net451\Microsoft.Data.Sqlite.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OxyPlot, Version=1.0.0.0, Culture=neutral, PublicKeyToken=638079a8f0bd61e9, processorArchitecture=MSIL">
+      <HintPath>..\packages\OxyPlot.Core.1.0.0\lib\net45\OxyPlot.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OxyPlot.WindowsForms, Version=1.0.0.0, Culture=neutral, PublicKeyToken=245eacd6b5d2d338, processorArchitecture=MSIL">
+      <HintPath>..\packages\OxyPlot.WindowsForms.1.0.0\lib\net45\OxyPlot.WindowsForms.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Xml.Serialization" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Engine\EngineBase.cs" />
+    <Compile Include="Enums\MutationType.cs" />
+    <Compile Include="Enums\ParentsSelectionType.cs" />
+    <Compile Include="Enums\RecombinationType.cs" />
+    <Compile Include="Enums\SurvivorsSelectionType.cs" />
+    <Compile Include="Factories\EnginesFactory.cs" />
+    <Compile Include="Factories\IEnginesFactory.cs" />
+    <Compile Include="Factories\IGenericFactory.cs" />
+    <Compile Include="Factories\ObjectMutatorsFactory.cs" />
+    <Compile Include="Factories\ObjectRecombinersFactory.cs" />
+    <Compile Include="Factories\ParentsSelectorsFactory.cs" />
+    <Compile Include="Factories\PopulationGeneratorsFactory.cs" />
+    <Compile Include="Factories\RotationsMutatorsFactory.cs" />
+    <Compile Include="Factories\RotationsRecombinersFactory.cs" />
+    <Compile Include="Factories\SolutionsFactory.cs" />
+    <Compile Include="Factories\StdDevsMutatorsFactory.cs" />
+    <Compile Include="Factories\StdDevsRecombinersFactory.cs" />
+    <Compile Include="Factories\SurvivorsSelectorsFactory.cs" />
+    <Compile Include="Models\EvolutionParameters.cs" />
+    <Compile Include="Models\EvolutionStatistics.cs" />
+    <Compile Include="Models\Solutions\CmSolution.cs" />
+    <Compile Include="Models\Solutions\NsmSolution.cs" />
+    <Compile Include="Mutation\MutatorBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Engine\CmEngineWithoutRecombination.cs" />
+    <Compile Include="Engine\CmEngineWithRecombination.cs" />
+    <Compile Include="Engine\UmEngineWithRecombination.cs" />
+    <Compile Include="Engine\UmEngineWithoutRecombination.cs" />
+    <Compile Include="MutationSupervison\MutationSupervisorsFactory.cs" />
+    <Compile Include="MutationSupervison\IMutationRuleSupervisor.cs" />
+    <Compile Include="MutationSupervison\NsmOneFifthRuleSupervisor.cs" />
+    <Compile Include="MutationSupervison\OsmOneFifthRuleSupervisor.cs" />
+    <Compile Include="Mutation\CmObjectMutator.cs" />
+    <Compile Include="PopulationGeneration\IPopulationGenerator.cs" />
+    <Compile Include="PopulationGeneration\CmPopulationRandomGenerator.cs" />
+    <Compile Include="PopulationGeneration\NsmPopulationRandomGenerator.cs" />
+    <Compile Include="PopulationGeneration\OsmPopulationRandomGenerator.cs" />
+    <Compile Include="Recombination\NsmStdDevsDiscreteRecombiner.cs" />
+    <Compile Include="Recombination\NsmStdDevsIntermediateRecombiner.cs" />
+    <Compile Include="Recombination\ObjectDiscreteRecombiner.cs" />
+    <Compile Include="Recombination\ObjectIntermediateRecombiner.cs" />
+    <Compile Include="Recombination\OsmStdDevsIntermediateRecombiner.cs" />
+    <Compile Include="Recombination\RecombinerBase.cs" />
+    <Compile Include="Recombination\RotationsDiscreteRecombiner.cs" />
+    <Compile Include="Recombination\RotationsIntermediateRecombiner.cs" />
+    <Compile Include="Selection\ParentsSelectorBase.cs" />
+    <Compile Include="Selection\SurvivorsSelectorBase.cs" />
+    <Compile Include="Selection\SurvivorsUnionSelector.cs" />
+    <Compile Include="Mutation\NsmObjectMutator.cs" />
+    <Compile Include="Mutation\NsmStdDevsMutator.cs" />
+    <Compile Include="Mutation\OsmObjectMutator.cs" />
+    <Compile Include="Mutation\OsmStdDevsMutator.cs" />
+    <Compile Include="Mutation\RotationsMutator.cs" />
+    <Compile Include="Recombination\OsmStdDevsDiscreteRecombiner.cs" />
+    <Compile Include="Selection\ParentsRandomSelector.cs" />
+    <Compile Include="Selection\SurvivorsDistinctSelector.cs" />
+    <Compile Include="Models\IEvaluator.cs" />
+    <Compile Include="Utils\DeepCopyByExpressionTrees.cs" />
+    <Compile Include="Utils\Defaults.cs" />
+    <Compile Include="Utils\MersenneTwister.cs" />
+    <Compile Include="Models\Solutions\Solution.cs" />
+    <Compile Include="Models\RobustMultivariateNormalDistribution.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\Accord.3.4.0\build\Accord.targets" Condition="Exists('..\packages\Accord.3.4.0\build\Accord.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
