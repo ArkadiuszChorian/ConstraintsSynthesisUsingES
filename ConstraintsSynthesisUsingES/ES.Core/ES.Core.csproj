@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Engine\EngineBase.cs" />
+    <Compile Include="Engine\IEngine.cs" />
     <Compile Include="Enums\MutationType.cs" />
     <Compile Include="Enums\ParentsSelectionType.cs" />
     <Compile Include="Enums\RecombinationType.cs" />

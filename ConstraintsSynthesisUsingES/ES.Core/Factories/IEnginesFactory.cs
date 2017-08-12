@@ -10,7 +10,7 @@ namespace ES.Core.Factories
 {
     public interface IEnginesFactory
     {
-        EngineBase Create(EvolutionParameters evolutionParameters, IGenericFactory<Solution> solutionsFactory,
+        IEngine Create(EvolutionParameters evolutionParameters, IGenericFactory<Solution> solutionsFactory,
             IGenericFactory<IPopulationGenerator> populationGeneratorsFactory, IGenericFactory<MutatorBase> objectMutatorsFactory,
             IGenericFactory<MutatorBase> stdDevsMutatorsFactory, IGenericFactory<ParentsSelectorBase> parentsSelectorsFactory,
             IGenericFactory<SurvivorsSelectorBase> survivorsSelectorsFactory, IGenericFactory<MutatorBase> rotationsMutatorsFactory = null,

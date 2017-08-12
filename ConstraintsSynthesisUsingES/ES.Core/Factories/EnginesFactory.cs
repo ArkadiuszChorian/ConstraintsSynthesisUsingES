@@ -12,14 +12,14 @@ namespace ES.Core.Factories
 {
     public class EnginesFactory : IEnginesFactory
     {
-        public EngineBase Create(EvolutionParameters evolutionParameters, IGenericFactory<Solution> solutionsFactory,
+        public IEngine Create(EvolutionParameters evolutionParameters, IGenericFactory<Solution> solutionsFactory,
             IGenericFactory<IPopulationGenerator> populationGeneratorsFactory, IGenericFactory<MutatorBase> objectMutatorsFactory,
             IGenericFactory<MutatorBase> stdDevsMutatorsFactory, IGenericFactory<ParentsSelectorBase> parentsSelectorsFactory,
             IGenericFactory<SurvivorsSelectorBase> survivorsSelectorsFactory, IGenericFactory<MutatorBase> rotationsMutatorsFactory = null,
             IGenericFactory<RecombinerBase> objectRecombinersFactory = null, IGenericFactory<RecombinerBase> stdDevsRecombinersFactory = null,
             IGenericFactory<RecombinerBase> rotationsRecombinersFactory = null)
         {
-            EngineBase engine;
+            IEngine engine;
 
             var populationGenerator = populationGeneratorsFactory.Create(evolutionParameters);
             var objectMutator = objectMutatorsFactory.Create(evolutionParameters);

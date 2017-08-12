@@ -12,7 +12,7 @@ using ES.Core.Utils;
 
 namespace ES.Core.Engine
 {
-    public abstract class EngineBase
+    public abstract class EngineBase : IEngine
     {
         protected IPopulationGenerator PopulationGenerator;
         protected MutatorBase ObjectMutator;
