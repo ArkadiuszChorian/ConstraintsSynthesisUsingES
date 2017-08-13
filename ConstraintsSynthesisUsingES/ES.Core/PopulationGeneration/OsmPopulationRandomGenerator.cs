@@ -5,7 +5,7 @@ using ES.Core.Utils;
 
 namespace ES.Core.PopulationGeneration
 {
-    public class OsmPopulationRandomGenerator : IPopulationGenerator
+    public class OsmPopulationRandomGenerator : PopulationGeneratorBase
     {       
         private readonly IGenericFactory<Solution> _solutionsFactory;
         protected readonly MersenneTwister RandomGenerator;

@@ -11,7 +11,7 @@ namespace ES.Core.Factories
     public interface IEnginesFactory
     {
         IEngine Create(EvolutionParameters evolutionParameters, IGenericFactory<Solution> solutionsFactory,
-            IGenericFactory<IPopulationGenerator> populationGeneratorsFactory, IGenericFactory<MutatorBase> objectMutatorsFactory,
+            IGenericFactory<PopulationGeneratorBase> populationGeneratorsFactory, IGenericFactory<MutatorBase> objectMutatorsFactory,
             IGenericFactory<MutatorBase> stdDevsMutatorsFactory, IGenericFactory<ParentsSelectorBase> parentsSelectorsFactory,
             IGenericFactory<SurvivorsSelectorBase> survivorsSelectorsFactory, IGenericFactory<MutatorBase> rotationsMutatorsFactory = null,
             IGenericFactory<RecombinerBase> objectRecombinersFactory = null, IGenericFactory<RecombinerBase> stdDevsRecombinersFactory = null,

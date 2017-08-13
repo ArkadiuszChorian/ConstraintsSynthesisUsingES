@@ -87,7 +87,7 @@
     <Compile Include="MutationSupervison\NsmOneFifthRuleSupervisor.cs" />
     <Compile Include="MutationSupervison\OsmOneFifthRuleSupervisor.cs" />
     <Compile Include="Mutation\CmObjectMutator.cs" />
-    <Compile Include="PopulationGeneration\IPopulationGenerator.cs" />
+    <Compile Include="PopulationGeneration\PopulationGeneratorBase.cs" />
     <Compile Include="PopulationGeneration\CmPopulationRandomGenerator.cs" />
     <Compile Include="PopulationGeneration\NsmPopulationRandomGenerator.cs" />
     <Compile Include="PopulationGeneration\OsmPopulationRandomGenerator.cs" />

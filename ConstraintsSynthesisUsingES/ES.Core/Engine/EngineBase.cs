@@ -14,7 +14,7 @@ namespace ES.Core.Engine
 {
     public abstract class EngineBase : IEngine
     {
-        protected IPopulationGenerator PopulationGenerator;
+        protected PopulationGeneratorBase PopulationGenerator;
         protected MutatorBase ObjectMutator;
         protected MutatorBase StdDeviationsMutator;
         //protected IMutationRuleSupervisor MutationRuleSupervisor;
@@ -25,7 +25,7 @@ namespace ES.Core.Engine
         protected Solution[] OffspringPopulation;
         protected Stopwatch Stoper;
 
-        protected EngineBase(EvolutionParameters evolutionParameters, IGenericFactory<Solution> solutionsFactory, IPopulationGenerator populationGenerator, MutatorBase objectMutator, MutatorBase stdDeviationsMutator, ParentsSelectorBase parentsSelector, SurvivorsSelectorBase survivorsSelector, Statistics statistics, Stopwatch stoper)
+        protected EngineBase(EvolutionParameters evolutionParameters, IGenericFactory<Solution> solutionsFactory, PopulationGeneratorBase populationGenerator, MutatorBase objectMutator, MutatorBase stdDeviationsMutator, ParentsSelectorBase parentsSelector, SurvivorsSelectorBase survivorsSelector, Statistics statistics, Stopwatch stoper)
         {
             Parameters = evolutionParameters;
             SolutionsFactory = solutionsFactory;

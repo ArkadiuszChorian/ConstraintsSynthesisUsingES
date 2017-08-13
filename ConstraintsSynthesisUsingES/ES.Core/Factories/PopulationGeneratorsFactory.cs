@@ -6,7 +6,7 @@ using ES.Core.PopulationGeneration;
 
 namespace ES.Core.Factories
 {
-    public class PopulationGeneratorsFactory : IGenericFactory<IPopulationGenerator>
+    public class PopulationGeneratorsFactory : IGenericFactory<PopulationGeneratorBase>
     {
         private readonly IGenericFactory<Solution> _solutionsFactory;
 
@@ -15,7 +15,7 @@ namespace ES.Core.Factories
             _solutionsFactory = solutionsFactory;
         }
 
-        public IPopulationGenerator Create(EvolutionParameters evolutionParameters)
+        public PopulationGeneratorBase Create(EvolutionParameters evolutionParameters)
         {
             var typeOfMutation = (MutationType) evolutionParameters.TypeOfMutation;
 
