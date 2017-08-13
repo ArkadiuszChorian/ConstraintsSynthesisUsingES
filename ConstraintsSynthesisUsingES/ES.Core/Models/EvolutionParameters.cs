@@ -56,6 +56,11 @@ namespace ES.Core.Models
         public int OffspringPopulationSize { get; set; }
         public int NumberOfGenerations { get; set; }
 
+        //TODO 
+        //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        public int OneFifthRuleCheckInterval { get; set; }
+        public double OneFifthRuleScalingFactor { get; set; }
+
         //Seed
         public int Seed { get; set; }
 
