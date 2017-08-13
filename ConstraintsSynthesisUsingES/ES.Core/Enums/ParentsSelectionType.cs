@@ -3,6 +3,6 @@
     public enum ParentsSelectionType : byte
     {
         Random,
-        Uniform
+        Even
     }
 }

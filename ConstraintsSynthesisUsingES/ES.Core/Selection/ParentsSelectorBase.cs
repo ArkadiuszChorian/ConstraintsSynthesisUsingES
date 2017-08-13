@@ -4,6 +4,6 @@ namespace ES.Core.Selection
 {
     public abstract class ParentsSelectorBase
     {
-        public abstract Solution[] Select(Solution[] parentSolutions);
+        public abstract Solution Select(Solution[] parentSolutions);
     }
 }

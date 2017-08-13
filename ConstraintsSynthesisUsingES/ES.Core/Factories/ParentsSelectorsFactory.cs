@@ -12,9 +12,9 @@ namespace ES.Core.Factories
             switch ((ParentsSelectionType) evolutionParameters.TypeOfParentsSelection)
             {
                 case ParentsSelectionType.Random:
-                    return new ParentsRandomSelector(evolutionParameters);
-                case ParentsSelectionType.Uniform:
-                    throw new NotImplementedException();
+                    return new ParentsRandomSelector();
+                case ParentsSelectionType.Even:
+                    return new ParentsEvenSelector(evolutionParameters);
                 default:
                     throw new ArgumentOutOfRangeException();
             }

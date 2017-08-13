@@ -24,10 +24,14 @@ namespace ES.Core.Engine
         protected override void Evolve(IEvaluator evaluator)
         {
             var offspringPopulationSize = Parameters.OffspringPopulationSize;
+            var numberOfParentsSolutionsToSelect = Parameters.NumberOfParentsSolutionsToSelect;
 
             for (var i = 0; i < offspringPopulationSize; i++)
             {
-                var parentsPopulation = ParentsSelector.Select(BasePopulation);
+                var parentsPopulation = new Solution[numberOfParentsSolutionsToSelect];
+
+                for (var j = 0; j < numberOfParentsSolutionsToSelect; j++)
+                    parentsPopulation[j] = ParentsSelector.Select(BasePopulation);
 
                 OffspringPopulation[i] = StdDeviationsRecombiner.Recombine(parentsPopulation, OffspringPopulation[i]);
                 OffspringPopulation[i] = RotationsRecombiner.Recombine(parentsPopulation, OffspringPopulation[i]);

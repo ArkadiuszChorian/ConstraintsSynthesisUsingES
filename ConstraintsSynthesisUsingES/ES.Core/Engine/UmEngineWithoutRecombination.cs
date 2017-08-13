@@ -21,7 +21,7 @@ namespace ES.Core.Engine
 
             for (var i = 0; i < offspringPopulationSize; i++)
             {
-                OffspringPopulation[i] = ParentsSelector.Select(BasePopulation)[0];
+                OffspringPopulation[i] = ParentsSelector.Select(BasePopulation);
 
                 OffspringPopulation[i] = StdDeviationsMutator.Mutate(OffspringPopulation[i]);
                 OffspringPopulation[i] = ObjectMutator.Mutate(OffspringPopulation[i]);

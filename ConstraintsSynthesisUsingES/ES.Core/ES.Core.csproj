@@ -100,6 +100,7 @@
     <Compile Include="Recombination\RotationsDiscreteRecombiner.cs" />
     <Compile Include="Recombination\RotationsIntermediateRecombiner.cs" />
     <Compile Include="Selection\ParentsSelectorBase.cs" />
+    <Compile Include="Selection\ParentsEvenSelector.cs" />
     <Compile Include="Selection\SurvivorsSelectorBase.cs" />
     <Compile Include="Selection\SurvivorsUnionSelector.cs" />
     <Compile Include="Mutation\NsmObjectMutator.cs" />
