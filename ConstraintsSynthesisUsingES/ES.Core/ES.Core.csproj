@@ -73,7 +73,7 @@
     <Compile Include="Factories\StdDevsRecombinersFactory.cs" />
     <Compile Include="Factories\SurvivorsSelectorsFactory.cs" />
     <Compile Include="Models\EvolutionParameters.cs" />
-    <Compile Include="Models\EvolutionStatistics.cs" />
+    <Compile Include="Models\Statistics.cs" />
     <Compile Include="Models\Solutions\CmSolution.cs" />
     <Compile Include="Models\Solutions\NsmSolution.cs" />
     <Compile Include="Mutation\MutatorBase.cs" />

@@ -30,7 +30,7 @@ namespace ES.Core.Factories
             var objectRecombiner = objectRecombinersFactory?.Create(evolutionParameters);
             var stdDevsRecombiner = stdDevsRecombinersFactory?.Create(evolutionParameters);
             var rotationsRecombiner = rotationsRecombinersFactory?.Create(evolutionParameters);
-            var evolutionStatistics = new EvolutionStatistics();
+            var statistics = new Statistics();
             var stoper = new Stopwatch();
 
             var typeOfMutation = (MutationType) evolutionParameters.TypeOfMutation;
@@ -39,22 +39,22 @@ namespace ES.Core.Factories
             {                
                 if (evolutionParameters.UseRecombination)
                 {
-                    engine = new CmEngineWithRecombination(evolutionParameters, solutionsFactory, populationGenerator, objectMutator, stdDevsMutator, parentsSelector, survivorsSelector, evolutionStatistics, stoper, objectRecombiner, stdDevsRecombiner, rotationsMutator, rotationsRecombiner);
+                    engine = new CmEngineWithRecombination(evolutionParameters, solutionsFactory, populationGenerator, objectMutator, stdDevsMutator, parentsSelector, survivorsSelector, statistics, stoper, objectRecombiner, stdDevsRecombiner, rotationsMutator, rotationsRecombiner);
                 }
                 else
                 {
-                    engine = new CmEngineWithoutRecombination(evolutionParameters, solutionsFactory, populationGenerator, objectMutator, stdDevsMutator, parentsSelector, survivorsSelector, evolutionStatistics, stoper, rotationsMutator);
+                    engine = new CmEngineWithoutRecombination(evolutionParameters, solutionsFactory, populationGenerator, objectMutator, stdDevsMutator, parentsSelector, survivorsSelector, statistics, stoper, rotationsMutator);
                 }
             }
             else
             {
                 if (evolutionParameters.UseRecombination)
                 {
-                    engine = new UmEngineWithRecombination(evolutionParameters, solutionsFactory, populationGenerator, objectMutator, stdDevsMutator, parentsSelector, survivorsSelector, evolutionStatistics, stoper, objectRecombiner, stdDevsRecombiner);
+                    engine = new UmEngineWithRecombination(evolutionParameters, solutionsFactory, populationGenerator, objectMutator, stdDevsMutator, parentsSelector, survivorsSelector, statistics, stoper, objectRecombiner, stdDevsRecombiner);
                 }
                 else
                 {
-                    engine = new UmEngineWithoutRecombination(evolutionParameters, solutionsFactory, populationGenerator, objectMutator, stdDevsMutator, parentsSelector, survivorsSelector, evolutionStatistics, stoper);
+                    engine = new UmEngineWithoutRecombination(evolutionParameters, solutionsFactory, populationGenerator, objectMutator, stdDevsMutator, parentsSelector, survivorsSelector, statistics, stoper);
                 }
             }
 

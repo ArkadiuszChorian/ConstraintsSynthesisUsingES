@@ -25,7 +25,7 @@ namespace ES.Core.Engine
         protected Solution[] OffspringPopulation;
         protected Stopwatch Stoper;
 
-        protected EngineBase(EvolutionParameters evolutionParameters, IGenericFactory<Solution> solutionsFactory, IPopulationGenerator populationGenerator, MutatorBase objectMutator, MutatorBase stdDeviationsMutator, ParentsSelectorBase parentsSelector, SurvivorsSelectorBase survivorsSelector, EvolutionStatistics evolutionStatistics, Stopwatch stoper)
+        protected EngineBase(EvolutionParameters evolutionParameters, IGenericFactory<Solution> solutionsFactory, IPopulationGenerator populationGenerator, MutatorBase objectMutator, MutatorBase stdDeviationsMutator, ParentsSelectorBase parentsSelector, SurvivorsSelectorBase survivorsSelector, Statistics statistics, Stopwatch stoper)
         {
             Parameters = evolutionParameters;
             SolutionsFactory = solutionsFactory;
@@ -34,7 +34,7 @@ namespace ES.Core.Engine
             StdDeviationsMutator = stdDeviationsMutator;
             ParentsSelector = parentsSelector;
             SurvivorsSelector = survivorsSelector;
-            Statistics = evolutionStatistics;
+            Statistics = statistics;
             Stoper = stoper;
 
             BasePopulation = new Solution[evolutionParameters.BasePopulationSize];
@@ -44,7 +44,7 @@ namespace ES.Core.Engine
         }
         
         public EvolutionParameters Parameters { get; set; }       
-        public EvolutionStatistics Statistics { get; set; }
+        public Statistics Statistics { get; set; }
                
         public Solution RunEvolution(IEvaluator evaluator)
         {

@@ -2,7 +2,7 @@
 
 namespace ES.Core.Models
 {
-    public class EvolutionStatistics
+    public class Statistics
     {
         public double BestFitnessScore { get; set; }
 

@@ -6,7 +6,7 @@ namespace ES.Core.Engine
     public interface IEngine
     {
         EvolutionParameters Parameters { get; set; }
-        EvolutionStatistics Statistics { get; set; }
+        Statistics Statistics { get; set; }
 
         Solution RunEvolution(IEvaluator evaluator);
     }
