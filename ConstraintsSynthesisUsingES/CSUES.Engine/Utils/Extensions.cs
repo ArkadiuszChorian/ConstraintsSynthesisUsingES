@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Text;
-using ES.Core.Constraints;
-using ES.Core.Models;
+using CSUES.Engine.Enums;
+using CSUES.Engine.Models;
 using ES.Core.Models.Solutions;
 
-namespace ES.Core.Utils
+namespace CSUES.Engine.Utils
 {
     public static class Extensions
     {
-        public static Constraint[] GetConstraints(this Solution solution, ExperimentParameters experimentParameters)
+        public static Constraint[] GetConstraints2(this Solution solution, int numberOfConstraintCoefficients)
         {
-            var numberOfConstraintCoefficients = experimentParameters.NumberOfDimensions + 1;
-            var numberOfConstraints = experimentParameters.NumberOfConstraints;
+            var numberOfConstraints = solution.ObjectCoefficients.Length / numberOfConstraintCoefficients;
             var limiter = numberOfConstraintCoefficients * numberOfConstraints;
             var constraints = new Constraint[numberOfConstraints];            
             var j = 0;
@@ -32,6 +29,23 @@ namespace ES.Core.Utils
             return constraints;
         }
 
+        public static Constraint[] GetConstraints(this Solution solution, ExperimentParameters experimentParameters)
+        {
+
+            var numberOfConstraintCoefficients = experimentParameters.NumberOfConstraintsCoefficients;
+            var numberOfConstraints = solution.ObjectCoefficients.Length / numberOfConstraintCoefficients;
+            var limiter = numberOfConstraintCoefficients * numberOfConstraints;
+            var constraints = new List<Constraint>(numberOfConstraints);
+            var coefficients = solution.ObjectCoefficients;
+
+            for (var i = 0; i < limiter; i += numberOfConstraintCoefficients)
+            {
+
+            }
+
+            return constraints.ToArray();
+        }
+
         public static bool IsSatisfyingConstraints(this IList<Constraint> constraints, Point point)
         {
             var length = constraints.Count;
@@ -44,25 +58,7 @@ namespace ES.Core.Utils
 
             return true;
         }
-
-        public static string GetHashString(this ExperimentParameters experimentParameters)
-        {
-            var hashStringBuilder = new StringBuilder();
-            var propertyInfos = experimentParameters.GetDbSerializableProperties().OrderBy(pi => pi.Name);
-            
-            foreach (var propertyInfo in propertyInfos)
-            {
-                hashStringBuilder.Append(propertyInfo.GetValue(experimentParameters, null));
-            }
-
-            return hashStringBuilder.ToString();
-        }
-
-        public static IEnumerable<PropertyInfo> GetDbSerializableProperties<T>(this T obj)
-        {
-            return obj.GetType().GetProperties().Where(pi => DatabaseContext.SerializableTypes.Contains(pi.PropertyType.BaseType));
-        }
-
+        
         public static string ToLpFormat(this IList<Constraint> constraints, IList<Domain> domains)
         {
             var sb = new StringBuilder();
@@ -73,11 +69,17 @@ namespace ES.Core.Utils
             {
                 sb.Append("\t");
                 sb.AppendFormat("c{0}: ", i);
+              
+                for (var j = 0; j < constraints[i].Terms.Length; j++)
+                {                    
+                    var term = constraints[i].Terms[j];
+                    
+                    if (term.Type == TermType.Linear)
+                        sb.AppendFormat("{0} x{1}", term.Coefficient, j);
+                    else
+                        sb.AppendFormat("{0} x{1} ^ {2}", term.Coefficient, j, term.Power);
 
-                for (var j = 0; j < constraints[i].TermsCoefficients.Length; j++)
-                {
-                    sb.AppendFormat("{0} x{1}", constraints[i].TermsCoefficients[j], j);
-                    sb.Append(j == constraints[i].TermsCoefficients.Length - 1 ? " <= " : " + ");
+                    sb.Append(j == constraints[i].Terms.Length - 1 ? " <= " : " + ");
                 }
 
                 sb.Append(constraints[i].LimitingValue);
@@ -104,42 +106,6 @@ namespace ES.Core.Utils
 
             sb.Append("\n");
             sb.Append("End");
-
-            return sb.ToString();
-        }
-
-        public static string ToSimpleFormat(this IList<Constraint> constraints, IList<Domain> domains)
-        {
-            var sb = new StringBuilder();
-
-
-
-            return sb.ToString();
-        }
-
-        public static string ToReadableString(this Statistics statistics)
-        {
-            var sb = new StringBuilder();
-            var propertyInfos = statistics.GetDbSerializableProperties();
-
-            foreach (var propertyInfo in propertyInfos)
-            {
-                sb.Append(propertyInfo.Name);
-                sb.Append(" = ");
-                
-                if (propertyInfo.PropertyType == typeof(TimeSpan))
-                {
-                    var timeSpan = (TimeSpan) propertyInfo.GetValue(statistics, null);
-                    sb.Append(timeSpan.TotalMilliseconds);
-                    sb.Append(" [ms]");
-                }
-                else
-                {
-                    sb.Append(propertyInfo.GetValue(statistics, null));
-                }
-
-                sb.Append("\n");
-            }
 
             return sb.ToString();
         }

@@ -1,4 +1,4 @@
-﻿namespace ES.Core.PrePostProcessing
+﻿namespace CSUES.Engine.PrePostProcessing
 {
     public interface IProcessor<T>
     {

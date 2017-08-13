@@ -41,76 +41,55 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Benchmarks\BallnBenchmark.cs" />
-    <Compile Include="Benchmarks\BenchmarkFactory.cs" />
     <Compile Include="Benchmarks\CubenBenchmark.cs" />
-    <Compile Include="Benchmarks\GeneralBenchmark.cs" />
+    <Compile Include="Benchmarks\GenericBenchmark.cs" />
     <Compile Include="Benchmarks\IBenchmark.cs" />
     <Compile Include="Benchmarks\SimplexnBenchmark.cs" />
-    <Compile Include="Constraints\BallConstraint.cs" />
-    <Compile Include="Constraints\Constraint.cs" />
-    <Compile Include="Constraints\Linear2DConstraint.cs" />
-    <Compile Include="Constraints\LinearConstraint.cs" />
+    <Compile Include="Models\Constraint.cs" />
     <Compile Include="DistanceMeasuring\CanberraDistanceCalculator.cs" />
     <Compile Include="DistanceMeasuring\EuclideanDistanceCalculator.cs" />
     <Compile Include="DistanceMeasuring\IDistanceCalculator.cs" />
     <Compile Include="DistanceMeasuring\INearestNeighbourDistanceCalculator.cs" />
     <Compile Include="DistanceMeasuring\NearestNeighbourDistanceCalculator.cs" />
-    <Compile Include="Engine\CmEngineWithoutRecombination.cs" />
-    <Compile Include="Engine\CmEngineWithRecombination.cs" />
-    <Compile Include="Engine\EngineBase.cs" />
-    <Compile Include="Engine\EngineFactory.cs" />
-    <Compile Include="Engine\UmEngineWithoutRecombination.cs" />
-    <Compile Include="Engine\UmEngineWithRecombination.cs" />
+    <Compile Include="Engine\Engine.cs" />
+    <Compile Include="Enums\BenchmarkType.cs" />
     <Compile Include="Enums\TermType.cs" />
-    <Compile Include="Evaluation\Evaluator.cs" />
-    <Compile Include="Evaluation\IEvaluator.cs" />
+    <Compile Include="Engine\Evaluator.cs" />
+    <Compile Include="Factories\BenchmarksFactory.cs" />
     <Compile Include="Factories\EnginesFactory.cs" />
-    <Compile Include="Factories\Interfaces\IEnginesFactory.cs" />
-    <Compile Include="Factories\Interfaces\IGenericFactory.cs" />
-    <Compile Include="Factories\Interfaces\ITermsFactory.cs" />
-    <Compile Include="Factories\ObjectMutatorsFactory.cs" />
-    <Compile Include="Factories\ObjectRecombinersFactory.cs" />
-    <Compile Include="Factories\ParentsSelectorsFactory.cs" />
-    <Compile Include="Factories\PopulationGeneratorsFactory.cs" />
-    <Compile Include="Factories\RotationsMutatorsFactory.cs" />
-    <Compile Include="Factories\RotationsRecombinersFactory.cs" />
-    <Compile Include="Factories\SolutionsFactory.cs" />
-    <Compile Include="Factories\StdDevsMutatorsFactory.cs" />
-    <Compile Include="Factories\StdDevsRecombinersFactory.cs" />
-    <Compile Include="Factories\SurvivorsSelectorsFactory.cs" />
+    <Compile Include="Factories\IGenericFactory.cs" />
+    <Compile Include="Factories\ITermsFactory.cs" />
     <Compile Include="Factories\TermsFactory.cs" />
-    <Compile Include="Models\ClassificationType.cs" />
+    <Compile Include="Enums\ClassificationType.cs" />
+    <Compile Include="Engine\IEngine.cs" />
     <Compile Include="Models\Domain.cs" />
-    <Compile Include="Models\EvolutionParameters.cs" />
-    <Compile Include="Models\EvolutionStatistics.cs" />
     <Compile Include="Models\ExperimentParameters.cs" />
     <Compile Include="Models\MathModel.cs" />
     <Compile Include="Models\Point.cs" />
-    <Compile Include="Models\Solutions\CmSolution.cs" />
-    <Compile Include="Models\Solutions\NsmSolution.cs" />
-    <Compile Include="Models\Solutions\Solution.cs" />
     <Compile Include="Models\Statistics.cs" />
     <Compile Include="Models\Terms\CubicTerm.cs" />
     <Compile Include="Models\Terms\LinearTerm.cs" />
     <Compile Include="Models\Terms\NpowerTerm.cs" />
     <Compile Include="Models\Terms\QuadraticTerm.cs" />
     <Compile Include="Models\Terms\Term.cs" />
-    <Compile Include="Models\Version.cs" />
-    <Compile Include="PointsGeneration\DomainSpaceSampler.cs" />
-    <Compile Include="PointsGeneration\IPointsGenerator.cs" />
     <Compile Include="PointsGeneration\NegativePointsGenerator.cs" />
+    <Compile Include="PointsGeneration\PointsGenerator.cs" />
     <Compile Include="PointsGeneration\PositivePointsGenerator.cs" />
+    <Compile Include="PointsGeneration\TestPointsGenerator.cs" />
     <Compile Include="PrePostProcessing\IProcessor.cs" />
     <Compile Include="PrePostProcessing\RedundantConstraintsRemover.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utils\Arguments.cs" />
-    <Compile Include="Utils\DatabaseContext.cs" />
     <Compile Include="Utils\DeepCopyByExpressionTrees.cs" />
     <Compile Include="Utils\Defaults.cs" />
     <Compile Include="Utils\Extensions.cs" />
-    <Compile Include="Utils\MersenneTwister.cs" />
-    <Compile Include="Utils\Visualization.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ES.Core\ES.Core.csproj">
+      <Project>{fe5c47de-4c78-49a7-9c3c-25ffeda88761}</Project>
+      <Name>ES.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

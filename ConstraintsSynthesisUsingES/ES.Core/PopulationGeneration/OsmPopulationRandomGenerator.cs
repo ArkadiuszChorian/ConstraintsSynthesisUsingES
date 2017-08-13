@@ -16,7 +16,7 @@ namespace ES.Core.PopulationGeneration
             RandomGenerator = MersenneTwister.Instance;
         }
 
-        public Solution[] GeneratePopulation(EvolutionParameters evolutionParameters)
+        public override Solution[] GeneratePopulation(EvolutionParameters evolutionParameters)
         {
             var basePopulationSize = evolutionParameters.BasePopulationSize;
             var population = new Solution[basePopulationSize];

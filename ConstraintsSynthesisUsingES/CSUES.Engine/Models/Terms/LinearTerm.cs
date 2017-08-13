@@ -1,14 +1,10 @@
-﻿using ES.Core.Enums;
+﻿using CSUES.Engine.Enums;
 
-namespace ES.Core.Models.Terms
+namespace CSUES.Engine.Models.Terms
 {
     public class LinearTerm : Term
     {
-        public LinearTerm(double coefficient) : base(coefficient)
-        {
-        }
-
-        public LinearTerm(double coefficient, TermType termType) : base(coefficient, termType)
+        public LinearTerm(double coefficient) : base(coefficient, 1, TermType.Linear)
         {           
         }
 

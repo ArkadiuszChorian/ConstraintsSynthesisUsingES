@@ -1,19 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using ES.Core.Constraints;
-using ES.Core.Models;
+using CSUES.Engine.Models;
 
-namespace ES.Core.Benchmarks
+namespace CSUES.Engine.Benchmarks
 {
-    public class GeneralBenchmark : IBenchmark
+    public class GenericBenchmark : IBenchmark
     {
-        public GeneralBenchmark(IEnumerable<Constraint> constraints, ExperimentParameters experimentParameters)
+        public GenericBenchmark(ExperimentParameters experimentParameters)
         {
             var numberOfDimensions = experimentParameters.NumberOfDimensions;
             var defaultLowerLimit = experimentParameters.DefaultDomainLowerLimit;
             var defaultUpperLimit = experimentParameters.DefaultDomainUpperLimit;
 
-            Constraints = constraints.ToArray();
+            Constraints = experimentParameters.ConstraintsForGenericBenchmark.ToArray();
             Domains = new Domain[numberOfDimensions];
 
             for (var i = 0; i < numberOfDimensions; i++)
@@ -22,7 +21,7 @@ namespace ES.Core.Benchmarks
             }
         }
 
-        public GeneralBenchmark(IEnumerable<Constraint> constraints, IEnumerable<Domain> domains)
+        public GenericBenchmark(IEnumerable<Constraint> constraints, IEnumerable<Domain> domains)
         {
             Constraints = constraints.ToArray();
             Domains = domains.ToArray();

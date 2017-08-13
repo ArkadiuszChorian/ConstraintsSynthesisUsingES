@@ -1,47 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ES.Core.Benchmarks;
-using ES.Core.Constraints;
-using ES.Core.Models;
-using ES.Core.PointsGeneration;
+using CSUES.Engine.Models;
+using CSUES.Engine.PointsGeneration;
 
-namespace ES.Core.PrePostProcessing
+namespace CSUES.Engine.PrePostProcessing
 {
     public class RedundantConstraintsRemover : IProcessor<Constraint[]>
     {
-        private readonly IPointsGenerator _domainSpaceSampler;
-        private readonly IBenchmark _benchmark;
-        private readonly long _numberOfPointsToGenerate;
+        private readonly PointsGenerator _domainSpaceSampler;
+        private readonly Domain[] _domains;
+        private readonly long _numberOfDomainSamples;
         private readonly int _maxNumberOfPointsInSingleArray;
 
-        public RedundantConstraintsRemover(IPointsGenerator pointsGenerator, IBenchmark benchmark, ExperimentParameters experimentParameters)
+        public RedundantConstraintsRemover(PointsGenerator pointsGenerator, Domain[] domains, ExperimentParameters experimentParameters)
         {
             _domainSpaceSampler = pointsGenerator;
-            _benchmark = benchmark;
+            _domains = domains;
             _maxNumberOfPointsInSingleArray = experimentParameters.MaxNumberOfPointsInSingleArray;
-            
-            var numberOfDimensions = benchmark.Domains.Length;
-            var domains = benchmark.Domains;
-            var domainSamplingStep = experimentParameters.DomainSamplingStep;
-            var temp = 1.0;
+            _numberOfDomainSamples = experimentParameters.NumberOfDomainSamples;
 
-            for (var i = 0; i < numberOfDimensions; i++)
-            {
-                temp *= (domains[i].UpperLimit - domains[i].LowerLimit) / domainSamplingStep;
-            }
+            //var numberOfDimensions = benchmark.Domains.Length;
+            //var domains = benchmark.Domains;
+            //var domainSamplingStep = experimentParameters.DomainSamplingStep;
+            //var temp = 1.0;
 
-            _numberOfPointsToGenerate = (long) temp;
+            //for (var i = 0; i < numberOfDimensions; i++)
+            //{
+            //    temp *= (domains[i].UpperLimit - domains[i].LowerLimit) / domainSamplingStep;
+            //}
+
+            //_numberOfPointsToGenerate = (long) temp;
         }
 
         public Constraint[] ApplyProcessing(Constraint[] constraints)
         {
             var count = 1;
-            var numberOfPointsInSingleArray = (int)_numberOfPointsToGenerate;
+            var numberOfPointsInSingleArray = (int)_numberOfDomainSamples;
 
-            if (_numberOfPointsToGenerate > _maxNumberOfPointsInSingleArray)
+            if (_numberOfDomainSamples > _maxNumberOfPointsInSingleArray)
             {
-                count = (int)Math.Ceiling((double)_numberOfPointsToGenerate / _maxNumberOfPointsInSingleArray);
+                count = (int)Math.Ceiling((double)_numberOfDomainSamples / _maxNumberOfPointsInSingleArray);
                 numberOfPointsInSingleArray = _maxNumberOfPointsInSingleArray;                
             }           
             
@@ -50,7 +49,7 @@ namespace ES.Core.PrePostProcessing
 
             for (var i = 0; i < count; i++)
             {
-                var points = _domainSpaceSampler.GeneratePoints(numberOfPointsInSingleArray, _benchmark);
+                var points = _domainSpaceSampler.GeneratePoints(numberOfPointsInSingleArray, _domains);
                 var numberOfPoints = points.Length;
 
                 for (var j = 0; j < numberOfPoints; j++)

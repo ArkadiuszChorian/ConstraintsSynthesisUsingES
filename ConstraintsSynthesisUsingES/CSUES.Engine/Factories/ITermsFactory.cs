@@ -1,6 +1,6 @@
-﻿using ES.Core.Models.Terms;
+﻿using CSUES.Engine.Models.Terms;
 
-namespace ES.Core.Factories.Interfaces
+namespace CSUES.Engine.Factories
 {
     public interface ITermsFactory
     {

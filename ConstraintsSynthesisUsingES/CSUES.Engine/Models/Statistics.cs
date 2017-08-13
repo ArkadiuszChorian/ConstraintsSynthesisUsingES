@@ -1,6 +1,7 @@
 ﻿using System;
+using EvolutionStatistics = ES.Core.Models.Statistics;
 
-namespace ES.Core.Models
+namespace CSUES.Engine.Models
 {
     public class Statistics
     {
@@ -19,15 +20,15 @@ namespace ES.Core.Models
         public double FalseOmissionRate => 1 - NegativePredictiveValue;
         public double Accuracy => (double)(TruePositives + TrueNegatives) / (TruePositives + TrueNegatives + FalsePositives + FalseNegatives);
         public double F1Score => 2 * Precision * Recall / (Precision + Recall);
-
-        public TimeSpan TotalEvolutionTime { get; set; }
+        
         public TimeSpan TotalSynthesisTime { get; set; }
         public TimeSpan RedundantConstraintsRemovingTime { get; set; }
-        public TimeSpan MeanSingleGenerationEvolutionTime { get; set; }
         public TimeSpan ModelEvaluationTime { get; set; }
 
         public TimeSpan PositiveTrainingPointsGenerationTime { get; set; }
         public TimeSpan NegativeTrainingPointsGenerationTime { get; set; }
         public TimeSpan TestPointsGenerationTime { get; set; }
+
+        public EvolutionStatistics EvolutionStatistics { get; set; }
     }
 }

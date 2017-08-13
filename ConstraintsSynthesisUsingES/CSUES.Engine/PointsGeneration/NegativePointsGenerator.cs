@@ -1,11 +1,11 @@
-﻿using ES.Core.Benchmarks;
-using ES.Core.DistanceMeasuring;
-using ES.Core.Models;
+﻿using CSUES.Engine.DistanceMeasuring;
+using CSUES.Engine.Enums;
+using CSUES.Engine.Models;
 using ES.Core.Utils;
 
-namespace ES.Core.PointsGeneration
+namespace CSUES.Engine.PointsGeneration
 {
-    public class NegativePointsGenerator : IPointsGenerator
+    public class NegativePointsGenerator : PointsGenerator
     {
         private readonly MersenneTwister _randomGenerator;
         private readonly Point[] _positiveMeasurePoints;
@@ -20,63 +20,29 @@ namespace ES.Core.PointsGeneration
             nearestNeighbourDistanceCalculator.CalculateNearestNeighbourDistances(positiveMeasurePoints);
         }
 
-        //public void CalculateNearestNeighbourDistances()
-        //{
-        //    var numberOfPositiveMeasurePoints = _positiveMeasurePoints.Length;
-
-        //    for (var i = 0; i < numberOfPositiveMeasurePoints; i++)
-        //    {
-        //        _positiveMeasurePoints[i].DistanceToNearestNeighbour = int.MaxValue;
-
-        //        for (var j = 0; j < numberOfPositiveMeasurePoints; j++)
-        //        {
-        //            if (i == j)
-        //            {
-        //                continue;
-        //            }
-
-        //            var distanceBetweenPoints = _distanceCalculator.Calculate(_positiveMeasurePoints[i].Coordinates,
-        //                _positiveMeasurePoints[j].Coordinates);
-
-        //            if (distanceBetweenPoints < _positiveMeasurePoints[i].DistanceToNearestNeighbour)
-        //            {
-        //                _positiveMeasurePoints[i].DistanceToNearestNeighbour = distanceBetweenPoints;
-        //            }
-        //        }
-        //    }
-        //}
-
-        public Point[] GeneratePoints(int numberOfPointsToGenerate, IBenchmark benchmark)
+        protected override Point GetAllowedPoint(Domain[] domains, Constraint[] constraints)
         {
-            var numberOfDimensions = benchmark.Domains.Length;
-            var points = new Point[numberOfPointsToGenerate];
+            var numberOfDimensions = domains.Length;
+            var point = new Point(numberOfDimensions, ClassificationType.Negative);
 
-            for (var i = 0; i < numberOfPointsToGenerate; i++)
+            var isSatisfyingNearestNeighbourConstraints = false;
+
+            while (isSatisfyingNearestNeighbourConstraints == false)
             {
-                points[i] = new Point(numberOfDimensions, ClassificationType.Negative);
-                var currentPoint = points[i];
-                var isSatisfyingNearestNeighbourConstraints = false;
+                isSatisfyingNearestNeighbourConstraints = true;
 
-                while (isSatisfyingNearestNeighbourConstraints == false)
+                for (var j = 0; j < numberOfDimensions; j++)
+                    point.Coordinates[j] = _randomGenerator.NextDouble(domains[j].LowerLimit, domains[j].UpperLimit);
+
+                for (var j = 0; j < _positiveMeasurePoints.Length; j++)
                 {
-                    isSatisfyingNearestNeighbourConstraints = true;
-
-                    for (var j = 0; j < numberOfDimensions; j++)
-                    {
-                        currentPoint.Coordinates[j] = _randomGenerator.NextDouble(benchmark.Domains[j].LowerLimit, benchmark.Domains[j].UpperLimit);
-                        //currentPoint.Coordinates[j] = _randomGenerator.NextDouble(-500, 500);
-                    }
-
-                    for (var j = 0; j < _positiveMeasurePoints.Length; j++)
-                    {
-                        if (IsOutsideNeighbourhood(currentPoint, _positiveMeasurePoints[j])) continue;
-                        isSatisfyingNearestNeighbourConstraints = false;
-                        break;
-                    }
+                    if (IsOutsideNeighbourhood(point, _positiveMeasurePoints[j])) continue;
+                    isSatisfyingNearestNeighbourConstraints = false;
+                    break;
                 }
             }
 
-            return points;
+            return point;
         }
 
         private bool IsOutsideNeighbourhood(Point pointToCheck, Point centerPoint)

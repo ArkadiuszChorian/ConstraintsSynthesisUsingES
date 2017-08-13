@@ -1,7 +1,6 @@
-﻿using ES.Core.Constraints;
-using ES.Core.Models;
+﻿using CSUES.Engine.Models;
 
-namespace ES.Core.Benchmarks
+namespace CSUES.Engine.Benchmarks
 {
     public interface IBenchmark
     {

@@ -1,26 +1,40 @@
-﻿using ES.Core.Constraints;
-using ES.Core.Models;
+﻿using CSUES.Engine.Enums;
+using CSUES.Engine.Factories;
+using CSUES.Engine.Models;
+using CSUES.Engine.Models.Terms;
 
-namespace ES.Core.Benchmarks
+namespace CSUES.Engine.Benchmarks
 {
     public class BallnBenchmark : IBenchmark
     {
-        public BallnBenchmark(ExperimentParameters experimentParameters)
+        public BallnBenchmark(ExperimentParameters experimentParameters, ITermsFactory termsFactory)
         {
             var numberOfDimensions = experimentParameters.NumberOfDimensions;
             var ballnBoundaryValue = experimentParameters.BallnBoundaryValue;
-            var termsCoefficients = new double[numberOfDimensions];
+            var numberOfTerms = numberOfDimensions * 2;
+            var terms = new Term[numberOfTerms];
+            var limitingValue = ballnBoundaryValue * ballnBoundaryValue;
 
             Constraints = new Constraint[1];
             Domains = new Domain[numberOfDimensions];
 
             for (var i = 0; i < numberOfDimensions; i++)
             {
-                termsCoefficients[i] = i + 1;
-                Domains[i] = new Domain(i + 1 - 2 * ballnBoundaryValue, i + 1 + 2 * ballnBoundaryValue);
+                var value = i + 1;              
+                terms[i] = termsFactory.Create((int)TermType.Quadratic, 1);
+
+                Domains[i] = new Domain(value - 2 * ballnBoundaryValue, value + 2 * ballnBoundaryValue);
+
+                limitingValue -= value * value;
             }
 
-            Constraints[0] = new BallConstraint(termsCoefficients, ballnBoundaryValue * ballnBoundaryValue);
+            for (var i = numberOfDimensions; i < numberOfTerms; i++)
+            {
+                var value = i + 1;
+                terms[i] = termsFactory.Create((int) TermType.Linear, -2 * value);
+            }
+
+            Constraints[0] = new Constraint(terms, limitingValue);
         }
 
         public Constraint[] Constraints { get; set; }

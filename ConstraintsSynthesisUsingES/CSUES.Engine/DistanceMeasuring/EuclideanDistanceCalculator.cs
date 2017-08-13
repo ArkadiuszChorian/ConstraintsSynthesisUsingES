@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ES.Core.DistanceMeasuring
+namespace CSUES.Engine.DistanceMeasuring
 {
     public class EuclideanDistanceCalculator : IDistanceCalculator
     {

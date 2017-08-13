@@ -1,23 +1,20 @@
-﻿using ES.Core.Enums;
+﻿using CSUES.Engine.Enums;
 
-namespace ES.Core.Models.Terms
+namespace CSUES.Engine.Models.Terms
 {
     public abstract class Term
     {
-        protected Term(double coefficient)
+        protected Term(double coefficient, double power, TermType termType)
         {
             Coefficient = coefficient;
-        }
-
-        protected Term(double coefficient, TermType termType)
-        {
-            Coefficient = coefficient;
+            Power = power;
             Type = termType;
         }
 
         public abstract double Value(double argument);
 
         public double Coefficient { get; set; }
-        public TermType Type { get; set; }
+        public double Power { get; private set; }
+        public TermType Type { get; private set; }
     }
 }

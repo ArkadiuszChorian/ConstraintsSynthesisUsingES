@@ -1,14 +1,10 @@
-﻿using ES.Core.Enums;
+﻿using CSUES.Engine.Enums;
 
-namespace ES.Core.Models.Terms
+namespace CSUES.Engine.Models.Terms
 {
     public class CubicTerm : Term
     {
-        public CubicTerm(double coefficient) : base(coefficient)
-        {
-        }
-
-        public CubicTerm(double coefficient, TermType termType) : base(coefficient, termType)
+        public CubicTerm(double coefficient) : base(coefficient, 3, TermType.Cubic)
         {
         }
 

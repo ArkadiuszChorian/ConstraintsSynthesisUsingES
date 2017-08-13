@@ -1,4 +1,6 @@
-﻿namespace ES.Core.Models
+﻿using CSUES.Engine.Enums;
+
+namespace CSUES.Engine.Models
 {
     public class Point
     {

@@ -1,4 +1,4 @@
-﻿namespace ES.Core.Models
+﻿namespace CSUES.Engine.Models
 {
     public class Domain
     {

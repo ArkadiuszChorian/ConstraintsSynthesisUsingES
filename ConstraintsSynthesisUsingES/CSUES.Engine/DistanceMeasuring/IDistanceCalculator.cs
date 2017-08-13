@@ -1,4 +1,4 @@
-﻿namespace ES.Core.DistanceMeasuring
+﻿namespace CSUES.Engine.DistanceMeasuring
 {
     public interface IDistanceCalculator
     {

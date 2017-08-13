@@ -9,7 +9,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace ES.Core.Utils
+namespace CSUES.Engine.Utils
 {
     /// <summary>
     /// Superfast deep copier class, which uses Expression trees.

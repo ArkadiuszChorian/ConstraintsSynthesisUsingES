@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
-using ES.Core.Constraints;
-using ES.Core.Models;
+using CSUES.Engine.Enums;
+using CSUES.Engine.Factories;
+using CSUES.Engine.Models;
+using CSUES.Engine.Models.Terms;
 
-namespace ES.Core.Benchmarks
+namespace CSUES.Engine.Benchmarks
 {
     public class CubenBenchmark : IBenchmark
     {
-        public CubenBenchmark(ExperimentParameters experimentParameters)
+        public CubenBenchmark(ExperimentParameters experimentParameters, ITermsFactory termsFactory)
         {
             var numberOfDimensions = experimentParameters.NumberOfDimensions;
             var cubenBoundaryValue = experimentParameters.CubenBoundaryValue;   
@@ -17,13 +19,21 @@ namespace ES.Core.Benchmarks
             for (var i = 0; i < numberOfDimensions; i++)
             {
                 var value = i + 1;
-                var termsCoefficients1 = new double[numberOfDimensions];
-                var termsCoefficients2 = new double[numberOfDimensions];
-                termsCoefficients1[i] = -1;
-                termsCoefficients2[i] = 1;
 
-                constraints.Add(new LinearConstraint(termsCoefficients1, -value));
-                constraints.Add(new LinearConstraint(termsCoefficients2, value + value * cubenBoundaryValue));
+                var terms1 = new Term[numberOfDimensions];
+                var terms2 = new Term[numberOfDimensions];
+
+                for (var j = 0; j < numberOfDimensions; j++)
+                {
+                    terms1[j] = termsFactory.Create((int)TermType.Linear, 0);
+                    terms2[j] = termsFactory.Create((int)TermType.Linear, 0);
+                }
+
+                terms1[i].Coefficient = -1;
+                terms2[i].Coefficient = 1;
+
+                constraints.Add(new Constraint(terms1, -value));
+                constraints.Add(new Constraint(terms2, value + value * cubenBoundaryValue));
 
                 Domains[i] = new Domain(value - value * cubenBoundaryValue, value + 2 * value * cubenBoundaryValue);
             }

@@ -1,10 +1,10 @@
-﻿using ES.Core.Benchmarks;
-using ES.Core.Models;
+﻿using CSUES.Engine.Enums;
+using CSUES.Engine.Models;
 using ES.Core.Utils;
 
-namespace ES.Core.PointsGeneration
+namespace CSUES.Engine.PointsGeneration
 {
-    public class PositivePointsGenerator : IPointsGenerator
+    public class PositivePointsGenerator : PointsGenerator
     {
         private readonly MersenneTwister _randomGenerator;
 
@@ -12,41 +12,31 @@ namespace ES.Core.PointsGeneration
         {
             _randomGenerator = MersenneTwister.Instance;
         }
-           
-        public Point[] GeneratePoints(int numberOfPointsToGenerate, IBenchmark benchmark)
+
+        protected override Point GetAllowedPoint(Domain[] domains, Constraint[] constraints)
         {
-            //TODO: Check if constraints have common space. Now, if they don't have, algorithm will stuck in while loop.
+            var numberOfDimensions = domains.Length;
+            var numberOfConstraints = constraints.Length;
+            var point = new Point(numberOfDimensions, ClassificationType.Positive);
 
-            var numberOfDimensions = benchmark.Domains.Length;
-            var constraints = benchmark.Constraints;
-            var numberOfConstraints = constraints.Length;         
-            var points = new Point[numberOfPointsToGenerate];
+            var isSatsfyngConstraints = false;
 
-            for (var i = 0; i < numberOfPointsToGenerate; i++)
+            while (isSatsfyngConstraints == false)
             {
-                points[i] = new Point(numberOfDimensions, ClassificationType.Positive);
-                var currentPoint = points[i];
-                var isSatsfyngConstraints = false;
+                isSatsfyngConstraints = true;
 
-                while (isSatsfyngConstraints == false)
+                for (var i = 0; i < numberOfDimensions; i++)
+                    point.Coordinates[i] = _randomGenerator.NextDouble(domains[i].LowerLimit, domains[i].UpperLimit);
+
+                for (var i = 0; i < numberOfConstraints; i++)
                 {
-                    isSatsfyngConstraints = true;
-
-                    for (var j = 0; j < numberOfDimensions; j++)
-                    {
-                        currentPoint.Coordinates[j] = _randomGenerator.NextDouble(benchmark.Domains[j].LowerLimit, benchmark.Domains[j].UpperLimit);
-                    }
-
-                    for (var j = 0; j < numberOfConstraints; j++)
-                    {
-                        if (constraints[j].IsSatisfyingConstraint(currentPoint)) continue;
-                        isSatsfyngConstraints = false;
-                        break;
-                    }
+                    if (constraints[i].IsSatisfyingConstraint(point)) continue;
+                    isSatsfyngConstraints = false;
+                    break;
                 }
             }
 
-            return points;
+            return point;
         }
     }
 }

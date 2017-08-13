@@ -1,43 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
-using ES.Core.Constraints;
-using ES.Core.Models;
+using CSUES.Engine.Enums;
+using CSUES.Engine.Factories;
+using CSUES.Engine.Models;
+using CSUES.Engine.Models.Terms;
+using CSUES.Engine.Utils;
 
-namespace ES.Core.Benchmarks
+namespace CSUES.Engine.Benchmarks
 {
     public class SimplexnBenchmark : IBenchmark
     {
-        public SimplexnBenchmark(ExperimentParameters experimentParameters)
+        public SimplexnBenchmark(ExperimentParameters experimentParameters, ITermsFactory termsFactory)
         {
             var numberOfDimensions = experimentParameters.NumberOfDimensions;
             var simplexnBoundaryValue = experimentParameters.SimplexnBoundaryValue;
             var tanPi12 = Math.Tan(Math.PI / 12);
             var cotPi12 = 1 / tanPi12;
-            var constraints = new List<Constraint>(numberOfDimensions * 2 - 1);
-            var termsCoefficients = new double[numberOfDimensions];
+            var constraints = new List<Constraint>(4 * numberOfDimensions - 6 + 1);
+            var terms1 = new Term[numberOfDimensions];
+            var terms2 = new Term[numberOfDimensions];
 
             Domains = new Domain[numberOfDimensions];
 
-            for (var i = 0; i < numberOfDimensions - 1; i++)
+            for (var i = 0; i < numberOfDimensions; i++)
             {
                 Domains[i] = new Domain(-1, 2 + simplexnBoundaryValue);
 
-                var termsCoefficients1 = new double[numberOfDimensions];
-                var termsCoefficients2 = new double[numberOfDimensions];
-                termsCoefficients1[i] = -cotPi12;
-                termsCoefficients1[i + 1] = tanPi12;
-                termsCoefficients2[i + 1] = -cotPi12;
-                termsCoefficients2[i] = tanPi12;
+                for (var j = 0; j < numberOfDimensions; j++)
+                {
+                    terms1[j] = termsFactory.Create((int)TermType.Linear, 0);
+                    terms2[j] = termsFactory.Create((int)TermType.Linear, 0);
+                }
 
-                constraints.Add(new LinearConstraint(termsCoefficients1, 0));
-                constraints.Add(new LinearConstraint(termsCoefficients2, 0));
+                for (var j = i + 1; j < numberOfDimensions; j++)
+                {
+                    terms1[i].Coefficient = -cotPi12;
+                    terms1[j].Coefficient = tanPi12;
+                    terms2[j].Coefficient = -cotPi12;
+                    terms2[i].Coefficient = tanPi12;
+                }
 
-                termsCoefficients[i] = 1;
+                constraints.Add(new Constraint(terms1.DeepCopyByExpressionTree(), 0));
+                constraints.Add(new Constraint(terms2.DeepCopyByExpressionTree(), 0));
             }
 
-            termsCoefficients[numberOfDimensions - 1] = 1;
-            Domains[numberOfDimensions - 1] = new Domain(-1, 2 + simplexnBoundaryValue);
-            constraints.Add(new LinearConstraint(termsCoefficients, simplexnBoundaryValue));
+            for (var i = 0; i < numberOfDimensions; i++)
+                terms1[i] = termsFactory.Create((int)TermType.Linear, 1);
+
+            constraints.Add(new Constraint(terms2.DeepCopyByExpressionTree(), simplexnBoundaryValue));
 
             Constraints = constraints.ToArray();
         }

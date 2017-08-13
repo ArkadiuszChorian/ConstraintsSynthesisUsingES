@@ -1,9 +1,8 @@
 ﻿using System;
-using ES.Core.Enums;
-using ES.Core.Factories.Interfaces;
-using ES.Core.Models.Terms;
+using CSUES.Engine.Enums;
+using CSUES.Engine.Models.Terms;
 
-namespace ES.Core.Factories
+namespace CSUES.Engine.Factories
 {
     public class TermsFactory : ITermsFactory
     {
@@ -14,13 +13,13 @@ namespace ES.Core.Factories
             switch (termType)
             {
                 case TermType.Linear:
-                    return new LinearTerm(coefficient, termType);
+                    return new LinearTerm(coefficient);
                 case TermType.Quadratic:
-                    return new QuadraticTerm(coefficient, termType);
+                    return new QuadraticTerm(coefficient);
                 case TermType.Cubic:
-                    return new CubicTerm(coefficient, termType);
+                    return new CubicTerm(coefficient);
                 case TermType.Npower:
-                    return new NpowerTerm(coefficient, termType, power);
+                    return new NpowerTerm(coefficient, power);
                 //case TermType.SquareRoot:
                 //    break;
                 //case TermType.Exponential:

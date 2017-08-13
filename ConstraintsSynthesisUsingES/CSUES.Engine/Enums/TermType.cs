@@ -1,4 +1,4 @@
-﻿namespace ES.Core.Enums
+﻿namespace CSUES.Engine.Enums
 {
     public enum TermType : byte
     {
@@ -6,19 +6,19 @@
         Quadratic,
         Cubic,
         Npower,
-        SquareRoot,
-        Exponential,
-        NaturalLogarithm,
-        BaseTenLogarithm,
-        AbsoluteValue,
-        Sine,
-        Cosine,
-        Tangent,
-        ArcSine,
-        ArcCosine,
-        ArcTangent,
-        HiperbolicSine,
-        HiperbolicCosine,
-        HiperbolicTangent
+        //SquareRoot,
+        //Exponential,
+        //NaturalLogarithm,
+        //BaseTenLogarithm,
+        //AbsoluteValue,
+        //Sine,
+        //Cosine,
+        //Tangent,
+        //ArcSine,
+        //ArcCosine,
+        //ArcTangent,
+        //HiperbolicSine,
+        //HiperbolicCosine,
+        //HiperbolicTangent
     }
 }

@@ -1,6 +1,6 @@
-﻿using ES.Core.Models;
+﻿using CSUES.Engine.Models;
 
-namespace ES.Core.DistanceMeasuring
+namespace CSUES.Engine.DistanceMeasuring
 {
     public class NearestNeighbourDistanceCalculator : INearestNeighbourDistanceCalculator
     {

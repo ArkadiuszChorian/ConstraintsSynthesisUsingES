@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using ES.Core.Benchmarks;
-using ES.Core.Constraints;
-using ES.Core.Utils;
+using CSUES.Engine.Benchmarks;
+using CSUES.Engine.Utils;
 
-namespace ES.Core.Models
+namespace CSUES.Engine.Models
 {
     public class MathModel
     {

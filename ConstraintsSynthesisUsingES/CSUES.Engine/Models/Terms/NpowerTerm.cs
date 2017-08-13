@@ -1,25 +1,17 @@
 ﻿using System;
-using ES.Core.Enums;
+using CSUES.Engine.Enums;
 
-namespace ES.Core.Models.Terms
+namespace CSUES.Engine.Models.Terms
 {
     public class NpowerTerm : Term
     {
-        private readonly double _power;
-
-        public NpowerTerm(double coefficient, double power) : base(coefficient)
+        public NpowerTerm(double coefficient, double power) : base(coefficient, power, TermType.Npower)
         {
-            _power = power;
-        }
-
-        public NpowerTerm(double coefficient, TermType termType, double power) : base(coefficient, termType)
-        {
-            _power = power;
         }
 
         public override double Value(double argument)
         {
-            return Math.Pow(argument, _power);
+            return Math.Pow(argument, Power);
         }
     }
 }

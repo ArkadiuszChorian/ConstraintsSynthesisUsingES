@@ -1,14 +1,10 @@
-﻿using ES.Core.Enums;
+﻿using CSUES.Engine.Enums;
 
-namespace ES.Core.Models.Terms
+namespace CSUES.Engine.Models.Terms
 {
     public class QuadraticTerm : Term
     {
-        public QuadraticTerm(double coefficient) : base(coefficient)
-        {
-        }
-
-        public QuadraticTerm(double coefficient, TermType termType) : base(coefficient, termType)
+        public QuadraticTerm(double coefficient) : base(coefficient, 2, TermType.Quadratic)
         {
         }
 
