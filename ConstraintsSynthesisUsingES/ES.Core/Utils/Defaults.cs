@@ -24,12 +24,9 @@ namespace ES.Core.Utils
         public const int NumberOfParentsSolutionsToSelect = 1;
         public const ParentsSelectionType TypeOfParentsSelection = ParentsSelectionType.Random;
         public const SurvivorsSelectionType TypeOfSurvivorsSelection = SurvivorsSelectionType.Distinct;
-
-        //public const int BasePopulationSize = 15;
-        //public const int OffspringPopulationSize = 100;
-        //public const int NumberOfGenerations = 100;
-        //public const int OneFifthRuleCheckInterval = 5;
-        //public const double OneFifthRuleScalingFactor = 0.9;
+        
+        public const int OneFifthRuleCheckInterval = 5;
+        public const double OneFifthRuleScalingFactor = 0.9;
 
         public const bool UseRecombination = false;
         public const RecombinationType TypeOfObjectsRecombination = RecombinationType.Discrete;
