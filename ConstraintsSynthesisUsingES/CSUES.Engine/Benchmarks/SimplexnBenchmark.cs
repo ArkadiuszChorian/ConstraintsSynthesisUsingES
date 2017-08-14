@@ -23,31 +23,32 @@ namespace CSUES.Engine.Benchmarks
             Domains = new Domain[numberOfDimensions];
 
             for (var i = 0; i < numberOfDimensions; i++)
-            {
                 Domains[i] = new Domain(-1, 2 + simplexnBoundaryValue);
 
-                for (var j = 0; j < numberOfDimensions; j++)
-                {
-                    terms1[j] = termsFactory.Create((int)TermType.Linear, 0);
-                    terms2[j] = termsFactory.Create((int)TermType.Linear, 0);
-                }
-
+            for (var i = 0; i < numberOfDimensions; i++)
+            {                          
                 for (var j = i + 1; j < numberOfDimensions; j++)
                 {
+                    for (var k = 0; k < numberOfDimensions; k++)
+                    {
+                        terms1[k] = termsFactory.Create((int)TermType.Linear, 0);
+                        terms2[k] = termsFactory.Create((int)TermType.Linear, 0);
+                    }
+
                     terms1[i].Coefficient = -cotPi12;
                     terms1[j].Coefficient = tanPi12;
                     terms2[j].Coefficient = -cotPi12;
                     terms2[i].Coefficient = tanPi12;
-                }
 
-                constraints.Add(new Constraint(terms1.DeepCopyByExpressionTree(), 0));
-                constraints.Add(new Constraint(terms2.DeepCopyByExpressionTree(), 0));
+                    constraints.Add(new Constraint(terms1.DeepCopyByExpressionTree(), 0));
+                    constraints.Add(new Constraint(terms2.DeepCopyByExpressionTree(), 0));
+                }               
             }
 
             for (var i = 0; i < numberOfDimensions; i++)
                 terms1[i] = termsFactory.Create((int)TermType.Linear, 1);
 
-            constraints.Add(new Constraint(terms2.DeepCopyByExpressionTree(), simplexnBoundaryValue));
+            constraints.Add(new Constraint(terms1.DeepCopyByExpressionTree(), simplexnBoundaryValue));
 
             Constraints = constraints.ToArray();
         }
