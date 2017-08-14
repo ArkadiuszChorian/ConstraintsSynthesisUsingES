@@ -30,7 +30,7 @@ namespace CSUES.Engine.Benchmarks
 
             for (var i = numberOfDimensions; i < numberOfTerms; i++)
             {
-                var value = i + 1;
+                var value = i + 1 - numberOfDimensions;
                 terms[i] = termsFactory.Create((int) TermType.Linear, -2 * value);
             }
 
