@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using ES.Core.Models;
+using System.Reflection;
+using CSUES.Engine.Models;
 using ExperimentDatabase;
-using Version = ES.Core.Models.Version;
 
-namespace ES.Core.Utils
+namespace CSUES.Common
 {
     public class DatabaseContext
     {
@@ -74,21 +75,21 @@ namespace ES.Core.Utils
             _anyErrors = true;
         }
 
-        public bool Exists(ExperimentParameters experimentParameters)
-        {
-            var controlQuery = $"SELECT name FROM sqlite_master WHERE name = '{nameof(_versions).Replace("_", string.Empty)}'";
+        //public bool Exists(ExperimentParameters experimentParameters)
+        //{
+        //    var controlQuery = $"SELECT name FROM sqlite_master WHERE name = '{nameof(_versions).Replace("_", string.Empty)}'";
             
-            var result = _databaseEngine.PrepareStatement(controlQuery).ExecuteReader();
+        //    var result = _databaseEngine.PrepareStatement(controlQuery).ExecuteReader();
 
-            if (!result.HasRows) return false;
+        //    if (!result.HasRows) return false;
 
-            var query = $"SELECT * FROM {nameof(_versions).Replace("_", string.Empty)} " +
-                $"WHERE {nameof(Version.ExperimentParametersHashString)} = '{experimentParameters.GetHashString()}'";
+        //    var query = $"SELECT * FROM {nameof(_versions).Replace("_", string.Empty)} " +
+        //        $"WHERE {nameof(Version.ExperimentParametersHashString)} = '{experimentParameters.GetHashString()}'";
 
-            result = _databaseEngine.PrepareStatement(query).ExecuteReader();
+        //    result = _databaseEngine.PrepareStatement(query).ExecuteReader();
 
-            return result.HasRows;
-        }
+        //    return result.HasRows;
+        //}
 
         public void Save()
         {
@@ -117,7 +118,7 @@ namespace ES.Core.Utils
 
         private void Insert<T>(T objectToInsert, params DataSet[] dataSetsToInsertIn)
         {
-            var propertyInfos = objectToInsert.GetDbSerializableProperties();
+            var propertyInfos = GetDbSerializableProperties(objectToInsert);
 
             foreach (var propertyInfo in propertyInfos)
             {
@@ -162,6 +163,11 @@ namespace ES.Core.Utils
             typeof(Enum),
             typeof(TimeSpan)
         };
+
+        public static IEnumerable<PropertyInfo> GetDbSerializableProperties<T>(T obj)
+        {
+            return obj.GetType().GetProperties().Where(pi => DatabaseContext.SerializableTypes.Contains(pi.PropertyType.BaseType));
+        }
     }
 }
 

@@ -1,4 +1,6 @@
-﻿using ES.Core.Models;
+﻿using CSUES.Engine.Constraints;
+using CSUES.Engine.Models;
+using ES.Core.Models;
 
 namespace ES.Core.Constraints
 {

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
+using CSUES.Engine.Constraints;
+using CSUES.Engine.Models;
 using ES.Core.Constraints;
 using ES.Core.Models;
 using OxyPlot;
