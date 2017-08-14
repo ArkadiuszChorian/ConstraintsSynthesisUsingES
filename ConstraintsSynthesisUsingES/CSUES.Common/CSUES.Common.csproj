@@ -46,9 +46,6 @@
     <Compile Include="Version.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\CSUES.Engine\CSUES.Engine.csproj">
       <Project>{623F5515-96C7-4A15-BD5B-65FCE100DB98}</Project>
       <Name>CSUES.Engine</Name>
