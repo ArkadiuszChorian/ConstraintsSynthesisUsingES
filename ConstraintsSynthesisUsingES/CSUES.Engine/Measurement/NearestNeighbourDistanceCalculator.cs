@@ -1,6 +1,6 @@
 ﻿using CSUES.Engine.Models;
 
-namespace CSUES.Engine.DistanceMeasuring
+namespace CSUES.Engine.Measurement
 {
     public class NearestNeighbourDistanceCalculator : INearestNeighbourDistanceCalculator
     {

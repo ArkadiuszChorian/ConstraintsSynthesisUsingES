@@ -8,17 +8,19 @@ using CSUES.Engine.PrePostProcessing;
 using CSUES.Engine.Utils;
 using ES.Core.Factories;
 
-namespace CSUES.Engine.Engine
+namespace CSUES.Engine.Core
 {
     public class Engine : IEngine
     {
+        private readonly IConstraintsBuilder _constraintsBuilder;
         private readonly IProcessor<Constraint[]> _redundantConstraintsRemover;      
         private readonly Stopwatch _stoper;
 
-        public Engine(ExperimentParameters experimentParameters, IBenchmark benchmark, IProcessor<Constraint[]> redundantConstraintsRemover, Stopwatch stoper)
+        public Engine(ExperimentParameters experimentParameters, IBenchmark benchmark, IConstraintsBuilder constraintsBuilder, IProcessor<Constraint[]> redundantConstraintsRemover, Stopwatch stoper)
         {
             Parameters = experimentParameters;
             Benchmark = benchmark;
+            _constraintsBuilder = constraintsBuilder;
             _redundantConstraintsRemover = redundantConstraintsRemover;
             _stoper = stoper;
             Statistics = new Statistics();
@@ -35,11 +37,11 @@ namespace CSUES.Engine.Engine
             var evolutionEngine = evolutionEnginesFactory.Create(Parameters.EvolutionParameters);
             var positiveTrainingPoints = trainingPoints.Where(tp => tp.ClassificationType == ClassificationType.Positive).ToArray();
             var negativeTrainingPoints = trainingPoints.Where(tp => tp.ClassificationType == ClassificationType.Negative).ToArray();
-            var evaluator = new Evaluator(Parameters.NumberOfConstraintsCoefficients, positiveTrainingPoints, negativeTrainingPoints);
+            var evaluator = new Evaluator(positiveTrainingPoints, negativeTrainingPoints, _constraintsBuilder);
 
             var bestSolution = evolutionEngine.RunEvolution(evaluator);
             Statistics.EvolutionStatistics = evolutionEngine.Statistics;
-            var synthesizedConstraints = bestSolution.GetConstraints(Parameters.NumberOfConstraintsCoefficients);
+            var synthesizedConstraints = _constraintsBuilder.BuildConstraints(bestSolution);
 
             var reducedSynthesizedConstraints = _redundantConstraintsRemover.ApplyProcessing(synthesizedConstraints);
 

@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using CSUES.Engine.Engine;
+using CSUES.Engine.Core;
 using CSUES.Engine.Models;
 using CSUES.Engine.PointsGeneration;
 using CSUES.Engine.PrePostProcessing;
@@ -13,10 +13,12 @@ namespace CSUES.Engine.Factories
             var benchmarksFactory = new BenchmarksFactory();
             var pointsGenerator = new PointsGenerator();
             var benchmark = benchmarksFactory.Create(experimentParameters);
+            var constraintsBuilder = new ConstraintsBuilder(benchmark.Constraints);
+
             var redundantConstraintsRemover = new RedundantConstraintsRemover(pointsGenerator, benchmark.Domains, experimentParameters);
             var stoper = new Stopwatch();
 
-            return new Engine.Engine(experimentParameters, benchmark, redundantConstraintsRemover, stoper);
+            return new Core.Engine(experimentParameters, benchmark, constraintsBuilder, redundantConstraintsRemover, stoper);
         }
     }
 }

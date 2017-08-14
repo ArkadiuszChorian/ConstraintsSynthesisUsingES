@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CSUES.Engine.DistanceMeasuring
+namespace CSUES.Engine.Measurement
 {
     public class CanberraDistanceCalculator : IDistanceCalculator
     {

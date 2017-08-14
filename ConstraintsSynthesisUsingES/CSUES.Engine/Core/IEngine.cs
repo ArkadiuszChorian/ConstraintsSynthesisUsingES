@@ -2,7 +2,7 @@
 using CSUES.Engine.Models;
 using Statistics = CSUES.Engine.Models.Statistics;
 
-namespace CSUES.Engine.Engine
+namespace CSUES.Engine.Core
 {
     public interface IEngine
     {

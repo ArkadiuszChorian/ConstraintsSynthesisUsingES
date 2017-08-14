@@ -26,7 +26,7 @@ namespace CSUES.Engine.Models
             double ballnBoundaryValue = Defaults.BallnBoundaryValue,
             double cubenBoundaryValue = Defaults.CubenBoundaryValue,
             double simplexnBoundaryValue = Defaults.SimplexnBoundaryValue,
-            IEnumerable<Constraint> constraintsForGenericBenchmark = default(IEnumerable<Constraint>),
+            IEnumerable<Constraint> referenceConstraints = default(IEnumerable<Constraint>),
 
             long numberOfDomainSamples = Defaults.NumberOfDomainSamples,
             int numberOfPositivePoints = Defaults.NumberOfPositivePoints,
@@ -76,7 +76,7 @@ namespace CSUES.Engine.Models
             BallnBoundaryValue = ballnBoundaryValue;
             CubenBoundaryValue = cubenBoundaryValue;
             SimplexnBoundaryValue = simplexnBoundaryValue;
-            ConstraintsForGenericBenchmark = constraintsForGenericBenchmark;
+            ReferenceConstraints = referenceConstraints;
 
             NumberOfDomainSamples = numberOfDomainSamples;
             NumberOfPositivePoints = numberOfPositivePoints;
@@ -102,7 +102,7 @@ namespace CSUES.Engine.Models
         public double BallnBoundaryValue { get; set; }
         public double CubenBoundaryValue { get; set; }
         public double SimplexnBoundaryValue { get; set; }
-        public IEnumerable<Constraint> ConstraintsForGenericBenchmark { get; set; }
+        public IEnumerable<Constraint> ReferenceConstraints { get; set; }
 
         //Points generation
         public long NumberOfDomainSamples { get; set; }

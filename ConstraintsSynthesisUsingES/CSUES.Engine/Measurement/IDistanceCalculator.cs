@@ -1,4 +1,4 @@
-﻿namespace CSUES.Engine.DistanceMeasuring
+﻿namespace CSUES.Engine.Measurement
 {
     public interface IDistanceCalculator
     {

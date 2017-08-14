@@ -12,7 +12,7 @@ namespace CSUES.Engine.Benchmarks
             var defaultLowerLimit = experimentParameters.DefaultDomainLowerLimit;
             var defaultUpperLimit = experimentParameters.DefaultDomainUpperLimit;
 
-            Constraints = experimentParameters.ConstraintsForGenericBenchmark.ToArray();
+            Constraints = experimentParameters.ReferenceConstraints.ToArray();
             Domains = new Domain[numberOfDimensions];
 
             for (var i = 0; i < numberOfDimensions; i++)
