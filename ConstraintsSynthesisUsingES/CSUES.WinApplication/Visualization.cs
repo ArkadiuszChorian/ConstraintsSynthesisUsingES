@@ -4,16 +4,14 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
-using CSUES.Engine.Constraints;
 using CSUES.Engine.Models;
-using ES.Core.Constraints;
-using ES.Core.Models;
+using CSUES.Engine.Utils;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 using OxyPlot.WindowsForms;
 
-namespace ES.Core.Utils
+namespace CSUES.WinApplication
 {
     public class Visualization
     {
@@ -119,7 +117,7 @@ namespace ES.Core.Utils
         {
             var plot = Plots.Last();
 
-            OxyPalette palette = null;        
+            OxyPalette palette = null;
 
             if (paletteInitializer != null)
             {
@@ -132,8 +130,10 @@ namespace ES.Core.Utils
 
             for (var i = 0; i < constraints.Count; i++)
             {
-                var denominator = constraints[i].TermsCoefficients[1];
-                var aNominator = constraints[i].TermsCoefficients[0];
+                //var denominator = constraints[i].TermsCoefficients[1];
+                //var aNominator = constraints[i].TermsCoefficients[0];
+                var denominator = constraints[i].Terms[1].Coefficient;
+                var aNominator = constraints[i].Terms[0].Coefficient;
                 var bNominator = constraints[i].LimitingValue;
 
                 if (denominator == 0)
@@ -142,7 +142,7 @@ namespace ES.Core.Utils
                     aNominator *= 10000;
                     bNominator *= 10000;
                 }
-
+                
                 var a = aNominator / denominator;
                 var b = bNominator / denominator;
 
