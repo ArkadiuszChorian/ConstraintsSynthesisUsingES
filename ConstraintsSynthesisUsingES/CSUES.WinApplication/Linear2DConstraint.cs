@@ -1,9 +1,9 @@
-﻿using CSUES.Engine.Models;
+﻿using CSUES.Engine.Models.Constraints;
 using CSUES.Engine.Models.Terms;
 
 namespace CSUES.WinApplication
 {
-    public class Linear2DConstraint : Constraint
+    public class Linear2DConstraint : LinearConstraint
     {
         public Linear2DConstraint(double a, double b, InequalityValue inequalityValue) : base(new Term[]
             {

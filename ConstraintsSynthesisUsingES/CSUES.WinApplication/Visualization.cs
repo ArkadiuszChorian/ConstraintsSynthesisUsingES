@@ -4,7 +4,9 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
+using CSUES.Engine.Enums;
 using CSUES.Engine.Models;
+using CSUES.Engine.Models.Constraints;
 using CSUES.Engine.Utils;
 using OxyPlot;
 using OxyPlot.Axes;
@@ -19,7 +21,14 @@ namespace CSUES.WinApplication
         private readonly Dictionary<OxyColor, double> _colorKey;
         private const string ColorAxisName = "ColorAxis";
 
-        public Visualization()
+        private readonly int _plotWidth;
+        private readonly int _plotHeight;
+        private readonly double _xAxisMin;
+        private readonly double _xAxisMax;
+        private readonly double _yAxisMin;
+        private readonly double _yAxisMax;       
+
+        public Visualization(BenchmarkType benchmarkType)
         {
             Plots = new List<PlotView>();
 
@@ -38,6 +47,44 @@ namespace CSUES.WinApplication
                 _colorAxis.AddRange(rangeStart, rangeStart + 0.1, oxyColor);
                 _colorKey.Add(oxyColor, rangeStart);
                 rangeStart++;
+            }
+
+            switch (benchmarkType)
+            {
+                case BenchmarkType.Balln:
+                    _plotWidth = 400;
+                    _plotHeight = 400;
+                    _xAxisMin = -5;
+                    _xAxisMax = 7;
+                    _yAxisMin = -4;
+                    _yAxisMax = 8;
+                    break;
+                case BenchmarkType.Cuben:
+                    _plotWidth = 400;
+                    _plotHeight = 400;
+                    _xAxisMin = -2;
+                    _xAxisMax = 6.6;
+                    _yAxisMin = -4.5;
+                    _yAxisMax = 13.5;
+                    break;
+                case BenchmarkType.Simplexn:
+                    _plotWidth = 400;
+                    _plotHeight = 400;
+                    _xAxisMin = -1.5;
+                    _xAxisMax = 5;
+                    _yAxisMin = -1.5;
+                    _yAxisMax = 5;
+                    break;
+                case BenchmarkType.Other:
+                    _plotWidth = 400;
+                    _plotHeight = 400;
+                    _xAxisMin = -100;
+                    _xAxisMax = 100;
+                    _yAxisMin = -100;
+                    _yAxisMax = 100;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(benchmarkType), benchmarkType, null);
             }
 
             Application.EnableVisualStyles();
@@ -82,7 +129,7 @@ namespace CSUES.WinApplication
             
             return plotThread;
         }
-        public Visualization AddNextPlot(string title = "Plot", int width = 400, int height = 400, int yAxisMin = -100, int yAxisMax = 100, int xAxisMin = -100, int xAxisMax = 100)
+        public Visualization AddNextPlot(string title = "Plot", int width = 400, int height = 400, double yAxisMin = -100, double yAxisMax = 100, double xAxisMin = -100, double xAxisMax = 100)
         {
             var plot = new PlotView { Size = new System.Drawing.Size(width, height) };
 
@@ -129,27 +176,41 @@ namespace CSUES.WinApplication
             }
 
             for (var i = 0; i < constraints.Count; i++)
-            {
-                //var denominator = constraints[i].TermsCoefficients[1];
-                //var aNominator = constraints[i].TermsCoefficients[0];
-                var denominator = constraints[i].Terms[1].Coefficient;
-                var aNominator = constraints[i].Terms[0].Coefficient;
-                var bNominator = constraints[i].LimitingValue;
+            {               
+                Series series;
 
-                if (denominator == 0)
+                if (constraints[i] is BallConstraint)
                 {
-                    denominator = 1;
-                    aNominator *= 10000;
-                    bNominator *= 10000;
+                    var a = constraints[i].Terms[2].Coefficient * -0.5;
+                    var b = constraints[i].Terms[3].Coefficient * -0.5;
+                    var r = Math.Sqrt(constraints[i].LimitingValue + (a * a) + (b * b));
+
+                    series = new FunctionSeries(t => a + r * Math.Cos(t), t => b + r * Math.Sin(t), 0, 2 * Math.PI, 1000)
+                    {
+                        Color = palette?.Colors[i] ?? color
+                    };
                 }
-                
-                var a = aNominator / denominator;
-                var b = bNominator / denominator;
-
-                var series = new FunctionSeries(x => b - a * x, xMin, xMax, step)
+                else
                 {
-                    Color = palette?.Colors[i] ?? color,
-                };
+                    var denominator = constraints[i].Terms[1].Coefficient;
+                    var aNominator = constraints[i].Terms[0].Coefficient;
+                    var bNominator = constraints[i].LimitingValue;
+
+                    if (denominator == 0)
+                    {
+                        denominator = 1;
+                        aNominator *= 10000;
+                        bNominator *= 10000;
+                    }
+
+                    var a = aNominator / denominator;
+                    var b = bNominator / denominator;
+
+                    series = new FunctionSeries(x => b - a * x, xMin, xMax, step)
+                    {
+                        Color = palette?.Colors[i] ?? color,
+                    };
+                }
 
                 plot.Model.Series.Add(series);
             }
@@ -157,18 +218,40 @@ namespace CSUES.WinApplication
             return this;
         }
 
-        public void ShowTwoPlots(IList<Point> positivePoints, IList<Point> negativePoints, MathModel mathModel)
+        public Visualization PrepareTwoPlots(IList<Point> positivePoints, IList<Point> negativePoints, MathModel mathModel)
         {
-            this
-                .AddNextPlot()
-                .AddPoints(positivePoints, OxyColors.Green)
-                .AddPoints(negativePoints, OxyColors.Red)
-                .AddConstraints(mathModel.ReferenceModel, OxyPalettes.Rainbow, xMin: mathModel.Domains[0].LowerLimit, xMax: mathModel.Domains[0].UpperLimit)
-                .AddNextPlot()
-                .AddPoints(positivePoints, OxyColors.Green)
-                .AddPoints(negativePoints, OxyColors.Red)
-                .AddConstraints(mathModel.SynthesizedModel, OxyPalettes.Rainbow)
-                .Show();
+            AddNextPlot("Reference model", _plotWidth, _plotHeight, _yAxisMin, _yAxisMax, _xAxisMin, _xAxisMax);
+            AddPoints(positivePoints, OxyColors.Green);
+            AddPoints(negativePoints, OxyColors.Red);
+            AddConstraints(mathModel.ReferenceModel, OxyPalettes.Rainbow, xMin: mathModel.Domains[0].LowerLimit,
+                xMax: mathModel.Domains[0].UpperLimit);
+            AddNextPlot("Synthesized model", _plotWidth, _plotHeight, _yAxisMin, _yAxisMax, _xAxisMin, _xAxisMax);
+            AddPoints(positivePoints, OxyColors.Green);
+            AddPoints(negativePoints, OxyColors.Red);
+            AddConstraints(mathModel.SynthesizedModel, OxyPalettes.Rainbow, xMin: mathModel.Domains[0].LowerLimit,
+                xMax: mathModel.Domains[0].UpperLimit);
+
+            return this;
+        }
+
+        public Visualization PrepareThreePlots(IList<Point> positivePoints, IList<Point> negativePoints, MathModel mathModel, IList<IList<Constraint>> evolutionSteps, int numberOfSteps, int stepIncrement)
+        {
+            PrepareTwoPlots(positivePoints, negativePoints, mathModel);
+            AddNextPlot("Evolution steps", _plotWidth, _plotHeight, _yAxisMin, _yAxisMax, _xAxisMin, _xAxisMax);
+            AddPoints(positivePoints, OxyColors.Green);
+            AddPoints(negativePoints, OxyColors.Red);
+
+            var j = 0;
+
+            for (var i = 0; i < numberOfSteps * stepIncrement; i += stepIncrement)
+            {
+                if (i > evolutionSteps.Count) break;
+
+                var color = OxyColor.FromRgb(50, 50, (byte)(byte.MaxValue / numberOfSteps * j++));
+                AddConstraints(evolutionSteps[i], null, color);
+            }
+
+            return this;
         }
     }
 }

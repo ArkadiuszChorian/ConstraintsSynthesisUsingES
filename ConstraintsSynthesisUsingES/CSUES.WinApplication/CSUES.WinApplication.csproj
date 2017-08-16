@@ -92,6 +92,10 @@
       <Project>{623f5515-96c7-4a15-bd5b-65fce100db98}</Project>
       <Name>CSUES.Engine</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ES.Core\ES.Core.csproj">
+      <Project>{fe5c47de-4c78-49a7-9c3c-25ffeda88761}</Project>
+      <Name>ES.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
