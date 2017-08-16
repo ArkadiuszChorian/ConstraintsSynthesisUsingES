@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using ES.Core.Factories;
@@ -39,13 +40,15 @@ namespace ES.Core.Engine
 
             BasePopulation = new Solution[evolutionParameters.BasePopulationSize];
             OffspringPopulation = new Solution[evolutionParameters.OffspringPopulationSize]; 
+            EvolutionSteps = new List<Solution>(evolutionParameters.NumberOfGenerations);
               
             MersenneTwister.Initialize(evolutionParameters.Seed);       
         }
         
         public EvolutionParameters Parameters { get; set; }       
-        public Statistics Statistics { get; set; }
-               
+        public Statistics Statistics { get; set; }      
+        public IList<Solution> EvolutionSteps { get; }
+            
         public Solution RunEvolution(IEvaluator evaluator)
         {
             var offspringPopulationSize = Parameters.OffspringPopulationSize;
@@ -55,12 +58,20 @@ namespace ES.Core.Engine
 
             for (var i = 0; i < offspringPopulationSize; i++)
                 OffspringPopulation[i] = SolutionsFactory.Create(Parameters);            
-
+            
             Stoper.Restart();
+          
+            if (Parameters.TrackEvolutionSteps)
+                EvolutionSteps.Add(BasePopulation.First());
 
             for (var i = 0; i < numberOfGenerations; i++)
+            {
                 Evolve(evaluator);
 
+                if (Parameters.TrackEvolutionSteps)
+                    EvolutionSteps.Add(BasePopulation.First());
+            }
+                
             Stoper.Stop();
 
             Statistics.TotalEvolutionTime = Stoper.Elapsed;

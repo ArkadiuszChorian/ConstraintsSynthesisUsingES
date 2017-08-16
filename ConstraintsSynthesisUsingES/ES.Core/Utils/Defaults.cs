@@ -16,6 +16,7 @@ namespace ES.Core.Utils
         }
 
         public const int Seed = 1;
+        public const bool TrackEvolutionSteps = false;
 
         public const double StepThreshold = 0.1;
         public const double RotationAngle = 5 * Math.PI / 180;

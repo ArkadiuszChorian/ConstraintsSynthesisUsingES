@@ -11,6 +11,7 @@ namespace ES.Core.Models
             int numberOfGenerations, 
             
             int seed = Defaults.Seed, 
+            bool trackEvolutionSteps = Defaults.TrackEvolutionSteps,
             
             int numberOfParentsSolutionsToSelect = Defaults.NumberOfParentsSolutionsToSelect, 
             int typeOfParentsSelection = (int) Defaults.TypeOfParentsSelection, 
@@ -33,6 +34,7 @@ namespace ES.Core.Models
             NumberOfGenerations = numberOfGenerations;
 
             Seed = seed;
+            TrackEvolutionSteps = trackEvolutionSteps;
 
             NumberOfParentsSolutionsToSelect = numberOfParentsSolutionsToSelect;
             TypeOfParentsSelection = typeOfParentsSelection;
@@ -61,8 +63,9 @@ namespace ES.Core.Models
         public int OneFifthRuleCheckInterval { get; set; }
         public double OneFifthRuleScalingFactor { get; set; }
 
-        //Seed
+        //Other
         public int Seed { get; set; }
+        public bool TrackEvolutionSteps { get; set; }
 
         //Selection parameters
         public int NumberOfParentsSolutionsToSelect { get; set; }
