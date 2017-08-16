@@ -1,5 +1,6 @@
 ﻿using CSUES.Engine.Enums;
 using CSUES.Engine.Models;
+using CSUES.Engine.Models.Constraints;
 using ES.Core.Utils;
 
 namespace CSUES.Engine.PointsGeneration
@@ -18,7 +19,7 @@ namespace CSUES.Engine.PointsGeneration
             var numberOfDimensions = domains.Length;
             var numberOfConstraints = constraints.Length;
             var point = new Point(numberOfDimensions, ClassificationType.Positive);
-
+            
             var isSatsfyngConstraints = false;
 
             while (isSatsfyngConstraints == false)
@@ -27,6 +28,13 @@ namespace CSUES.Engine.PointsGeneration
 
                 for (var i = 0; i < numberOfDimensions; i++)
                     point.Coordinates[i] = _randomGenerator.NextDouble(domains[i].LowerLimit, domains[i].UpperLimit);
+
+                //HACK
+
+                //point.Coordinates[0] = 1;
+                //point.Coordinates[1] = -0.5;
+
+                //
 
                 for (var i = 0; i < numberOfConstraints; i++)
                 {

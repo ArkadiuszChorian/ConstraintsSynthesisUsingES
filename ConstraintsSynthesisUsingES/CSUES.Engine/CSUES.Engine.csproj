@@ -11,6 +11,8 @@
     <AssemblyName>CSUES.Engine</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -41,7 +43,8 @@
     <Compile Include="Benchmarks\SimplexnBenchmark.cs" />
     <Compile Include="Core\ConstraintsBuilder.cs" />
     <Compile Include="Core\IConstraintsBuilder.cs" />
-    <Compile Include="Models\Constraint.cs" />
+    <Compile Include="Models\Constraints\BallConstraint.cs" />
+    <Compile Include="Models\Constraints\Constraint.cs" />
     <Compile Include="Measurement\CanberraDistanceCalculator.cs" />
     <Compile Include="Measurement\EuclideanDistanceCalculator.cs" />
     <Compile Include="Measurement\IDistanceCalculator.cs" />
@@ -58,6 +61,7 @@
     <Compile Include="Factories\TermsFactory.cs" />
     <Compile Include="Enums\ClassificationType.cs" />
     <Compile Include="Core\IEngine.cs" />
+    <Compile Include="Models\Constraints\LinearConstraint.cs" />
     <Compile Include="Models\Domain.cs" />
     <Compile Include="Models\ExperimentParameters.cs" />
     <Compile Include="Models\MathModel.cs" />
@@ -74,6 +78,11 @@
     <Compile Include="PointsGeneration\TestPointsGenerator.cs" />
     <Compile Include="PrePostProcessing\IProcessor.cs" />
     <Compile Include="PrePostProcessing\RedundantConstraintsRemover.cs" />
+    <Compile Include="PrePostProcessing\StandardScoreConstraintsNormalizationProcessor.cs" />
+    <Compile Include="PrePostProcessing\StandardScoreConstraintsNormalizer.cs" />
+    <Compile Include="PrePostProcessing\StandardScorePointsDenormalizer.cs" />
+    <Compile Include="PrePostProcessing\StandardScorePointsNormalizationProcessor.cs" />
+    <Compile Include="PrePostProcessing\StandardScorePointsNormalizer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\DeepCopyByExpressionTrees.cs" />
     <Compile Include="Utils\Defaults.cs" />
@@ -85,7 +94,6 @@
       <Name>ES.Core</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

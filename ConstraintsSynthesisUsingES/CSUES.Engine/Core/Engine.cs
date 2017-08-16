@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using CSUES.Engine.Benchmarks;
 using CSUES.Engine.Enums;
 using CSUES.Engine.Models;
+using CSUES.Engine.Models.Constraints;
 using CSUES.Engine.PrePostProcessing;
 using CSUES.Engine.Utils;
 using ES.Core.Factories;
@@ -24,12 +26,14 @@ namespace CSUES.Engine.Core
             _redundantConstraintsRemover = redundantConstraintsRemover;
             _stoper = stoper;
             Statistics = new Statistics();
+            EvolutionSteps = new List<IList<Constraint>>();
         }
 
         public IBenchmark Benchmark { get; set; }
         public ExperimentParameters Parameters { get; set; }
         public Statistics Statistics { get; }
-        public MathModel MathModel { get; private set; }
+        public MathModel MathModel { get; private set; }        
+        public IList<IList<Constraint>> EvolutionSteps { get; }
         
         public MathModel SynthesizeModel(Point[] trainingPoints)
         {
@@ -40,12 +44,20 @@ namespace CSUES.Engine.Core
             var evaluator = new Evaluator(positiveTrainingPoints, negativeTrainingPoints, _constraintsBuilder);
 
             var bestSolution = evolutionEngine.RunEvolution(evaluator);
+
+            if (Parameters.TrackEvolutionSteps)
+            {
+                var evolutionStepsAsSolutions = evolutionEngine.EvolutionSteps.ToList();
+                evolutionStepsAsSolutions.ForEach(es => EvolutionSteps.Add(_constraintsBuilder.BuildConstraints(es)));
+            }
+
             Statistics.EvolutionStatistics = evolutionEngine.Statistics;
             var synthesizedConstraints = _constraintsBuilder.BuildConstraints(bestSolution);
 
-            var reducedSynthesizedConstraints = _redundantConstraintsRemover.ApplyProcessing(synthesizedConstraints);
+            if (Parameters.UseRedundantConstraintsRemoving)
+                synthesizedConstraints = _redundantConstraintsRemover.ApplyProcessing(synthesizedConstraints);
 
-            MathModel = new MathModel(reducedSynthesizedConstraints, Benchmark);
+            MathModel = new MathModel(synthesizedConstraints, Benchmark);
 
             return MathModel;
         }

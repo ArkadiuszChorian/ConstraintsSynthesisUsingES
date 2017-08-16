@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CSUES.Engine.Enums;
+using CSUES.Engine.Models.Constraints;
 using ES.Core.Enums;
 using ES.Core.Models;
 using EvolutionDefaults = ES.Core.Utils.Defaults;
@@ -11,22 +13,22 @@ namespace CSUES.Engine.Models
     {                
         public ExperimentParameters(
             int numberOfDimensions,
-            int maximumNumberOfConstraints,
-
+            
             int basePopulationSize,
             int offspringPopulationSize,
             int numberOfGenerations,
-                       
+                        
             int seed = EvolutionDefaults.Seed,
+            bool trackEvolutionSteps = EvolutionDefaults.TrackEvolutionSteps,
             bool useRedundantConstraintsRemoving = Defaults.UseRedundantConstraintsRemoving,
-            bool useDataStandardization = Defaults.UseDataStandardization,
+            bool useDataNormalization = Defaults.UseDataNormalization,
 
             ISet<TermType> allowedTermsTypes = default(ISet<TermType>),
             BenchmarkType typeOfBenchmark = Defaults.TypeOfBenchmark,
             double ballnBoundaryValue = Defaults.BallnBoundaryValue,
             double cubenBoundaryValue = Defaults.CubenBoundaryValue,
             double simplexnBoundaryValue = Defaults.SimplexnBoundaryValue,
-            IEnumerable<Constraint> referenceConstraints = default(IEnumerable<Constraint>),
+            IList<Constraint> referenceConstraints = default(IList<Constraint>),
 
             long numberOfDomainSamples = Defaults.NumberOfDomainSamples,
             int numberOfPositivePoints = Defaults.NumberOfPositivePoints,
@@ -53,24 +55,40 @@ namespace CSUES.Engine.Models
             RecombinationType typeOfStdDeviationsRecombination = EvolutionDefaults.TypeOfStdDeviationsRecombination,
             RecombinationType typeOfRotationsRecombination = EvolutionDefaults.TypeOfRotationsRecombination)                       
         {
+            if (typeOfBenchmark == BenchmarkType.Other && referenceConstraints == default(IList<Constraint>))
+                throw new ArgumentException("In case of choosing BenchmarkType = Other, it is obligatory to provide reference constraints.");
+
             AllowedTermsTypes = allowedTermsTypes == default(ISet<TermType>)
                 ? Defaults.AllowedTermsTypes
                 : allowedTermsTypes;
 
+            //HACK
+            AllowedTermsTypes = new HashSet<TermType>
+            {
+                TermType.Linear,
+                TermType.Quadratic
+            };
+
             NumberOfConstraintsCoefficients = numberOfDimensions * AllowedTermsTypes.Count + 1;
 
-            var objectVectorSize = NumberOfConstraintsCoefficients * maximumNumberOfConstraints;          
+            MaximumNumberOfConstraints = typeOfBenchmark == BenchmarkType.Other
+                // ReSharper disable once PossibleNullReferenceException : It is checked before
+                ? referenceConstraints.Count
+                : GetMaximumNumberOfConstraints(numberOfDimensions, typeOfBenchmark);
 
-            NumberOfDimensions = numberOfDimensions;
-            MaximumNumberOfConstraints = maximumNumberOfConstraints;          
+            var objectVectorSize = NumberOfConstraintsCoefficients * MaximumNumberOfConstraints;          
+
+            NumberOfDimensions = numberOfDimensions;        
+                  
             EvolutionParameters = new EvolutionParameters(
-                objectVectorSize, basePopulationSize, offspringPopulationSize, numberOfGenerations, seed,
+                objectVectorSize, basePopulationSize, offspringPopulationSize, numberOfGenerations, seed, trackEvolutionSteps,
                 numberOfParentsSolutionsToSelect, (int)typeOfParentsSelection, (int)typeOfSurvivorsSelection,
                 globalLearningRate, individualLearningRate, stepThreshold, rotationAngle, (int)typeOfMutation,
                 useRecombination, (int)typeOfObjectsRecombination, (int)typeOfStdDeviationsRecombination, (int)typeOfRotationsRecombination);
             Seed = seed;
+            TrackEvolutionSteps = trackEvolutionSteps;
             UseRedundantConstraintsRemoving = useRedundantConstraintsRemoving;
-            UseDataStandardization = useDataStandardization;
+            UseDataNormalization = useDataNormalization;
 
             TypeOfBenchmark = typeOfBenchmark;
             BallnBoundaryValue = ballnBoundaryValue;
@@ -92,8 +110,9 @@ namespace CSUES.Engine.Models
         public int NumberOfConstraintsCoefficients { get; set; }    
         public EvolutionParameters EvolutionParameters { get; set; }
         public int Seed { get; set; }
+        public bool TrackEvolutionSteps { get; set; }
         public bool UseRedundantConstraintsRemoving { get; set; }
-        public bool UseDataStandardization { get; set; }
+        public bool UseDataNormalization { get; set; }
 
 
         //Benchmark parameters
@@ -102,7 +121,7 @@ namespace CSUES.Engine.Models
         public double BallnBoundaryValue { get; set; }
         public double CubenBoundaryValue { get; set; }
         public double SimplexnBoundaryValue { get; set; }
-        public IEnumerable<Constraint> ReferenceConstraints { get; set; }
+        public IList<Constraint> ReferenceConstraints { get; set; }
 
         //Points generation
         public long NumberOfDomainSamples { get; set; }
@@ -111,6 +130,21 @@ namespace CSUES.Engine.Models
         public double DefaultDomainLowerLimit { get; set; }
         public double DefaultDomainUpperLimit { get; set; }
         public int MaxNumberOfPointsInSingleArray { get; set; }
+
+        private static int GetMaximumNumberOfConstraints(int numberOfDimensions, BenchmarkType benchmarkType)
+        {
+            switch (benchmarkType)
+            {
+                case BenchmarkType.Balln:
+                    return 1;
+                case BenchmarkType.Cuben:
+                    return numberOfDimensions * 2;
+                case BenchmarkType.Simplexn:
+                    return 4 * numberOfDimensions - 6 + 1;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(benchmarkType), benchmarkType, null);
+            }
+        }
     }
 }
 

@@ -1,6 +1,7 @@
 ﻿using CSUES.Engine.Enums;
 using CSUES.Engine.Factories;
 using CSUES.Engine.Models;
+using CSUES.Engine.Models.Constraints;
 using CSUES.Engine.Models.Terms;
 
 namespace CSUES.Engine.Benchmarks
@@ -25,6 +26,9 @@ namespace CSUES.Engine.Benchmarks
 
                 Domains[i] = new Domain(value - 2 * ballnBoundaryValue, value + 2 * ballnBoundaryValue);
 
+                //HACK TODO
+                Domains[i] = new Domain(value - 2 * ballnBoundaryValue - 100, value + 2 * ballnBoundaryValue + 100);
+
                 limitingValue -= value * value;
             }
 
@@ -34,7 +38,7 @@ namespace CSUES.Engine.Benchmarks
                 terms[i] = termsFactory.Create((int) TermType.Linear, -2 * value);
             }
 
-            Constraints[0] = new Constraint(terms, limitingValue);
+            Constraints[0] = new BallConstraint(terms, limitingValue);
         }
 
         public Constraint[] Constraints { get; set; }

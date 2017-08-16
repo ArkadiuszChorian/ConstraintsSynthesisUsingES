@@ -1,4 +1,4 @@
-﻿using CSUES.Engine.Models;
+﻿using CSUES.Engine.Models.Constraints;
 using ES.Core.Models.Solutions;
 using ES.Core.Utils;
 

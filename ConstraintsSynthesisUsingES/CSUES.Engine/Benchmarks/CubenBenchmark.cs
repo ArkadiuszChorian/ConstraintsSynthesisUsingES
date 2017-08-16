@@ -2,6 +2,7 @@
 using CSUES.Engine.Enums;
 using CSUES.Engine.Factories;
 using CSUES.Engine.Models;
+using CSUES.Engine.Models.Constraints;
 using CSUES.Engine.Models.Terms;
 
 namespace CSUES.Engine.Benchmarks
@@ -32,8 +33,8 @@ namespace CSUES.Engine.Benchmarks
                 terms1[i].Coefficient = -1;
                 terms2[i].Coefficient = 1;
 
-                constraints.Add(new Constraint(terms1, -value));
-                constraints.Add(new Constraint(terms2, value + value * cubenBoundaryValue));
+                constraints.Add(new LinearConstraint(terms1, -value));
+                constraints.Add(new LinearConstraint(terms2, value + value * cubenBoundaryValue));
 
                 Domains[i] = new Domain(value - value * cubenBoundaryValue, value + 2 * value * cubenBoundaryValue);
             }

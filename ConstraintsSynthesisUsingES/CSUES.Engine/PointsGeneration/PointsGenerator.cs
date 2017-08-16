@@ -1,5 +1,6 @@
 ﻿using CSUES.Engine.Enums;
 using CSUES.Engine.Models;
+using CSUES.Engine.Models.Constraints;
 using ES.Core.Utils;
 
 namespace CSUES.Engine.PointsGeneration

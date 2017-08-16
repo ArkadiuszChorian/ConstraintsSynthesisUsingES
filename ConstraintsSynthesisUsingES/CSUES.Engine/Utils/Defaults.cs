@@ -11,16 +11,16 @@ namespace CSUES.Engine.Utils
         };
 
         public const bool UseRedundantConstraintsRemoving = true;
-        public const bool UseDataStandardization = true;
+        public const bool UseDataNormalization = true;
 
         public const long NumberOfDomainSamples = 100000;
 
-        public const double BallnBoundaryValue = 100;
-        public const double CubenBoundaryValue = 100;
-        public const double SimplexnBoundaryValue = 100;
+        public const double BallnBoundaryValue = 2.7;
+        public const double CubenBoundaryValue = 2.7;
+        public const double SimplexnBoundaryValue = 2.7;
 
-        public const int NumberOfPositivePoints = 100;
-        public const int NumberOfNegativePoints = 100;
+        public const int NumberOfPositivePoints = 500;
+        public const int NumberOfNegativePoints = 500;
         public const double DefaultDomainLowerLimit = -100;
         public const double DefaultDomainUpperLimit = 100;
         public const int MaxNumberOfPointsInSingleArray = 800000;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CSUES.Engine.Enums;
 using CSUES.Engine.Factories;
 using CSUES.Engine.Models;
+using CSUES.Engine.Models.Constraints;
 using CSUES.Engine.Models.Terms;
 using CSUES.Engine.Utils;
 
@@ -40,15 +41,15 @@ namespace CSUES.Engine.Benchmarks
                     terms2[j].Coefficient = -cotPi12;
                     terms2[i].Coefficient = tanPi12;
 
-                    constraints.Add(new Constraint(terms1.DeepCopyByExpressionTree(), 0));
-                    constraints.Add(new Constraint(terms2.DeepCopyByExpressionTree(), 0));
+                    constraints.Add(new LinearConstraint(terms1.DeepCopyByExpressionTree(), 0));
+                    constraints.Add(new LinearConstraint(terms2.DeepCopyByExpressionTree(), 0));
                 }               
             }
 
             for (var i = 0; i < numberOfDimensions; i++)
                 terms1[i] = termsFactory.Create((int)TermType.Linear, 1);
 
-            constraints.Add(new Constraint(terms1.DeepCopyByExpressionTree(), simplexnBoundaryValue));
+            constraints.Add(new LinearConstraint(terms1.DeepCopyByExpressionTree(), simplexnBoundaryValue));
 
             Constraints = constraints.ToArray();
         }

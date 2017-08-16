@@ -2,6 +2,7 @@
 using System.Text;
 using CSUES.Engine.Enums;
 using CSUES.Engine.Models;
+using CSUES.Engine.Models.Constraints;
 
 namespace CSUES.Engine.Utils
 {

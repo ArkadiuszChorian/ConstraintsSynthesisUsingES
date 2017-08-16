@@ -9,9 +9,9 @@ namespace CSUES.Engine.Models.Terms
         {
         }
 
-        public override double Value(double argument)
+        public override double Value(params double[] arguments)
         {
-            return Math.Pow(argument, Power);
+            return Math.Pow(arguments[0], Power);
         }
     }
 }

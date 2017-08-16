@@ -11,7 +11,7 @@ namespace CSUES.Engine.Models.Terms
             Type = termType;
         }
 
-        public abstract double Value(double argument);
+        public abstract double Value(params double[] arguments);
 
         public double Coefficient { get; set; }
         public double Power { get; private set; }

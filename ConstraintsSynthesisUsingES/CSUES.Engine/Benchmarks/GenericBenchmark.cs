@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using CSUES.Engine.Models;
+using CSUES.Engine.Models.Constraints;
 
 namespace CSUES.Engine.Benchmarks
 {
