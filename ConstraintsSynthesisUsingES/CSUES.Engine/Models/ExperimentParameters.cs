@@ -178,7 +178,7 @@ namespace CSUES.Engine.Models
 //        CubenBoundaryValue = Arguments.HasKey(nameof(Defaults.CubenBoundaryValue)) ? Arguments.Get<int>(nameof(Defaults.CubenBoundaryValue)) : Defaults.CubenBoundaryValue;
 //        SimplexnBoundaryValue = Arguments.HasKey(nameof(Defaults.SimplexnBoundaryValue)) ? Arguments.Get<int>(nameof(Defaults.SimplexnBoundaryValue)) : Defaults.SimplexnBoundaryValue;
 
-//        GlobalLearningRate = Arguments.HasKey(nameof(Defaults.GlobalLerningRate)) ? Arguments.Get<double>(nameof(Defaults.GlobalLerningRate)) : Defaults.GlobalLerningRate(NumberOfDimensions);
+//        GlobalLearningRate = Arguments.HasKey(nameof(Defaults.GlobalLearningRate)) ? Arguments.Get<double>(nameof(Defaults.GlobalLearningRate)) : Defaults.GlobalLearningRate(NumberOfDimensions);
 //        IndividualLearningRate = Arguments.HasKey(nameof(Defaults.IndividualLearningRate)) ? Arguments.Get<double>(nameof(Defaults.IndividualLearningRate)) : Defaults.IndividualLearningRate(NumberOfDimensions);
 //        StepThreshold = Arguments.HasKey(nameof(Defaults.StepThreshold)) ? Arguments.Get<double>(nameof(Defaults.StepThreshold)) : Defaults.StepThreshold;
 //        RotationAngle = Arguments.HasKey(nameof(Defaults.RotationAngle)) ? Arguments.Get<double>(nameof(Defaults.RotationAngle)) : Defaults.RotationAngle;

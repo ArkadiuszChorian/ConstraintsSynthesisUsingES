@@ -6,13 +6,11 @@ namespace CSUES.Common
     {
         public const int ImplementationVersion = 1;
 
-        public Version(DateTime startDateTime, string experimentParametersHashString)
+        public Version(DateTime startDateTime)
         {
             StartDateTime = startDateTime;
-            ExperimentParametersHashString = experimentParametersHashString;
         }
 
         public DateTime StartDateTime { get; set; }
-        public string ExperimentParametersHashString { get; set; }
     }
 }

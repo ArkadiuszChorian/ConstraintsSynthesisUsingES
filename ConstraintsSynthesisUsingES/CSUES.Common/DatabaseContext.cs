@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using CSUES.Engine.Models;
+using ES.Core.Models;
 using ExperimentDatabase;
+using Statistics = CSUES.Engine.Models.Statistics;
 
 namespace CSUES.Common
 {
@@ -15,10 +18,19 @@ namespace CSUES.Common
         private readonly DataSet _experiments;
         private readonly DataSet _versions;
         private readonly DataSet _experimentParameters;
+        private readonly DataSet _evolutionParameters;
         private readonly DataSet _mathModels;
         private readonly DataSet _statistics;       
         private readonly DataSet _errors;
-              
+
+        private static readonly string ExperimentsTableName = nameof(_experiments).Replace("_", string.Empty);
+        private static readonly string VersionsTableName = nameof(_versions).Replace("_", string.Empty);
+        private static readonly string ExperimentParametersTableName = nameof(_experimentParameters).Replace("_", string.Empty);
+        private static readonly string EvolutionParametersTableName = nameof(_evolutionParameters).Replace("_", string.Empty);
+        private static readonly string MathModelsTableName = nameof(_mathModels).Replace("_", string.Empty);
+        private static readonly string StatisticsTableName = nameof(_statistics).Replace("_", string.Empty);
+        private static readonly string ErrorsTableName = nameof(_errors).Replace("_", string.Empty);
+
         private bool _anyErrors;
 
         public DatabaseContext(string dbFilePath)
@@ -27,11 +39,12 @@ namespace CSUES.Common
             _databaseEngine = new DatabaseEngine(dbFilePath);
             
             _experiments = _database.NewExperiment();
-            _versions = _experiments.NewChildDataSet(nameof(_versions).Replace("_", string.Empty));
-            _experimentParameters = _experiments.NewChildDataSet(nameof(_experimentParameters).Replace("_", string.Empty));
-            _mathModels = _experiments.NewChildDataSet(nameof(_mathModels).Replace("_", string.Empty));
-            _statistics = _experiments.NewChildDataSet(nameof(_statistics).Replace("_", string.Empty));
-            _errors = _experiments.NewChildDataSet(nameof(_errors).Replace("_", string.Empty));
+            _versions = _experiments.NewChildDataSet(VersionsTableName);
+            _experimentParameters = _experiments.NewChildDataSet(ExperimentParametersTableName);
+            _evolutionParameters = _experiments.NewChildDataSet(EvolutionParametersTableName);
+            _mathModels = _experiments.NewChildDataSet(MathModelsTableName);
+            _statistics = _experiments.NewChildDataSet(StatisticsTableName);
+            _errors = _experiments.NewChildDataSet(ErrorsTableName);
 
             _anyErrors = false;
         }
@@ -40,16 +53,19 @@ namespace CSUES.Common
         {
             _experiments.Add(nameof(Version.StartDateTime), version.StartDateTime);
             _experiments.Add(nameof(Version.ImplementationVersion), Version.ImplementationVersion);
-            _experiments.Add(nameof(Version.ExperimentParametersHashString), version.ExperimentParametersHashString);
 
             _versions.Add(nameof(Version.StartDateTime), version.StartDateTime);
             _versions.Add(nameof(Version.ImplementationVersion), Version.ImplementationVersion);
-            _versions.Add(nameof(Version.ExperimentParametersHashString), version.ExperimentParametersHashString);
         }
 
         public void Insert(ExperimentParameters experimentParameters)
         {
             Insert(experimentParameters, _experiments, _experimentParameters);   
+        }
+
+        public void Insert(EvolutionParameters evolutionParameters)
+        {
+            Insert(evolutionParameters, _experiments, _evolutionParameters);
         }
 
         public void Insert(Statistics statistics)
@@ -59,37 +75,64 @@ namespace CSUES.Common
 
         public void Insert(MathModel mathModel)
         {
-            _experiments.Add(nameof(MathModel.SynthesizedModelInLpFormat), mathModel.SynthesizedModelInLpFormat);
-            _experiments.Add(nameof(MathModel.ReferenceModelInLpFormat), mathModel.ReferenceModelInLpFormat);
+            Insert(mathModel, _experiments, _mathModels);
+            //_experiments.Add(nameof(MathModel.SynthesizedModelInLpFormat), mathModel.SynthesizedModelInLpFormat);
+            //_experiments.Add(nameof(MathModel.ReferenceModelInLpFormat), mathModel.ReferenceModelInLpFormat);
 
-            _mathModels.Add(nameof(MathModel.SynthesizedModelInLpFormat), mathModel.SynthesizedModelInLpFormat);
-            _mathModels.Add(nameof(MathModel.ReferenceModelInLpFormat), mathModel.ReferenceModelInLpFormat);
+            //_mathModels.Add(nameof(MathModel.SynthesizedModelInLpFormat), mathModel.SynthesizedModelInLpFormat);
+            //_mathModels.Add(nameof(MathModel.ReferenceModelInLpFormat), mathModel.ReferenceModelInLpFormat);
         }
 
         public void Insert(Exception exception)
         {
-            _errors.Add(nameof(Exception.HResult), exception.HResult);
-            _errors.Add(nameof(Exception.Message), exception.Message);
-            _errors.Add(nameof(Exception.StackTrace), exception.StackTrace);
+            Insert(exception, _experiments, _errors);
+            //_errors.Add(nameof(Exception.HResult), exception.HResult);
+            //_errors.Add(nameof(Exception.Message), exception.Message);
+            //_errors.Add(nameof(Exception.StackTrace), exception.StackTrace);
 
             _anyErrors = true;
         }
 
-        //public bool Exists(ExperimentParameters experimentParameters)
-        //{
-        //    var controlQuery = $"SELECT name FROM sqlite_master WHERE name = '{nameof(_versions).Replace("_", string.Empty)}'";
+        public bool Exists(ExperimentParameters experimentParameters)
+        {
+            var controlQuery = $"SELECT name FROM sqlite_master WHERE name = '{VersionsTableName}'";
+
+            var result = _databaseEngine.PrepareStatement(controlQuery).ExecuteReader();
+
+            if (!result.HasRows) return false;
             
-        //    var result = _databaseEngine.PrepareStatement(controlQuery).ExecuteReader();
+            var implementationQuery = $"SELECT * FROM {VersionsTableName} " +
+                $"WHERE {nameof(Version.ImplementationVersion)} = '{Version.ImplementationVersion}'";
 
-        //    if (!result.HasRows) return false;
+            result = _databaseEngine.PrepareStatement(implementationQuery).ExecuteReader();
 
-        //    var query = $"SELECT * FROM {nameof(_versions).Replace("_", string.Empty)} " +
-        //        $"WHERE {nameof(Version.ExperimentParametersHashString)} = '{experimentParameters.GetHashString()}'";
+            if (!result.HasRows) return false;   
+                    
+            return Exists(experimentParameters.EvolutionParameters, EvolutionParametersTableName) 
+                && Exists(experimentParameters, ExperimentParametersTableName);
+        }
 
-        //    result = _databaseEngine.PrepareStatement(query).ExecuteReader();
+        private bool Exists<T>(T obj, string tableName)
+        {
+            var query = new StringBuilder();
+            query.Append($"SELECT * FROM {tableName} WHERE ");
 
-        //    return result.HasRows;
-        //}
+            var propertyInfos = GetDbSerializableProperties(obj).ToList();
+
+            for (var i = 0; i < propertyInfos.Count; i++)
+            {
+                var pi = propertyInfos[i];
+
+                query.Append($"{pi.Name} = '{pi.GetValue(obj, null)}'");
+
+                if (i != propertyInfos.Count - 1)
+                    query.Append(" AND ");
+            }
+
+            var result = _databaseEngine.PrepareStatement(query.ToString()).ExecuteReader();
+
+            return result.HasRows;
+        }
 
         public void Save()
         {
@@ -107,22 +150,30 @@ namespace CSUES.Common
 
         public void Dispose()
         {
-            _experiments.Dispose();
+            _databaseEngine.Dispose();
             _versions.Dispose();
             _experimentParameters.Dispose();
             _mathModels.Dispose();
             _statistics.Dispose();
             _errors.Dispose();
-            _database.Dispose();
+            _experiments.Dispose();          
+            _database.Dispose();            
         }        
 
-        private void Insert<T>(T objectToInsert, params DataSet[] dataSetsToInsertIn)
+        private static void Insert<T>(T objectToInsert, params DataSet[] dataSetsToInsertIn)
         {
             var propertyInfos = GetDbSerializableProperties(objectToInsert);
 
             foreach (var propertyInfo in propertyInfos)
             {
-                var valueToInsert = propertyInfo.GetValue(objectToInsert, null);
+                var valueToInsert = propertyInfo.GetValue(objectToInsert, null).ToString();
+
+                if (propertyInfo.PropertyType == typeof(EvolutionParameters))
+                {
+                    var obj = propertyInfo.GetValue(objectToInsert, null);
+                    Insert(obj, dataSetsToInsertIn);
+                    continue;                    
+                }
 
                 if (propertyInfo.PropertyType.IsEnum)
                 {
@@ -136,37 +187,32 @@ namespace CSUES.Common
                 {
                     var timeSpan = propertyInfo.GetValue(objectToInsert, null);
 
-                    valueToInsert = ((TimeSpan) timeSpan).Milliseconds;
+                    valueToInsert = ((TimeSpan) timeSpan).Milliseconds.ToString();
                 }
 
-                if (dataSetsToInsertIn.Any())
+                foreach (var dataSet in dataSetsToInsertIn)
                 {
-                    foreach (var dataSet in dataSetsToInsertIn)
+                    try
                     {
                         dataSet.Add(propertyInfo.Name, valueToInsert);
                     }
-                }
-                else
-                {
-                    _experiments.Add(propertyInfo.Name, valueToInsert);
-                }                       
+                    catch (ArgumentException)
+                    {
+                    }                  
+                }                                                
             }
         }
 
-        public static readonly Type[] SerializableTypes = {
-            typeof(bool).BaseType,
-            typeof(int).BaseType,
-            typeof(long).BaseType,
-            typeof(double).BaseType,
-            typeof(decimal).BaseType,
-            typeof(float).BaseType,
+        private static readonly Type[] SerializableTypes = {
+            typeof(ValueType),
+            typeof(string),           
             typeof(Enum),
             typeof(TimeSpan)
         };
 
-        public static IEnumerable<PropertyInfo> GetDbSerializableProperties<T>(T obj)
+        private static IEnumerable<PropertyInfo> GetDbSerializableProperties<T>(T obj)
         {
-            return obj.GetType().GetProperties().Where(pi => DatabaseContext.SerializableTypes.Contains(pi.PropertyType.BaseType));
+            return obj.GetType().GetProperties().Where(pi => SerializableTypes.Contains(pi.PropertyType) || SerializableTypes.Contains(pi.PropertyType.BaseType));
         }
     }
 }

@@ -16,17 +16,18 @@ namespace CSUES.WinApplication
         private const int NumberOfEvolutionStepsToShow = 100;
         static void Main(string[] args)
         {
-            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-us");
-            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("en-US");
-            Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
+            //Thread.CurrentThread.CurrentCulture = new CultureInfo("en-us");
+            //CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("en-US");
+            //Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
 
             var experimentParameters = new ExperimentParameters(
                 numberOfDimensions: 2,
                 basePopulationSize: 15,
                 offspringPopulationSize: 100,
                 numberOfGenerations: 1000,
-                seed: new Random().Next(),
-                oneFifthRuleCheckInterval: 10,
+                //seed: new Random().Next(),
+                seed: 1,
+                //oneFifthRuleCheckInterval: 10,
                 //individualLearningRate: 0.1, //0.47287080450158792
                 //globalLearningRate: 0.1, //0.31622776601683794
                 typeOfParentsSelection: ParentsSelectionType.Random,
@@ -34,7 +35,7 @@ namespace CSUES.WinApplication
                 typeOfRotationsRecombination: RecombinationType.Intermediate,
                 useRedundantConstraintsRemoving: true,
                 useDataNormalization: true,
-                allowQuadraticTerms: true,
+                allowQuadraticTerms: false,
                 useRecombination: true,
                 trackEvolutionSteps: true,
                 numberOfParentsSolutionsToSelect: 5,

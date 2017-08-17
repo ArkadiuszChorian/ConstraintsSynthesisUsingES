@@ -44,11 +44,13 @@ namespace CSUES.Common
             return Instance._dictionary.ContainsKey(key);
         }
 
-        [DebuggerHidden]
+        //[DebuggerHidden]
         public static T Get<T>(string key) where T : struct
         {
             try
             {
+                if (typeof(T).BaseType == typeof(Enum))
+                    return (T)Enum.Parse(typeof(T), Instance._dictionary[key]);
                 return (T)Convert.ChangeType(Instance._dictionary[key], typeof(T));
             }
             catch (KeyNotFoundException)

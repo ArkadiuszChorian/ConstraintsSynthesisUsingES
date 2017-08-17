@@ -2,9 +2,9 @@
 {
     public enum BenchmarkType
     {
-        Balln,
-        Cuben,
         Simplexn,
+        Cuben,
+        Balln,
         Other
     }
 }

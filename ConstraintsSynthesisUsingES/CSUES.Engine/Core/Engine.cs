@@ -43,12 +43,12 @@ namespace CSUES.Engine.Core
 
             //const int count = int.MaxValue / 1000;
             //var values = new double[count];
-            ////var sum = 0.0;
-            ////for (int i = 0; i < count; i++)
-            ////{
-            ////    values[i] = MersenneTwister.Instance.NextDouble(-1, 1);
-            ////}
-            //values = normalDis.Generate(count);
+            //////var sum = 0.0;
+            //for (int i = 0; i < count; i++)
+            //{
+            //    values[i] = MersenneTwister.Instance.NextGaussian();
+            //}
+            ////values = normalDis.Generate(count);
 
             //var mean = values.Mean();
             //var stdDev = values.StandardDeviation();
