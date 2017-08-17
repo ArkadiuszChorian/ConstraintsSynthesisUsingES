@@ -338,6 +338,22 @@ namespace ES.Core.Utils
         }
 
         /// <summary>
+        /// Calculates next random value from Gaussian distribution using Box-Muller transform.
+        /// http://stackoverflow.com/a/218600/1016631
+        /// </summary>
+        /// <param name="random"></param>
+        /// <param name="μ">Mean</param>
+        /// <param name="σ">Standard deviation</param>
+        /// <returns></returns>
+        public double NextGaussian(double μ = 0.0, double σ = 1.0)
+        {
+            var u1 = NextDouble(); // these are uniform(0,1) random doubles
+            var u2 = NextDouble();
+            var randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Sin(2.0 * Math.PI * u2); // random normal(0,1)
+            return μ + σ * randStdNormal; // random normal(μ,σ)
+        }
+
+        /// <summary>
         /// Returns a pseudo-random number between 0.0 and 1.0.
         /// </summary>
         /// <returns>

@@ -5,7 +5,7 @@ namespace ES.Core.Utils
 {
     public static class Defaults
     {   
-        public static double GlobalLerningRate(int objectVectorSize)
+        public static double GlobalLearningRate(int objectVectorSize)
         {
             return 1 / Math.Sqrt(2 * objectVectorSize);
         }
@@ -31,7 +31,7 @@ namespace ES.Core.Utils
 
         public const bool UseRecombination = false;
         public const RecombinationType TypeOfObjectsRecombination = RecombinationType.Discrete;
-        public const RecombinationType TypeOfStdDeviationsRecombination = RecombinationType.Discrete;
-        public const RecombinationType TypeOfRotationsRecombination = RecombinationType.Discrete;
+        public const RecombinationType TypeOfStdDeviationsRecombination = RecombinationType.Intermediate;
+        public const RecombinationType TypeOfRotationsRecombination = RecombinationType.Intermediate;
     }
 }

@@ -46,7 +46,7 @@ namespace ES.Core.Models
             TypeOfParentsSelection = typeOfParentsSelection;
             TypeOfSurvivorsSelection = typeOfSurvivorsSelection;
 
-            GlobalLearningRate = double.IsNaN(globalLearningRate) ? Defaults.GlobalLerningRate(objectVectorSize) : globalLearningRate;
+            GlobalLearningRate = double.IsNaN(globalLearningRate) ? Defaults.GlobalLearningRate(objectVectorSize) : globalLearningRate;
             IndividualLearningRate = double.IsNaN(individualLearningRate) ? Defaults.IndividualLearningRate(objectVectorSize) : individualLearningRate;
             StepThreshold = stepThreshold;
             RotationAngle = rotationAngle;
