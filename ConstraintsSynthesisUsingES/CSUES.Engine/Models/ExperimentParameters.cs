@@ -22,6 +22,7 @@ namespace CSUES.Engine.Models
             bool trackEvolutionSteps = EvolutionDefaults.TrackEvolutionSteps,
             bool useRedundantConstraintsRemoving = Defaults.UseRedundantConstraintsRemoving,
             bool useDataNormalization = Defaults.UseDataNormalization,
+            bool allowQuadraticTerms = Defaults.AllowQuadraticTerms,
 
             ISet<TermType> allowedTermsTypes = default(ISet<TermType>),
             BenchmarkType typeOfBenchmark = Defaults.TypeOfBenchmark,
@@ -31,6 +32,7 @@ namespace CSUES.Engine.Models
             IList<Constraint> referenceConstraints = default(IList<Constraint>),
 
             long numberOfDomainSamples = Defaults.NumberOfDomainSamples,
+            int numberOfTestPoints = Defaults.NumberOfTestPoints,
             int numberOfPositivePoints = Defaults.NumberOfPositivePoints,
             int numberOfNegativePoints = Defaults.NumberOfNegativePoints,
             double defaultDomainLowerLimit = Defaults.DefaultDomainLowerLimit,
@@ -63,18 +65,20 @@ namespace CSUES.Engine.Models
                 : allowedTermsTypes;
 
             //HACK
-            AllowedTermsTypes = new HashSet<TermType>
-            {
-                TermType.Linear,
-                TermType.Quadratic
-            };
+            //AllowedTermsTypes = new HashSet<TermType>
+            //{
+            //    TermType.Linear,
+            //    TermType.Quadratic
+            //};
 
-            NumberOfConstraintsCoefficients = numberOfDimensions * AllowedTermsTypes.Count + 1;
+            //NumberOfConstraintsCoefficients = numberOfDimensions * AllowedTermsTypes.Count + 1;
+
+            NumberOfConstraintsCoefficients = allowQuadraticTerms ? numberOfDimensions * 2 + 1 : numberOfDimensions + 1;
 
             MaximumNumberOfConstraints = typeOfBenchmark == BenchmarkType.Other
                 // ReSharper disable once PossibleNullReferenceException : It is checked before
                 ? referenceConstraints.Count
-                : GetMaximumNumberOfConstraints(numberOfDimensions, typeOfBenchmark);
+                : GetMaximumNumberOfConstraints(numberOfDimensions, typeOfBenchmark, allowQuadraticTerms);
 
             var objectVectorSize = NumberOfConstraintsCoefficients * MaximumNumberOfConstraints;          
 
@@ -82,13 +86,14 @@ namespace CSUES.Engine.Models
                   
             EvolutionParameters = new EvolutionParameters(
                 objectVectorSize, basePopulationSize, offspringPopulationSize, numberOfGenerations, seed, trackEvolutionSteps,
-                numberOfParentsSolutionsToSelect, (int)typeOfParentsSelection, (int)typeOfSurvivorsSelection,
+                oneFifthRuleCheckInterval, oneFifthRuleScalingFactor, numberOfParentsSolutionsToSelect, (int)typeOfParentsSelection, (int)typeOfSurvivorsSelection,
                 globalLearningRate, individualLearningRate, stepThreshold, rotationAngle, (int)typeOfMutation,
                 useRecombination, (int)typeOfObjectsRecombination, (int)typeOfStdDeviationsRecombination, (int)typeOfRotationsRecombination);
             Seed = seed;
             TrackEvolutionSteps = trackEvolutionSteps;
             UseRedundantConstraintsRemoving = useRedundantConstraintsRemoving;
             UseDataNormalization = useDataNormalization;
+            AllowQuadraticTerms = allowQuadraticTerms;
 
             TypeOfBenchmark = typeOfBenchmark;
             BallnBoundaryValue = ballnBoundaryValue;
@@ -97,6 +102,7 @@ namespace CSUES.Engine.Models
             ReferenceConstraints = referenceConstraints;
 
             NumberOfDomainSamples = numberOfDomainSamples;
+            NumberOfTestPoints = numberOfTestPoints;
             NumberOfPositivePoints = numberOfPositivePoints;
             NumberOfNegativePoints = numberOfNegativePoints;
             DefaultDomainLowerLimit = defaultDomainLowerLimit;
@@ -113,9 +119,10 @@ namespace CSUES.Engine.Models
         public bool TrackEvolutionSteps { get; set; }
         public bool UseRedundantConstraintsRemoving { get; set; }
         public bool UseDataNormalization { get; set; }
+        public bool AllowQuadraticTerms { get; set; }
 
 
-        //Benchmark parameters
+        //Benchmark parameters        
         public ISet<TermType> AllowedTermsTypes { get; set; }
         public BenchmarkType TypeOfBenchmark { get; set; }
         public double BallnBoundaryValue { get; set; }
@@ -125,18 +132,19 @@ namespace CSUES.Engine.Models
 
         //Points generation
         public long NumberOfDomainSamples { get; set; }
+        public int NumberOfTestPoints { get; set; }
         public int NumberOfPositivePoints { get; set; }
         public int NumberOfNegativePoints { get; set; }
         public double DefaultDomainLowerLimit { get; set; }
         public double DefaultDomainUpperLimit { get; set; }
         public int MaxNumberOfPointsInSingleArray { get; set; }
 
-        private static int GetMaximumNumberOfConstraints(int numberOfDimensions, BenchmarkType benchmarkType)
+        private static int GetMaximumNumberOfConstraints(int numberOfDimensions, BenchmarkType benchmarkType, bool allowQuadraticTerms)
         {
             switch (benchmarkType)
             {
                 case BenchmarkType.Balln:
-                    return 1;
+                    return allowQuadraticTerms ? 1 : numberOfDimensions * numberOfDimensions;
                 case BenchmarkType.Cuben:
                     return numberOfDimensions * 2;
                 case BenchmarkType.Simplexn:

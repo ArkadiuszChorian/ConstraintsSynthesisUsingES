@@ -3,13 +3,13 @@ using CSUES.Engine.Utils;
 
 namespace CSUES.Engine.PrePostProcessing
 {
-    public class StandardScorePointsNormalizer : StandardScorePointsNormalizationProcessor
+    public class StandardScorePointsNormalizer : IProcessor<Point[]>
     {
-        public override Point[] ApplyProcessing(Point[] points)
+        public Point[] ApplyProcessing(Point[] points)
         {
             var normalizedPoints = points.DeepCopyByExpressionTree();
-            var means = Means(points);
-            var standardDeviations = StandardDeviations(points, means);
+            var means = points.Means();
+            var standardDeviations = points.StandardDeviations(means);
             var numberOfDimensions = means.Length;
 
             foreach (var point in normalizedPoints)

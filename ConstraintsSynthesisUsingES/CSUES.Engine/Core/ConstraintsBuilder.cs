@@ -1,4 +1,7 @@
-﻿using CSUES.Engine.Models.Constraints;
+﻿using System.Linq;
+using CSUES.Engine.Enums;
+using CSUES.Engine.Models;
+using CSUES.Engine.Models.Constraints;
 using ES.Core.Models.Solutions;
 using ES.Core.Utils;
 
@@ -6,16 +9,28 @@ namespace CSUES.Engine.Core
 {
     public class ConstraintsBuilder : IConstraintsBuilder
     {
-        private readonly Constraint[] _referenceConstraints;
+        private readonly Constraint[] _constraintsModel;
 
-        public ConstraintsBuilder(Constraint[] referenceConstraints)
+        public ConstraintsBuilder(Constraint[] referenceConstraints, ExperimentParameters experimentParameters)
         {
-            _referenceConstraints = referenceConstraints;
+            if (experimentParameters.TypeOfBenchmark == BenchmarkType.Balln && experimentParameters.AllowQuadraticTerms
+                || experimentParameters.TypeOfBenchmark != BenchmarkType.Balln)
+            {
+                _constraintsModel = referenceConstraints;
+            }
+            else
+            {
+                _constraintsModel = new Constraint[experimentParameters.MaximumNumberOfConstraints];
+                var terms = referenceConstraints.First().Terms.Where(term => term.Type == TermType.Linear).ToArray();
+
+                for (var i = 0; i < _constraintsModel.Length; i++)
+                    _constraintsModel[i] = new LinearConstraint(terms, 0);
+            }            
         }
 
         public Constraint[] BuildConstraints(Solution solution)
         {
-            var constraints = _referenceConstraints.DeepCopyByExpressionTree();
+            var constraints = _constraintsModel.DeepCopyByExpressionTree();
             var coefficients = solution.ObjectCoefficients;
             var index = 0;
 

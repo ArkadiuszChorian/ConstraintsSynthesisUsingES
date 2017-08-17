@@ -4,7 +4,7 @@ namespace CSUES.Engine.Models.Terms
 {
     public class CubicTerm : Term
     {
-        public CubicTerm(double coefficient) : base(coefficient, 3, TermType.Cubic)
+        public CubicTerm(double coefficient) : base(coefficient, null, TermType.Cubic)
         {
         }
 

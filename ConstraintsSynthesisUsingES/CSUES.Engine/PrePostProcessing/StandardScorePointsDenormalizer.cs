@@ -3,7 +3,7 @@ using CSUES.Engine.Utils;
 
 namespace CSUES.Engine.PrePostProcessing
 {
-    public class StandardScorePointsDenormalizer : StandardScorePointsNormalizationProcessor
+    public class StandardScorePointsDenormalizer : IProcessor<Point[]>
     {
         private readonly double[] _means;
         private readonly double[] _standardDeviations;
@@ -14,7 +14,7 @@ namespace CSUES.Engine.PrePostProcessing
             _standardDeviations = standardDeviations;
         }
 
-        public override Point[] ApplyProcessing(Point[] points)
+        public Point[] ApplyProcessing(Point[] points)
         {
             var denormalizedPoints = points.DeepCopyByExpressionTree();
             var numberOfDimensions = _means.Length;

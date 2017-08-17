@@ -27,7 +27,8 @@ namespace CSUES.Engine.Benchmarks
                 Domains[i] = new Domain(value - 2 * ballnBoundaryValue, value + 2 * ballnBoundaryValue);
 
                 //HACK TODO
-                Domains[i] = new Domain(value - 2 * ballnBoundaryValue - 100, value + 2 * ballnBoundaryValue + 100);
+                //Domains[i] = new Domain(value - 2 * ballnBoundaryValue + 100, value + 2 * ballnBoundaryValue + 100);
+                //
 
                 limitingValue -= value * value;
             }
@@ -38,7 +39,7 @@ namespace CSUES.Engine.Benchmarks
                 terms[i] = termsFactory.Create((int) TermType.Linear, -2 * value);
             }
 
-            Constraints[0] = new BallConstraint(terms, limitingValue);
+            Constraints[0] = new QuadraticConstraint(terms, limitingValue);
         }
 
         public Constraint[] Constraints { get; set; }

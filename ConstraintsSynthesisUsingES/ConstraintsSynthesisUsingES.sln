@@ -12,11 +12,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CSUES.Database", "CSUES.Dat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSUES.Engine", "CSUES.Engine\CSUES.Engine.csproj", "{623F5515-96C7-4A15-BD5B-65FCE100DB98}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSUES.Application", "CSUES.Application\CSUES.Application.csproj", "{A6B280DF-3570-4F34-BA0C-CFCF564BF603}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSUES.ConsoleApplication", "CSUES.Application\CSUES.ConsoleApplication.csproj", "{A6B280DF-3570-4F34-BA0C-CFCF564BF603}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSUES.Common", "CSUES.Common\CSUES.Common.csproj", "{0B82A7A6-C481-474B-8ACC-74B857FC85D8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSUES.WinApplication", "CSUES.WinApplication\CSUES.WinApplication.csproj", "{A0972D17-C268-440A-BE7E-F68D644338B9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gurobi", "Gurobi", "{C4B4F76C-70CF-427C-BB60-41C575C48875}"
+	ProjectSection(SolutionItems) = preProject
+		Gurobi\gurobi75.dll = Gurobi\gurobi75.dll
+		Gurobi\Gurobi75.NET.dll = Gurobi\Gurobi75.NET.dll
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

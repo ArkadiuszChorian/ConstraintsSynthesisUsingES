@@ -5,13 +5,15 @@ namespace CSUES.Engine.Models.Terms
 {
     public class NpowerTerm : Term
     {
-        public NpowerTerm(double coefficient, double power) : base(coefficient, power, TermType.Npower)
+        private readonly double _power;
+        public NpowerTerm(double coefficient, double power) : base(coefficient, null, TermType.Npower)
         {
+            _power = power;
         }
 
         public override double Value(params double[] arguments)
         {
-            return Math.Pow(arguments[0], Power);
+            return Math.Pow(arguments[0], _power);
         }
     }
 }

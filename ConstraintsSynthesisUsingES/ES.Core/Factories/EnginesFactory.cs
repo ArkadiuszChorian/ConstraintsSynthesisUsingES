@@ -4,6 +4,7 @@ using ES.Core.Enums;
 using ES.Core.Models;
 using ES.Core.Models.Solutions;
 using ES.Core.Mutation;
+using ES.Core.MutationSupervison;
 using ES.Core.PopulationGeneration;
 using ES.Core.Recombination;
 using ES.Core.Selection;
@@ -12,18 +13,16 @@ namespace ES.Core.Factories
 {
     public class EnginesFactory : IEnginesFactory
     {
-        public IEngine Create(EvolutionParameters evolutionParameters, IGenericFactory<Solution> solutionsFactory,
-            IGenericFactory<PopulationGeneratorBase> populationGeneratorsFactory, IGenericFactory<MutatorBase> objectMutatorsFactory,
-            IGenericFactory<MutatorBase> stdDevsMutatorsFactory, IGenericFactory<ParentsSelectorBase> parentsSelectorsFactory,
-            IGenericFactory<SurvivorsSelectorBase> survivorsSelectorsFactory, IGenericFactory<MutatorBase> rotationsMutatorsFactory = null,
-            IGenericFactory<RecombinerBase> objectRecombinersFactory = null, IGenericFactory<RecombinerBase> stdDevsRecombinersFactory = null,
-            IGenericFactory<RecombinerBase> rotationsRecombinersFactory = null)
+        public IEngine Create(EvolutionParameters evolutionParameters, IGenericFactory<Solution> solutionsFactory, IGenericFactory<PopulationGeneratorBase> populationGeneratorsFactory, IGenericFactory<MutatorBase> objectMutatorsFactory, IGenericFactory<MutatorBase> stdDevsMutatorsFactory, IGenericFactory<MutationRuleSupervisorBase> mutationRuleSupervisorsFactory, IGenericFactory<ParentsSelectorBase> parentsSelectorsFactory, IGenericFactory<SurvivorsSelectorBase> survivorsSelectorsFactory, 
+          IGenericFactory<MutatorBase> rotationsMutatorsFactory = null, IGenericFactory<RecombinerBase> objectRecombinersFactory = null, 
+          IGenericFactory<RecombinerBase> stdDevsRecombinersFactory = null, IGenericFactory<RecombinerBase> rotationsRecombinersFactory = null)
         {
             IEngine engine;
 
             var populationGenerator = populationGeneratorsFactory.Create(evolutionParameters);
             var objectMutator = objectMutatorsFactory.Create(evolutionParameters);
             var stdDevsMutator = stdDevsMutatorsFactory.Create(evolutionParameters);
+            var mutationRuleSupervisor = mutationRuleSupervisorsFactory.Create(evolutionParameters);
             var rotationsMutator = rotationsMutatorsFactory?.Create(evolutionParameters);
             var parentsSelector = parentsSelectorsFactory.Create(evolutionParameters);
             var survivorsSelector = survivorsSelectorsFactory.Create(evolutionParameters);
@@ -39,22 +38,22 @@ namespace ES.Core.Factories
             {                
                 if (evolutionParameters.UseRecombination)
                 {
-                    engine = new CmEngineWithRecombination(evolutionParameters, solutionsFactory, populationGenerator, objectMutator, stdDevsMutator, parentsSelector, survivorsSelector, statistics, stoper, objectRecombiner, stdDevsRecombiner, rotationsMutator, rotationsRecombiner);
+                    engine = new CmEngineWithRecombination(evolutionParameters, solutionsFactory, populationGenerator, objectMutator, stdDevsMutator, mutationRuleSupervisor, parentsSelector, survivorsSelector, statistics, stoper, objectRecombiner, stdDevsRecombiner, rotationsMutator, rotationsRecombiner);
                 }
                 else
                 {
-                    engine = new CmEngineWithoutRecombination(evolutionParameters, solutionsFactory, populationGenerator, objectMutator, stdDevsMutator, parentsSelector, survivorsSelector, statistics, stoper, rotationsMutator);
+                    engine = new CmEngineWithoutRecombination(evolutionParameters, solutionsFactory, populationGenerator, objectMutator, stdDevsMutator, mutationRuleSupervisor, parentsSelector, survivorsSelector, statistics, stoper, rotationsMutator);
                 }
             }
             else
             {
                 if (evolutionParameters.UseRecombination)
                 {
-                    engine = new UmEngineWithRecombination(evolutionParameters, solutionsFactory, populationGenerator, objectMutator, stdDevsMutator, parentsSelector, survivorsSelector, statistics, stoper, objectRecombiner, stdDevsRecombiner);
+                    engine = new UmEngineWithRecombination(evolutionParameters, solutionsFactory, populationGenerator, objectMutator, stdDevsMutator, mutationRuleSupervisor, parentsSelector, survivorsSelector, statistics, stoper, objectRecombiner, stdDevsRecombiner);
                 }
                 else
                 {
-                    engine = new UmEngineWithoutRecombination(evolutionParameters, solutionsFactory, populationGenerator, objectMutator, stdDevsMutator, parentsSelector, survivorsSelector, statistics, stoper);
+                    engine = new UmEngineWithoutRecombination(evolutionParameters, solutionsFactory, populationGenerator, objectMutator, stdDevsMutator, mutationRuleSupervisor, parentsSelector, survivorsSelector, statistics, stoper);
                 }
             }
 
@@ -69,6 +68,7 @@ namespace ES.Core.Factories
             IGenericFactory<PopulationGeneratorBase> populationGeneratorsFactory = new PopulationGeneratorsFactory(solutionsFactory);
             IGenericFactory<MutatorBase> objectMutatorsFactory = new ObjectMutatorsFactory();
             IGenericFactory<MutatorBase> stdDevsMutatorsFactory = new StdDevsMutatorsFactory();
+            IGenericFactory<MutationRuleSupervisorBase> mutationRuleSupervisorsFactory = new MutationRuleSupervisorsFactory();
             IGenericFactory<ParentsSelectorBase> parentsSelectorsFactory = new ParentsSelectorsFactory();
             IGenericFactory<SurvivorsSelectorBase> survivorsSelectorsFactory = new SurvivorsSelectorsFactory();
             
@@ -85,12 +85,12 @@ namespace ES.Core.Factories
                     IGenericFactory<RecombinerBase> rotationsRecombinersFactory = new RotationsRecombinersFactory();
 
                     engine = Create(evolutionParameters, solutionsFactory, populationGeneratorsFactory,
-                        objectMutatorsFactory, stdDevsMutatorsFactory, parentsSelectorsFactory, survivorsSelectorsFactory, rotationsMutatorsFactory, objectRecombinersFactory, stdDevsRecombinersFactory, rotationsRecombinersFactory);
+                        objectMutatorsFactory, stdDevsMutatorsFactory, mutationRuleSupervisorsFactory, parentsSelectorsFactory, survivorsSelectorsFactory, rotationsMutatorsFactory, objectRecombinersFactory, stdDevsRecombinersFactory, rotationsRecombinersFactory);
                 }
                 else
                 {
                     engine = Create(evolutionParameters, solutionsFactory, populationGeneratorsFactory,
-                        objectMutatorsFactory, stdDevsMutatorsFactory, parentsSelectorsFactory, survivorsSelectorsFactory, rotationsMutatorsFactory);
+                        objectMutatorsFactory, stdDevsMutatorsFactory, mutationRuleSupervisorsFactory, parentsSelectorsFactory, survivorsSelectorsFactory, rotationsMutatorsFactory);
                 }
             }
             else
@@ -101,12 +101,12 @@ namespace ES.Core.Factories
                     IGenericFactory<RecombinerBase> stdDevsRecombinersFactory = new StdDevsRecombinersFactory();
 
                     engine = Create(evolutionParameters, solutionsFactory, populationGeneratorsFactory,
-                        objectMutatorsFactory, stdDevsMutatorsFactory, parentsSelectorsFactory, survivorsSelectorsFactory, null, objectRecombinersFactory, stdDevsRecombinersFactory);
+                        objectMutatorsFactory, stdDevsMutatorsFactory, mutationRuleSupervisorsFactory, parentsSelectorsFactory, survivorsSelectorsFactory, null, objectRecombinersFactory, stdDevsRecombinersFactory);
                 }
                 else
                 {
                     engine = Create(evolutionParameters, solutionsFactory, populationGeneratorsFactory,
-                        objectMutatorsFactory, stdDevsMutatorsFactory, parentsSelectorsFactory, survivorsSelectorsFactory);
+                        objectMutatorsFactory, stdDevsMutatorsFactory, mutationRuleSupervisorsFactory, parentsSelectorsFactory, survivorsSelectorsFactory);
                 }
             }
 

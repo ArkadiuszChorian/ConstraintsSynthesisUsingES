@@ -29,10 +29,15 @@ namespace CSUES.Engine.PointsGeneration
                 for (var i = 0; i < numberOfDimensions; i++)
                     point.Coordinates[i] = _randomGenerator.NextDouble(domains[i].LowerLimit, domains[i].UpperLimit);
 
+                //HACK TODO
+                //for (var i = 0; i < numberOfDimensions; i++)
+                //    point.Coordinates[i] = _randomGenerator.NextDouble(domains[i].LowerLimit - 10, domains[i].UpperLimit - 10);
+                //
+
                 //HACK
 
-                //point.Coordinates[0] = 1;
-                //point.Coordinates[1] = -0.5;
+                //point.Coordinates[0] = 3;
+                //point.Coordinates[1] = 0;
 
                 //
 

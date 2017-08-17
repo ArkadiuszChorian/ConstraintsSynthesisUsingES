@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using CSUES.Engine.Enums;
 using CSUES.Engine.Models;
@@ -39,7 +41,7 @@ namespace CSUES.Engine.Utils
                     if (term.Type == TermType.Linear)
                         sb.AppendFormat("{0} x{1}", term.Coefficient, j);
                     else
-                        sb.AppendFormat("{0} x{1} ^ {2}", term.Coefficient, j, term.Power);
+                        sb.AppendFormat("{0} x{1} ^ {2}", term.Coefficient, j, 2);
 
                     sb.Append(j == constraints[i].Terms.Length - 1 ? " <= " : " + ");
                 }
@@ -70,6 +72,58 @@ namespace CSUES.Engine.Utils
             sb.Append("End");
 
             return sb.ToString();
+        }
+
+        public static double[] Means(this Point[] points)
+        {
+            var numberOfDimensions = points.First().Coordinates.Length;
+            var numberOfPoints = points.Length;
+            var means = new double[numberOfDimensions];
+
+            foreach (var point in points)
+            {
+                for (var i = 0; i < numberOfDimensions; i++)
+                    means[i] += point.Coordinates[i] / numberOfPoints;
+            }
+
+            return means;
+        }
+
+        public static double[] StandardDeviations(this Point[] points, double[] means)
+        {
+            var numberOfDimensions = means.Length;
+            var variances = Variances(points, means);
+            var standardDeviations = new double[numberOfDimensions];
+
+            for (var i = 0; i < numberOfDimensions; i++)
+                standardDeviations[i] = Math.Sqrt(variances[i]);
+
+            return standardDeviations;
+        }
+
+        public static double[] StandardDeviations(this Point[] points)
+        {
+            return StandardDeviations(points, Means(points));
+        }
+
+        public static double[] Variances(this Point[] points, double[] means)
+        {
+            var numberOfDimensions = means.Length;
+            var numberOfPoints = points.Length;
+            var variances = new double[numberOfDimensions];
+
+            for (var i = 0; i < numberOfDimensions; i++)
+            {
+                for (var j = 0; j < numberOfPoints; j++)
+                    variances[i] += Math.Pow(points[j].Coordinates[i] - means[i], 2) / numberOfPoints;
+            }
+
+            return variances;
+        }
+
+        public static double[] Variances(this Point[] points)
+        {
+            return Variances(points, Means(points));
         }
     }
 }

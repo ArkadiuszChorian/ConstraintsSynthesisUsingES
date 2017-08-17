@@ -18,7 +18,7 @@ namespace ES.Core.Engine
         protected PopulationGeneratorBase PopulationGenerator;
         protected MutatorBase ObjectMutator;
         protected MutatorBase StdDeviationsMutator;
-        //protected IMutationRuleSupervisor MutationRuleSupervisor;
+        protected MutationRuleSupervisorBase MutationRuleSupervisor;
         protected ParentsSelectorBase ParentsSelector;
         protected SurvivorsSelectorBase SurvivorsSelector;
         protected IGenericFactory<Solution> SolutionsFactory;
@@ -26,13 +26,14 @@ namespace ES.Core.Engine
         protected Solution[] OffspringPopulation;
         protected Stopwatch Stoper;
 
-        protected EngineBase(EvolutionParameters evolutionParameters, IGenericFactory<Solution> solutionsFactory, PopulationGeneratorBase populationGenerator, MutatorBase objectMutator, MutatorBase stdDeviationsMutator, ParentsSelectorBase parentsSelector, SurvivorsSelectorBase survivorsSelector, Statistics statistics, Stopwatch stoper)
+        protected EngineBase(EvolutionParameters evolutionParameters, IGenericFactory<Solution> solutionsFactory, PopulationGeneratorBase populationGenerator, MutatorBase objectMutator, MutatorBase stdDeviationsMutator, MutationRuleSupervisorBase mutationRuleSupervisor, ParentsSelectorBase parentsSelector, SurvivorsSelectorBase survivorsSelector, Statistics statistics, Stopwatch stoper)
         {
             Parameters = evolutionParameters;
             SolutionsFactory = solutionsFactory;
             PopulationGenerator = populationGenerator;
             ObjectMutator = objectMutator;
             StdDeviationsMutator = stdDeviationsMutator;
+            MutationRuleSupervisor = mutationRuleSupervisor;
             ParentsSelector = parentsSelector;
             SurvivorsSelector = survivorsSelector;
             Statistics = statistics;
@@ -40,9 +41,7 @@ namespace ES.Core.Engine
 
             BasePopulation = new Solution[evolutionParameters.BasePopulationSize];
             OffspringPopulation = new Solution[evolutionParameters.OffspringPopulationSize]; 
-            EvolutionSteps = new List<Solution>(evolutionParameters.NumberOfGenerations);
-              
-            MersenneTwister.Initialize(evolutionParameters.Seed);       
+            EvolutionSteps = new List<Solution>(evolutionParameters.NumberOfGenerations);                              
         }
         
         public EvolutionParameters Parameters { get; set; }       
@@ -66,12 +65,26 @@ namespace ES.Core.Engine
 
             for (var i = 0; i < numberOfGenerations; i++)
             {
+                //MutationRuleSupervisor.SaveBestFitness(BasePopulation.First());
+
                 Evolve(evaluator);
+
+                //MutationRuleSupervisor.EnsureRuleFullfillment(BasePopulation);
 
                 if (Parameters.TrackEvolutionSteps)
                     EvolutionSteps.Add(BasePopulation.First());
             }
-                
+            
+            Console.WriteLine("###########################################################################");
+            Console.WriteLine("###########################################################################");
+            Console.WriteLine("###########################################################################");
+            Console.WriteLine(nameof(MutationRuleSupervisor.NumberOfHigheringScalings) + " = " + MutationRuleSupervisor.NumberOfHigheringScalings);
+            Console.WriteLine(nameof(MutationRuleSupervisor.NumberOfLoweringScalings) + " = " + MutationRuleSupervisor.NumberOfLoweringScalings);
+            Console.WriteLine("Example stdDev = " + BasePopulation.First().StdDeviationsCoefficients.First());
+            Console.WriteLine("###########################################################################");
+            Console.WriteLine("###########################################################################");
+            Console.WriteLine("###########################################################################");
+
             Stoper.Stop();
 
             Statistics.TotalEvolutionTime = Stoper.Elapsed;

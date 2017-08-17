@@ -11,14 +11,15 @@ namespace CSUES.Engine.Utils
         };
 
         public const bool UseRedundantConstraintsRemoving = true;
-        public const bool UseDataNormalization = true;
-
-        public const long NumberOfDomainSamples = 100000;
-
+        public const bool UseDataNormalization = true;       
+        public const bool AllowQuadraticTerms = false;       
+        
         public const double BallnBoundaryValue = 2.7;
         public const double CubenBoundaryValue = 2.7;
         public const double SimplexnBoundaryValue = 2.7;
 
+        public const long NumberOfDomainSamples = 100000;
+        public const int NumberOfTestPoints = 100000;
         public const int NumberOfPositivePoints = 500;
         public const int NumberOfNegativePoints = 500;
         public const double DefaultDomainLowerLimit = -100;

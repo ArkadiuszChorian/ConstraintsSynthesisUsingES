@@ -5,6 +5,10 @@ namespace CSUES.Engine.Models
 {
     public class Statistics
     {
+        public int NumberOfConstraints { get; set; }
+        public double MeanAngle { get; set; }
+        public double JaccardIndex => (double) TruePositives / (TruePositives + FalsePositives + FalseNegatives);
+
         public int TruePositives { get; set; }
         public int FalsePositives { get; set; }
         public int TrueNegatives { get; set; }

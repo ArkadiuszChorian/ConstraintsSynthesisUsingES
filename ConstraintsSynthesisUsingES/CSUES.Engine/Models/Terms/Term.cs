@@ -1,20 +1,25 @@
-﻿using CSUES.Engine.Enums;
+﻿using System;
+using CSUES.Engine.Enums;
 
 namespace CSUES.Engine.Models.Terms
 {
-    public abstract class Term
+    public class Term
     {
-        protected Term(double coefficient, double power, TermType termType)
+        protected readonly Func<double[], double> Function;
+
+        public Term(double coefficient, Func<double[], double> function, TermType termType)
         {
             Coefficient = coefficient;
-            Power = power;
+            Function = function;
             Type = termType;
         }
 
-        public abstract double Value(params double[] arguments);
+        public virtual double Value(params double[] arguments)
+        {
+            return Function.Invoke(arguments);
+        }
 
         public double Coefficient { get; set; }
-        public double Power { get; private set; }
         public TermType Type { get; private set; }
     }
 }

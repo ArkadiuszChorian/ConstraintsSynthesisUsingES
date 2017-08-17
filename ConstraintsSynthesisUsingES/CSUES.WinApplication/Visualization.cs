@@ -102,7 +102,7 @@ namespace CSUES.WinApplication
             if (c > 2) w = 1300;
             else w = 100 + c * 400;
 
-            var form = new Form()
+            var form = new Form
             {
                 Text = "Thesis",
                 Height = h,
@@ -179,7 +179,7 @@ namespace CSUES.WinApplication
             {               
                 Series series;
 
-                if (constraints[i] is BallConstraint)
+                if (constraints[i] is QuadraticConstraint)
                 {
                     var a = constraints[i].Terms[2].Coefficient * -0.5;
                     var b = constraints[i].Terms[3].Coefficient * -0.5;
@@ -218,29 +218,49 @@ namespace CSUES.WinApplication
             return this;
         }
 
-        public Visualization PrepareTwoPlots(IList<Point> positivePoints, IList<Point> negativePoints, MathModel mathModel)
+        public Visualization PreparePlots(IList<Point> positivePoints, IList<Point> negativePoints, MathModel mathModel)
         {
-            AddNextPlot("Reference model", _plotWidth, _plotHeight, _yAxisMin, _yAxisMax, _xAxisMin, _xAxisMax);
+            AddNextPlot("Reference model - Training points", _plotWidth, _plotHeight, _yAxisMin, _yAxisMax, _xAxisMin, _xAxisMax);
             AddPoints(positivePoints, OxyColors.Green);
-            AddPoints(negativePoints, OxyColors.Red);
+            AddPoints(negativePoints, OxyColors.DarkRed);
             AddConstraints(mathModel.ReferenceModel, OxyPalettes.Rainbow, xMin: mathModel.Domains[0].LowerLimit,
                 xMax: mathModel.Domains[0].UpperLimit);
-            AddNextPlot("Synthesized model", _plotWidth, _plotHeight, _yAxisMin, _yAxisMax, _xAxisMin, _xAxisMax);
+            AddNextPlot("Synthesized model - Training points", _plotWidth, _plotHeight, _yAxisMin, _yAxisMax, _xAxisMin, _xAxisMax);
             AddPoints(positivePoints, OxyColors.Green);
-            AddPoints(negativePoints, OxyColors.Red);
+            AddPoints(negativePoints, OxyColors.DarkRed);
             AddConstraints(mathModel.SynthesizedModel, OxyPalettes.Rainbow, xMin: mathModel.Domains[0].LowerLimit,
                 xMax: mathModel.Domains[0].UpperLimit);
 
             return this;
         }
 
-        public Visualization PrepareThreePlots(IList<Point> positivePoints, IList<Point> negativePoints, MathModel mathModel, IList<IList<Constraint>> evolutionSteps, int numberOfSteps, int stepIncrement)
+        public Visualization PreparePlots(IList<Point> testPoints, MathModel mathModel)
         {
-            PrepareTwoPlots(positivePoints, negativePoints, mathModel);
+            var positiveTestPoints = testPoints.Where(tp => tp.ClassificationType == ClassificationType.Positive).ToList();
+            var negativeTestPoints = testPoints.Where(tp => tp.ClassificationType == ClassificationType.Negative).ToList();
+
+            AddNextPlot("Reference model - Test points", _plotWidth, _plotHeight, _yAxisMin, _yAxisMax, _xAxisMin, _xAxisMax);
+            AddPoints(positiveTestPoints, OxyColors.Green);
+            AddPoints(negativeTestPoints, OxyColors.DarkRed);
+            AddConstraints(mathModel.ReferenceModel, OxyPalettes.Rainbow, xMin: mathModel.Domains[0].LowerLimit,
+                xMax: mathModel.Domains[0].UpperLimit);
+            AddNextPlot("Synthesized model - Test points", _plotWidth, _plotHeight, _yAxisMin, _yAxisMax, _xAxisMin, _xAxisMax);
+            AddPoints(positiveTestPoints, OxyColors.Green);
+            AddPoints(negativeTestPoints, OxyColors.DarkRed);
+            AddConstraints(mathModel.SynthesizedModel, OxyPalettes.Rainbow, xMin: mathModel.Domains[0].LowerLimit,
+                xMax: mathModel.Domains[0].UpperLimit);
+
+            return this;
+        }
+
+        public Visualization PreparePlots(IList<Point> positivePoints, IList<Point> negativePoints, MathModel mathModel, IList<IList<Constraint>> evolutionSteps, int numberOfSteps)
+        {
+            PreparePlots(positivePoints, negativePoints, mathModel);
             AddNextPlot("Evolution steps", _plotWidth, _plotHeight, _yAxisMin, _yAxisMax, _xAxisMin, _xAxisMax);
             AddPoints(positivePoints, OxyColors.Green);
-            AddPoints(negativePoints, OxyColors.Red);
+            AddPoints(negativePoints, OxyColors.DarkRed);
 
+            var stepIncrement = evolutionSteps.Count / numberOfSteps;
             var j = 0;
 
             for (var i = 0; i < numberOfSteps * stepIncrement; i += stepIncrement)
@@ -250,6 +270,22 @@ namespace CSUES.WinApplication
                 var color = OxyColor.FromRgb(50, 50, (byte)(byte.MaxValue / numberOfSteps * j++));
                 AddConstraints(evolutionSteps[i], null, color);
             }
+
+            return this;
+        }
+
+        public Visualization PreparePlots(IList<Point> positivePoints, IList<Point> negativePoints, IList<Point> testPoints, MathModel mathModel)
+        {
+            PreparePlots(positivePoints, negativePoints, mathModel);
+            PreparePlots(testPoints, mathModel);
+
+            return this;
+        }
+      
+        public Visualization PreparePlots(IList<Point> positivePoints, IList<Point> negativePoints, IList<Point> testPoints, MathModel mathModel, IList<IList<Constraint>> evolutionSteps, int numberOfSteps)
+        {
+            PreparePlots(positivePoints, negativePoints, mathModel, evolutionSteps, numberOfSteps);
+            PreparePlots(testPoints, mathModel);
 
             return this;
         }

@@ -4,7 +4,7 @@ namespace CSUES.Engine.Models.Terms
 {
     public class LinearTerm : Term
     {
-        public LinearTerm(double coefficient) : base(coefficient, 1, TermType.Linear)
+        public LinearTerm(double coefficient) : base(coefficient, null, TermType.Linear)
         {           
         }
 

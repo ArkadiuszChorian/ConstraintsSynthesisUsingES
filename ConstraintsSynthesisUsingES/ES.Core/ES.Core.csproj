@@ -62,6 +62,7 @@
     <Compile Include="Factories\EnginesFactory.cs" />
     <Compile Include="Factories\IEnginesFactory.cs" />
     <Compile Include="Factories\IGenericFactory.cs" />
+    <Compile Include="Factories\MutationRuleSupervisorsFactory.cs" />
     <Compile Include="Factories\ObjectMutatorsFactory.cs" />
     <Compile Include="Factories\ObjectRecombinersFactory.cs" />
     <Compile Include="Factories\ParentsSelectorsFactory.cs" />
@@ -82,8 +83,7 @@
     <Compile Include="Engine\CmEngineWithRecombination.cs" />
     <Compile Include="Engine\UmEngineWithRecombination.cs" />
     <Compile Include="Engine\UmEngineWithoutRecombination.cs" />
-    <Compile Include="MutationSupervison\MutationSupervisorsFactory.cs" />
-    <Compile Include="MutationSupervison\IMutationRuleSupervisor.cs" />
+    <Compile Include="MutationSupervison\MutationRuleSupervisorBase.cs" />
     <Compile Include="MutationSupervison\NsmOneFifthRuleSupervisor.cs" />
     <Compile Include="MutationSupervison\OsmOneFifthRuleSupervisor.cs" />
     <Compile Include="Mutation\CmObjectMutator.cs" />

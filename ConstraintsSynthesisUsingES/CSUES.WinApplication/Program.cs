@@ -1,33 +1,47 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
+using System.Threading;
 using CSUES.Engine.Enums;
 using CSUES.Engine.Factories;
 using CSUES.Engine.Measurement;
 using CSUES.Engine.Models;
 using CSUES.Engine.PointsGeneration;
-using CSUES.Engine.PrePostProcessing;
+using ES.Core.Enums;
 
 namespace CSUES.WinApplication
 {
     class Program
     {
+        private const int NumberOfEvolutionStepsToShow = 100;
         static void Main(string[] args)
         {
-            //var database = new DatabaseContext("Test.db");
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-us");
+            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("en-US");
+            Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
 
             var experimentParameters = new ExperimentParameters(
                 numberOfDimensions: 2,
                 basePopulationSize: 15,
                 offspringPopulationSize: 100,
                 numberOfGenerations: 1000,
-                //numberOfPositivePoints: 1,
+                seed: new Random().Next(),
+                oneFifthRuleCheckInterval: 10,
+                //individualLearningRate: 0.1, //0.47287080450158792
+                //globalLearningRate: 0.1, //0.31622776601683794
+                typeOfParentsSelection: ParentsSelectionType.Random,
+                typeOfStdDeviationsRecombination: RecombinationType.Intermediate,
+                typeOfRotationsRecombination: RecombinationType.Intermediate,
                 useRedundantConstraintsRemoving: true,
-                useRecombination: false,
+                useDataNormalization: true,
+                allowQuadraticTerms: true,
+                useRecombination: true,
                 trackEvolutionSteps: true,
                 numberOfParentsSolutionsToSelect: 5,
                 numberOfPositivePoints: 500,
                 numberOfNegativePoints: 500,
-                typeOfBenchmark: BenchmarkType.Balln);
+                //ballnBoundaryValue: 10,
+                typeOfBenchmark: BenchmarkType.Simplexn);
 
             var enginesFactory = new EnginesFactory();
 
@@ -42,33 +56,43 @@ namespace CSUES.WinApplication
             
             var trainingPoints = positiveTrainingPoints.Concat(negativeTrainingPoints).ToArray();
 
-            //FOR TEST TODO
-
-            var normalizer = new StandardScorePointsNormalizer();
-            var normalizedPoints = normalizer.ApplyProcessing(negativeTrainingPoints);
-            var means = normalizer.Means(negativeTrainingPoints);
-            var denormalizer = new StandardScorePointsDenormalizer(means, normalizer.StandardDeviations(negativeTrainingPoints, means));
-            var denormalizedPoints = denormalizer.ApplyProcessing(normalizedPoints);
-
-            //
+            var testPointsGenerator = new TestPointsGenerator();
+            var testPoints = testPointsGenerator.GeneratePoints(experimentParameters.NumberOfTestPoints, engine.Benchmark.Domains, engine.Benchmark.Constraints);
 
             var mathModel = engine.SynthesizeModel(trainingPoints);
+
+            var statistics = engine.EvaluateModel(testPoints);
 
             var visualization = new Visualization(experimentParameters.TypeOfBenchmark);
 
             if (experimentParameters.TrackEvolutionSteps)
-                visualization.PrepareThreePlots(positiveTrainingPoints, negativeTrainingPoints, mathModel,
-                    engine.EvolutionSteps, 10, 10).Show();
-            else
-                visualization.PrepareTwoPlots(positiveTrainingPoints, negativeTrainingPoints, mathModel)
+                visualization.PreparePlots(positiveTrainingPoints, negativeTrainingPoints, testPoints.Reduce(), mathModel, engine.EvolutionSteps, NumberOfEvolutionStepsToShow)
                     .Show();
-
+            else
+                visualization.PreparePlots(positiveTrainingPoints, negativeTrainingPoints, testPoints.Reduce(), mathModel)
+                    .Show();
+            
+            Console.WriteLine("==========================================");
+            Console.WriteLine("=============== PARAMETERS ===============");
+            Console.WriteLine("==========================================");
+            Console.WriteLine(experimentParameters.GetPrintableString());
+            Console.WriteLine();
+            Console.WriteLine("==========================================");
+            Console.WriteLine("============= REFERENCE MODEL ============");
+            Console.WriteLine("==========================================");
             Console.WriteLine(mathModel.ReferenceModelInLpFormat);
             Console.WriteLine();
+            Console.WriteLine("==========================================");
+            Console.WriteLine("============ SYNTHESIZED MODEL ===========");
+            Console.WriteLine("==========================================");
             Console.WriteLine(mathModel.SynthesizedModelInLpFormat);
             Console.WriteLine();
-            Console.WriteLine("FINISHED!");
+            Console.WriteLine("==========================================");
+            Console.WriteLine("=============== STATISTICS ===============");
+            Console.WriteLine("==========================================");
+            Console.WriteLine(statistics.GetPrintableString());
+            Console.WriteLine();
             Console.ReadKey();
-        }
+        }       
     }
 }

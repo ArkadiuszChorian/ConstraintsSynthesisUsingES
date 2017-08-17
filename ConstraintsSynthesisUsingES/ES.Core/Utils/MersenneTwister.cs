@@ -59,7 +59,6 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using ES.Core.Models;
 
 namespace ES.Core.Utils
 {

@@ -15,7 +15,7 @@ namespace ES.Core.Engine
         protected RecombinerBase ObjectRecombiner;
         protected RecombinerBase StdDeviationsRecombiner;
 
-        public UmEngineWithRecombination(EvolutionParameters evolutionParameters, IGenericFactory<Solution> solutionsFactory, PopulationGeneratorBase populationGenerator, MutatorBase objectMutator, MutatorBase stdDeviationsMutator, ParentsSelectorBase parentsSelector, SurvivorsSelectorBase survivorsSelector, Statistics statistics, Stopwatch stoper, RecombinerBase objectRecombiner, RecombinerBase stdDeviationsRecombiner) : base(evolutionParameters, solutionsFactory, populationGenerator, objectMutator, stdDeviationsMutator, parentsSelector, survivorsSelector, statistics, stoper)
+        public UmEngineWithRecombination(EvolutionParameters evolutionParameters, IGenericFactory<Solution> solutionsFactory, PopulationGeneratorBase populationGenerator, MutatorBase objectMutator, MutatorBase stdDeviationsMutator, MutationRuleSupervisorBase mutationRuleSupervisor, ParentsSelectorBase parentsSelector, SurvivorsSelectorBase survivorsSelector, Statistics statistics, Stopwatch stoper, RecombinerBase objectRecombiner, RecombinerBase stdDeviationsRecombiner) : base(evolutionParameters, solutionsFactory, populationGenerator, objectMutator, stdDeviationsMutator, mutationRuleSupervisor, parentsSelector, survivorsSelector, statistics, stoper)
         {
             ObjectRecombiner = objectRecombiner;
             StdDeviationsRecombiner = stdDeviationsRecombiner;

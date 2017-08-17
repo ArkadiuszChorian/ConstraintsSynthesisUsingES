@@ -4,7 +4,7 @@ namespace CSUES.Engine.Models.Terms
 {
     public class QuadraticTerm : Term
     {
-        public QuadraticTerm(double coefficient) : base(coefficient, 2, TermType.Quadratic)
+        public QuadraticTerm(double coefficient) : base(coefficient, null, TermType.Quadratic)
         {
         }
 

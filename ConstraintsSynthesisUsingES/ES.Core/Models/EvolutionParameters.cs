@@ -12,7 +12,10 @@ namespace ES.Core.Models
             
             int seed = Defaults.Seed, 
             bool trackEvolutionSteps = Defaults.TrackEvolutionSteps,
-            
+
+            int oneFifthRuleCheckInterval = Defaults.OneFifthRuleCheckInterval,
+            double oneFifthRuleScalingFactor = Defaults.OneFifthRuleScalingFactor,
+
             int numberOfParentsSolutionsToSelect = Defaults.NumberOfParentsSolutionsToSelect, 
             int typeOfParentsSelection = (int) Defaults.TypeOfParentsSelection, 
             int typeOfSurvivorsSelection = (int) Defaults.TypeOfSurvivorsSelection, 
@@ -36,6 +39,9 @@ namespace ES.Core.Models
             Seed = seed;
             TrackEvolutionSteps = trackEvolutionSteps;
 
+            OneFifthRuleCheckInterval = oneFifthRuleCheckInterval;
+            OneFifthRuleScalingFactor = oneFifthRuleScalingFactor;
+
             NumberOfParentsSolutionsToSelect = numberOfParentsSolutionsToSelect;
             TypeOfParentsSelection = typeOfParentsSelection;
             TypeOfSurvivorsSelection = typeOfSurvivorsSelection;
@@ -57,27 +63,26 @@ namespace ES.Core.Models
         public int BasePopulationSize { get; set; }
         public int OffspringPopulationSize { get; set; }
         public int NumberOfGenerations { get; set; }
-
-        //TODO 
-        //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        public int OneFifthRuleCheckInterval { get; set; }
-        public double OneFifthRuleScalingFactor { get; set; }
-
+      
         //Other
         public int Seed { get; set; }
         public bool TrackEvolutionSteps { get; set; }
+
+        //One fifth rule parameters
+        public int OneFifthRuleCheckInterval { get; set; }
+        public double OneFifthRuleScalingFactor { get; set; }
 
         //Selection parameters
         public int NumberOfParentsSolutionsToSelect { get; set; }
         public int TypeOfParentsSelection { get; set; }
         public int TypeOfSurvivorsSelection { get; set; }
 
-        //Mutation parameters
+        //Mutation parameters        
         public double GlobalLearningRate { get; set; }
         public double IndividualLearningRate { get; set; }
         public double StepThreshold { get; set; }
         public double RotationAngle { get; set; }
-        public int TypeOfMutation { get; set; }
+        public int TypeOfMutation { get; set; }      
 
         //Recombination
         public bool UseRecombination { get; set; }

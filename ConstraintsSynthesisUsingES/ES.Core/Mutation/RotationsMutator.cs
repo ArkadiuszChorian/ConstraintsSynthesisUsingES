@@ -1,4 +1,5 @@
 ﻿using System;
+using Accord.Statistics.Distributions.Univariate;
 using ES.Core.Models;
 using ES.Core.Models.Solutions;
 using ES.Core.Utils;
@@ -8,6 +9,7 @@ namespace ES.Core.Mutation
     public class RotationsMutator : MutatorBase
     {
         private readonly MersenneTwister _randomGenerator;
+        private readonly NormalDistribution _randomGenerator2 = new NormalDistribution();
         private readonly double _rotationsAngle;
 
         public RotationsMutator(EvolutionParameters evolutionParameters)
@@ -22,7 +24,9 @@ namespace ES.Core.Mutation
 
             for (var i = 0; i < vectorSize; i++)
             {
-                var mutationValue = _rotationsAngle * _randomGenerator.NextDoublePositive();
+                //var mutationValue = _rotationsAngle * _randomGenerator.NextDoublePositive();
+                //var mutationValue = _rotationsAngle * _randomGenerator.NextDouble(-1, 1);
+                var mutationValue = _rotationsAngle * _randomGenerator2.Generate();
 
                 solution.RotationsCoefficients[i] += mutationValue;
 

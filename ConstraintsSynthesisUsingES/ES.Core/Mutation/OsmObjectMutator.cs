@@ -18,7 +18,8 @@ namespace ES.Core.Mutation
 
             for (var i = 0; i < numberOfCoefficients; i++)
             {
-                solution.ObjectCoefficients[i] += solution.OneStepStdDeviation * _randomGenerator.NextDoublePositive();
+                //solution.ObjectCoefficients[i] += solution.OneStepStdDeviation * _randomGenerator.NextDoublePositive();
+                solution.ObjectCoefficients[i] += solution.OneStepStdDeviation * _randomGenerator.NextDouble(-1, 1);
             }
 
             return solution;

@@ -20,7 +20,8 @@ namespace ES.Core.Mutation
 
         public override Solution Mutate(Solution solution)
         {
-            solution.OneStepStdDeviation *= Math.Exp(_individualLearningRate * _randomGenerator.NextDoublePositive());
+            //solution.OneStepStdDeviation *= Math.Exp(_individualLearningRate * _randomGenerator.NextDoublePositive());
+            solution.OneStepStdDeviation *= Math.Exp(_individualLearningRate * _randomGenerator.NextDouble(-1, 1));
             solution.OneStepStdDeviation = solution.OneStepStdDeviation < _stepThreshold ? _stepThreshold : solution.OneStepStdDeviation;
 
             return solution; 
