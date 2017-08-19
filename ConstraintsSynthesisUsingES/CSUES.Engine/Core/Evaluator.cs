@@ -1,4 +1,6 @@
-﻿using CSUES.Engine.Models;
+﻿using System;
+using System.Linq;
+using CSUES.Engine.Models;
 using CSUES.Engine.Utils;
 using ES.Core.Models;
 using ES.Core.Models.Solutions;
@@ -24,6 +26,10 @@ namespace CSUES.Engine.Core
             var numberOfNegativePointsSatisfyingConstraints = 0;
             var constraints = _constraintsBuilder.BuildConstraints(solution);
 
+            //TODO
+            //var mean = constraints.Sum(c => c.GetTermsCoefficients().Min(tc => Math.Abs(tc)));
+            //var modifier = mean > 1 ? 1.0 / mean : 1;
+
             foreach (var positivePoint in _positivePoints)
             {
                 if (constraints.IsSatisfyingConstraints(positivePoint))
@@ -36,7 +42,9 @@ namespace CSUES.Engine.Core
                     numberOfNegativePointsSatisfyingConstraints++;
             }
 
+            //TODO
             return (double)numberOfPositivePointsSatisfyingConstraints / (_positivePoints.Length + numberOfNegativePointsSatisfyingConstraints);
+            //return ((double)numberOfPositivePointsSatisfyingConstraints / (_positivePoints.Length + numberOfNegativePointsSatisfyingConstraints)) * modifier;
         }
     }
 }

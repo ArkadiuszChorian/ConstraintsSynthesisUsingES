@@ -22,15 +22,15 @@ namespace CSUES.WinApplication
 
             var experimentParameters = new ExperimentParameters(
                 numberOfDimensions: 2,
-                basePopulationSize: 15,
-                offspringPopulationSize: 100,
-                numberOfGenerations: 1000,
+                basePopulationSize: 100,
+                offspringPopulationSize: 1000,
+                numberOfGenerations: 100,
                 //seed: new Random().Next(),
                 seed: 1,
                 //oneFifthRuleCheckInterval: 10,
                 //individualLearningRate: 0.1, //0.47287080450158792
                 //globalLearningRate: 0.1, //0.31622776601683794
-                typeOfParentsSelection: ParentsSelectionType.Random,
+                typeOfParentsSelection: ParentsSelectionType.Even,
                 typeOfStdDeviationsRecombination: RecombinationType.Intermediate,
                 typeOfRotationsRecombination: RecombinationType.Intermediate,
                 useRedundantConstraintsRemoving: true,

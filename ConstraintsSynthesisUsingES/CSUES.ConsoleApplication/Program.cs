@@ -12,7 +12,7 @@ using EvolutionDefaults = ES.Core.Utils.Defaults;
 using Defaults = CSUES.Engine.Utils.Defaults;
 using Version = CSUES.Common.Version;
 
-namespace CSUES.Application
+namespace CSUES.ConsoleApplication
 {
     class Program
     {
