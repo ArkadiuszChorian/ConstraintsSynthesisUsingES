@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using CSUES.Common;
 using CSUES.Engine.Enums;
@@ -16,9 +17,12 @@ namespace CSUES.ConsoleApplication
 {
     class Program
     {
+        //private static readonly string DatabaseDirPath = Path.GetFullPath("../Database/" + DatabaseContext.DbFilename);
+        private static readonly string DatabasePath = Path.GetFullPath("../../../Database/" + DatabaseContext.DbFilename);
+
         static void Main(string[] args)
         {
-            var database = new DatabaseContext("database1.db");
+            var database = new DatabaseContext(DatabasePath);
             var version = new Version(DateTime.Now);
             var experimentParameters = GetExperimentParameters();
 
@@ -82,7 +86,7 @@ namespace CSUES.ConsoleApplication
                 trackEvolutionSteps: Arguments.Get(nameof(ExperimentParameters.UseRedundantConstraintsRemoving), EvolutionDefaults.TrackEvolutionSteps),
                 useRedundantConstraintsRemoving: Arguments.Get(nameof(ExperimentParameters.UseRedundantConstraintsRemoving), Defaults.UseRedundantConstraintsRemoving),
                 useDataNormalization: Arguments.Get(nameof(ExperimentParameters.UseDataNormalization), Defaults.UseDataNormalization),
-                allowQuadraticTerms: Arguments.Get(nameof(ExperimentParameters.AllowQuadraticTerms), Defaults.AllowQuadraticTerms),      
+                allowQuadraticTerms: Arguments.Get(nameof(ExperimentParameters.AllowQuadraticTerms), Defaults.AllowQuadraticTerms),
                         
                 ballnBoundaryValue: Arguments.Get(nameof(ExperimentParameters.BallnBoundaryValue), Defaults.BallnBoundaryValue),
                 cubenBoundaryValue: Arguments.Get(nameof(ExperimentParameters.CubenBoundaryValue), Defaults.CubenBoundaryValue),

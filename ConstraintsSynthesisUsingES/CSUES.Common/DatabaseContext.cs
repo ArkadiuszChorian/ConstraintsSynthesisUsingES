@@ -33,6 +33,8 @@ namespace CSUES.Common
 
         private bool _anyErrors;
 
+        public const string DbFilename = "database1.db";
+
         public DatabaseContext(string dbFilePath)
         {
             _database = new Database(dbFilePath);

@@ -75,10 +75,13 @@ namespace CSUES.Engine.Models
 
             NumberOfConstraintsCoefficients = allowQuadraticTerms ? numberOfDimensions * 2 + 1 : numberOfDimensions + 1;
 
-            MaximumNumberOfConstraints = typeOfBenchmark == BenchmarkType.Other
-                // ReSharper disable once PossibleNullReferenceException : It is checked before
-                ? referenceConstraints.Count
-                : GetMaximumNumberOfConstraints(numberOfDimensions, typeOfBenchmark, allowQuadraticTerms);
+            //MaximumNumberOfConstraints = typeOfBenchmark == BenchmarkType.Other
+            //    // ReSharper disable once PossibleNullReferenceException : It is checked before
+            //    ? referenceConstraints.Count
+            //    : GetMaximumNumberOfConstraints(numberOfDimensions, typeOfBenchmark, allowQuadraticTerms);
+
+            MaximumNumberOfConstraints = GetMaximumNumberOfConstraints(numberOfDimensions, typeOfBenchmark,
+                allowQuadraticTerms);
 
             var objectVectorSize = NumberOfConstraintsCoefficients * MaximumNumberOfConstraints;          
 
@@ -141,17 +144,22 @@ namespace CSUES.Engine.Models
 
         private static int GetMaximumNumberOfConstraints(int numberOfDimensions, BenchmarkType benchmarkType, bool allowQuadraticTerms)
         {
-            switch (benchmarkType)
-            {
-                case BenchmarkType.Balln:
-                    return allowQuadraticTerms ? 1 : numberOfDimensions * numberOfDimensions;
-                case BenchmarkType.Cuben:
-                    return numberOfDimensions * 2;
-                case BenchmarkType.Simplexn:
-                    return 4 * numberOfDimensions - 6 + 1;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(benchmarkType), benchmarkType, null);
-            }
+            //switch (benchmarkType)
+            //{
+            //    case BenchmarkType.Balln:
+            //        return allowQuadraticTerms ? 1 : numberOfDimensions * numberOfDimensions;
+            //    case BenchmarkType.Cuben:
+            //        return numberOfDimensions * 2;
+            //    case BenchmarkType.Simplexn:
+            //        return 4 * numberOfDimensions - 6 + 1;
+            //    default:
+            //        throw new ArgumentOutOfRangeException(nameof(benchmarkType), benchmarkType, null);
+            //}
+
+            if (benchmarkType == BenchmarkType.Balln && allowQuadraticTerms)
+                return 2 * numberOfDimensions * 2 * numberOfDimensions;
+
+            return numberOfDimensions * numberOfDimensions;
         }
     }
 }

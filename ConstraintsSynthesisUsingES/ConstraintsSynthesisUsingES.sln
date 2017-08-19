@@ -24,6 +24,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gurobi", "Gurobi", "{C4B4F7
 		Gurobi\Gurobi75.NET.dll = Gurobi\Gurobi75.NET.dll
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSUES.SlurmRunner", "CSUES.SlurmRunner\CSUES.SlurmRunner.csproj", "{38E94DDF-3FD1-4423-B38F-7ED4C5CD8B0A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +52,10 @@ Global
 		{A0972D17-C268-440A-BE7E-F68D644338B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A0972D17-C268-440A-BE7E-F68D644338B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A0972D17-C268-440A-BE7E-F68D644338B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38E94DDF-3FD1-4423-B38F-7ED4C5CD8B0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38E94DDF-3FD1-4423-B38F-7ED4C5CD8B0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38E94DDF-3FD1-4423-B38F-7ED4C5CD8B0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38E94DDF-3FD1-4423-B38F-7ED4C5CD8B0A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
