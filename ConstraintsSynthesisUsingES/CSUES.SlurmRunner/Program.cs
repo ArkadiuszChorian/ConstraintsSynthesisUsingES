@@ -34,7 +34,7 @@ namespace CSUES.SlurmRunner
             var database = new DatabaseContext(path);           
 
             for (var seed = 1; seed <= 30; seed++){
-            for (var numberOfDimensions = 1; numberOfDimensions <= 7; numberOfDimensions++){                                          
+            for (var numberOfDimensions = 3; numberOfDimensions <= 7; numberOfDimensions++){                                          
             for (var i = 0; i < NumbersOfGenerations.Length; i++){                                          
             for (var j = 0; j < OffspringPopulationSizes.Length; j++){                                          
             for (var k = 0; k < BenchmarkTypes.Length; k++){                                          
