@@ -20,11 +20,11 @@ namespace CSUES.Engine.PointsGeneration
             var numberOfConstraints = constraints.Length;
             var point = new Point(numberOfDimensions, ClassificationType.Positive);
             
-            var isSatsfyngConstraints = false;
+            var isSatisfyingConstraints = false;
 
-            while (isSatsfyngConstraints == false)
+            while (isSatisfyingConstraints == false)
             {
-                isSatsfyngConstraints = true;
+                isSatisfyingConstraints = true;
 
                 for (var i = 0; i < numberOfDimensions; i++)
                     point.Coordinates[i] = _randomGenerator.NextDouble(domains[i].LowerLimit, domains[i].UpperLimit);
@@ -44,7 +44,7 @@ namespace CSUES.Engine.PointsGeneration
                 for (var i = 0; i < numberOfConstraints; i++)
                 {
                     if (constraints[i].IsSatisfyingConstraint(point)) continue;
-                    isSatsfyngConstraints = false;
+                    isSatisfyingConstraints = false;
                     break;
                 }
             }

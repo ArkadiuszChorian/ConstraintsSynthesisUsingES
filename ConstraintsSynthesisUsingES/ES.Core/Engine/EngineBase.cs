@@ -80,7 +80,13 @@ namespace ES.Core.Engine
             Console.WriteLine("###########################################################################");
             Console.WriteLine(nameof(MutationRuleSupervisor.NumberOfHigheringScalings) + " = " + MutationRuleSupervisor.NumberOfHigheringScalings);
             Console.WriteLine(nameof(MutationRuleSupervisor.NumberOfLoweringScalings) + " = " + MutationRuleSupervisor.NumberOfLoweringScalings);
-            Console.WriteLine("Example stdDev = " + BasePopulation.First().StdDeviationsCoefficients.First());
+            Console.Write("Best solution stdDevs = [");
+            foreach (var stdDeviationsCoefficient in BasePopulation.First().StdDeviationsCoefficients)
+            {
+                Console.Write(stdDeviationsCoefficient + ", ");
+            }
+            Console.WriteLine("]\n");
+            //Console.WriteLine("Example stdDev = " + BasePopulation.First().StdDeviationsCoefficients.First());
             Console.WriteLine("###########################################################################");
             Console.WriteLine("###########################################################################");
             Console.WriteLine("###########################################################################");

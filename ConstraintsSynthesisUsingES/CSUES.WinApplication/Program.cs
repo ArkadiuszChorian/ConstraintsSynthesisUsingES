@@ -23,10 +23,11 @@ namespace CSUES.WinApplication
             var experimentParameters = new ExperimentParameters(
                 numberOfDimensions: 2,
                 basePopulationSize: 100,
-                offspringPopulationSize: 1000,
+                offspringPopulationSize: 100,
                 numberOfGenerations: 100,
-                //seed: new Random().Next(),
-                seed: 1,
+                seed: new Random().Next(),
+                //seed: 1,
+                //seed: 1971749862,
                 //oneFifthRuleCheckInterval: 10,
                 //individualLearningRate: 0.1, //0.47287080450158792
                 //globalLearningRate: 0.1, //0.31622776601683794
@@ -35,12 +36,12 @@ namespace CSUES.WinApplication
                 typeOfRotationsRecombination: RecombinationType.Intermediate,
                 useRedundantConstraintsRemoving: true,
                 useDataNormalization: true,
-                allowQuadraticTerms: false,
-                useRecombination: true,
+                allowQuadraticTerms: true,
+                useRecombination: false,
                 trackEvolutionSteps: true,
                 numberOfParentsSolutionsToSelect: 5,
                 numberOfPositivePoints: 500,
-                numberOfNegativePoints: 500,
+                numberOfNegativePoints: 1500,
                 //ballnBoundaryValue: 10,
                 typeOfBenchmark: BenchmarkType.Simplexn);
 
@@ -53,13 +54,14 @@ namespace CSUES.WinApplication
             var positiveTrainingPoints = positivePointsGenerator.GeneratePoints(experimentParameters.NumberOfPositivePoints, engine.Benchmark.Domains, engine.Benchmark.Constraints);
 
             var negativePointsGenerator = new NegativePointsGenerator(positiveTrainingPoints, distanceCalculator, new NearestNeighbourDistanceCalculator(distanceCalculator));
-            var negativeTrainingPoints = negativePointsGenerator.GeneratePoints(experimentParameters.NumberOfNegativePoints, engine.Benchmark.Domains);
+            //var negativeTrainingPoints = negativePointsGenerator.GeneratePoints(experimentParameters.NumberOfNegativePoints, engine.Benchmark.Domains);
+            var negativeTrainingPoints = negativePointsGenerator.GeneratePoints(experimentParameters.NumberOfNegativePoints, engine.Benchmark.Domains, engine.Benchmark.Constraints);
             
             var trainingPoints = positiveTrainingPoints.Concat(negativeTrainingPoints).ToArray();
 
             var testPointsGenerator = new TestPointsGenerator();
             var testPoints = testPointsGenerator.GeneratePoints(experimentParameters.NumberOfTestPoints, engine.Benchmark.Domains, engine.Benchmark.Constraints);
-
+            Console.WriteLine("Evolution starts!");
             var mathModel = engine.SynthesizeModel(trainingPoints);
 
             var statistics = engine.EvaluateModel(testPoints);

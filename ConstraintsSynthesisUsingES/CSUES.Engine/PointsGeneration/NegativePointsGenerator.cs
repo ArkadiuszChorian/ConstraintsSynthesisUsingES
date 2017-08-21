@@ -2,6 +2,7 @@
 using CSUES.Engine.Measurement;
 using CSUES.Engine.Models;
 using CSUES.Engine.Models.Constraints;
+using CSUES.Engine.Utils;
 using ES.Core.Utils;
 
 namespace CSUES.Engine.PointsGeneration
@@ -45,6 +46,35 @@ namespace CSUES.Engine.PointsGeneration
 
             return point;
         }
+
+        //protected override Point GetAllowedPoint(Domain[] domains, Constraint[] constraints)
+        //{
+        //    var numberOfDimensions = domains.Length;
+        //    var numberOfConstraints = constraints.Length;
+        //    var point = new Point(numberOfDimensions, ClassificationType.Negative);
+
+        //    var isSatisfyingConstraints = true;
+
+        //    while (isSatisfyingConstraints == true)
+        //    {
+        //        isSatisfyingConstraints = false;
+
+        //        for (var i = 0; i < numberOfDimensions; i++)
+        //            point.Coordinates[i] = _randomGenerator.NextDouble(domains[i].LowerLimit, domains[i].UpperLimit);
+
+        //        if (constraints.IsSatisfyingConstraints(point))
+        //            isSatisfyingConstraints = true;
+
+        //        //for (var i = 0; i < numberOfConstraints; i++)
+        //        //{
+        //        //    if (constraints[i].IsSatisfyingConstraint(point) == false) break;
+        //        //    isSatsfyngConstraints = true;
+        //        //    break;
+        //        //}
+        //    }
+
+        //    return point;
+        //}
 
         private bool IsOutsideNeighbourhood(Point pointToCheck, Point centerPoint)
         {

@@ -168,7 +168,7 @@ namespace CSUES.Common
 
             foreach (var propertyInfo in propertyInfos)
             {
-                var valueToInsert = propertyInfo.GetValue(objectToInsert, null).ToString();
+                var valueToInsert = propertyInfo.GetValue(objectToInsert, null)?.ToString();
 
                 if (propertyInfo.PropertyType == typeof(EvolutionParameters))
                 {
