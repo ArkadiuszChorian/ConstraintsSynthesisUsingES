@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
+using CSUES.Engine.Core;
 using CSUES.Engine.Enums;
 using CSUES.Engine.Factories;
 using CSUES.Engine.Measurement;
 using CSUES.Engine.Models;
 using CSUES.Engine.PointsGeneration;
 using ES.Core.Enums;
+using OxyPlot;
 
 namespace CSUES.WinApplication
 {
@@ -22,7 +25,7 @@ namespace CSUES.WinApplication
 
             var experimentParameters = new ExperimentParameters(
                 numberOfDimensions: 2,
-                basePopulationSize: 100,
+                basePopulationSize: 15,
                 offspringPopulationSize: 100,
                 numberOfGenerations: 100,
                 seed: new Random().Next(),
@@ -41,7 +44,7 @@ namespace CSUES.WinApplication
                 trackEvolutionSteps: true,
                 numberOfParentsSolutionsToSelect: 5,
                 numberOfPositivePoints: 500,
-                numberOfNegativePoints: 1500,
+                numberOfNegativePoints: 500,
                 //ballnBoundaryValue: 10,
                 typeOfBenchmark: BenchmarkType.Simplexn);
 
@@ -66,14 +69,19 @@ namespace CSUES.WinApplication
 
             var statistics = engine.EvaluateModel(testPoints);
 
-            var visualization = new Visualization(experimentParameters.TypeOfBenchmark);
+            //var visualization = new Visualization(experimentParameters.TypeOfBenchmark);
 
-            if (experimentParameters.TrackEvolutionSteps)
-                visualization.PreparePlots(positiveTrainingPoints, negativeTrainingPoints, testPoints.Reduce(), mathModel, engine.EvolutionSteps, NumberOfEvolutionStepsToShow)
-                    .Show();
-            else
-                visualization.PreparePlots(positiveTrainingPoints, negativeTrainingPoints, testPoints.Reduce(), mathModel)
-                    .Show();
+            //if (experimentParameters.TrackEvolutionSteps)
+            //    visualization.PreparePlots(positiveTrainingPoints, negativeTrainingPoints, testPoints.Reduce(), mathModel, engine.EvolutionSteps, NumberOfEvolutionStepsToShow)
+            //        .Show();
+            //else
+            //    visualization.PreparePlots(positiveTrainingPoints, negativeTrainingPoints, testPoints.Reduce(), mathModel)
+            //        .Show();
+
+            var visualization = PrepareVisualisation(experimentParameters, engine, positiveTrainingPoints, negativeTrainingPoints,
+                testPoints);
+
+            visualization.Show();
             
             Console.WriteLine("==========================================");
             Console.WriteLine("=============== PARAMETERS ===============");
@@ -96,6 +104,80 @@ namespace CSUES.WinApplication
             Console.WriteLine(statistics.GetPrintableString());
             Console.WriteLine();
             Console.ReadKey();
-        }       
+        }
+
+        private static Visualization PrepareVisualisation(ExperimentParameters experimentParameters, IEngine engine, IList<Point> positiveTrainingPoints, IList<Point> negativeTrainingPoints, IList<Point> testPoints, int numberOfEvolutionStepsToShow = 100)
+        {
+            var visualization = new Visualization(experimentParameters.TypeOfBenchmark);
+
+            testPoints = testPoints.Reduce();
+            var positiveTestPoints = testPoints.Where(tp => tp.ClassificationType == ClassificationType.Positive).ToList();
+            var negativeTestPoints = testPoints.Where(tp => tp.ClassificationType == ClassificationType.Negative).ToList();
+            var synthesizedConstraints = engine.MathModel.SynthesizedModel;
+            var referenceConstraints = engine.MathModel.ReferenceModel;
+
+            visualization
+                .AddNextPlot("Reference - Training")
+                .AddPoints(positiveTrainingPoints, OxyColors.Green)
+                .AddPoints(negativeTrainingPoints, OxyColors.DarkRed)
+                .AddConstraints(referenceConstraints, OxyPalettes.Rainbow);
+
+            visualization
+                .AddNextPlot("Synthesized - Training")
+                .AddPoints(positiveTrainingPoints, OxyColors.Green)
+                .AddPoints(negativeTrainingPoints, OxyColors.DarkRed)
+                .AddConstraints(synthesizedConstraints, OxyPalettes.Rainbow);
+
+            if (experimentParameters.UseDataNormalization)
+            {
+                var normalizedPositiveTrainingPoints = 
+                    engine.NormalizedTrainingPoints.Where(tp => tp.ClassificationType == ClassificationType.Positive).ToList();
+                var normalizedNegativeTrainingPoints = 
+                    engine.NormalizedTrainingPoints.Where(tp => tp.ClassificationType == ClassificationType.Negative).ToList();
+                var normalizedSynthesizedConstraints = engine.NormalizedSynthesizedConstraints;
+
+                visualization
+                    .AddNextPlot("Synthesized - Training [Normalized]")
+                    .AddPoints(normalizedPositiveTrainingPoints, OxyColors.Green)
+                    .AddPoints(normalizedNegativeTrainingPoints, OxyColors.DarkRed)
+                    .AddConstraints(normalizedSynthesizedConstraints, OxyPalettes.Rainbow);
+
+                if (experimentParameters.TrackEvolutionSteps)
+                {
+                    var normalizedEvolutionSteps = engine.NormalizedEvolutionSteps;
+
+                    visualization
+                        .AddNextPlot("Evolution steps [Normalized]")
+                        .AddPoints(normalizedPositiveTrainingPoints, OxyColors.Green)
+                        .AddPoints(normalizedNegativeTrainingPoints, OxyColors.DarkRed)
+                        .AddEvolutionSteps(normalizedEvolutionSteps, numberOfEvolutionStepsToShow);
+                }                
+            }
+
+            if (experimentParameters.TrackEvolutionSteps)
+            {
+                var evolutionSteps = engine.EvolutionSteps;
+
+                visualization
+                    .AddNextPlot("Evolution steps")
+                    .AddPoints(positiveTrainingPoints, OxyColors.Green)
+                    .AddPoints(negativeTrainingPoints, OxyColors.DarkRed)
+                    .AddEvolutionSteps(evolutionSteps, numberOfEvolutionStepsToShow);
+            }
+
+            visualization
+                .AddNextPlot("Reference - Test")
+                .AddPoints(positiveTestPoints, OxyColors.Green)
+                .AddPoints(negativeTestPoints, OxyColors.DarkRed)
+                .AddConstraints(referenceConstraints, OxyPalettes.Rainbow);
+
+            visualization
+                .AddNextPlot("Synthesized - Test")
+                .AddPoints(positiveTestPoints, OxyColors.Green)
+                .AddPoints(negativeTestPoints, OxyColors.DarkRed)
+                .AddConstraints(synthesizedConstraints, OxyPalettes.Rainbow);
+
+            return visualization;
+        }
     }
 }

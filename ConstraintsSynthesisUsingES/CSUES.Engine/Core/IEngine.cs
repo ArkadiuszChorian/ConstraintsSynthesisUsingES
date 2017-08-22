@@ -12,7 +12,10 @@ namespace CSUES.Engine.Core
         ExperimentParameters Parameters { get; set; }      
         Statistics Statistics { get; }
         MathModel MathModel { get; }
-        IList<IList<Constraint>> EvolutionSteps { get; }
+        IList<IList<Constraint>> EvolutionSteps { get; }       
+        IList<Point> NormalizedTrainingPoints { get; }
+        IList<Constraint> NormalizedSynthesizedConstraints { get; }
+        IList<IList<Constraint>> NormalizedEvolutionSteps { get; }
 
         MathModel SynthesizeModel(Point[] trainingPoints);
         Statistics EvaluateModel(Point[] testPoints);

@@ -9,12 +9,10 @@ namespace CSUES.WinApplication
 {
     public static class Extensions
     {
-        private const int MaximumNumberOfPointsOnPlot = 10000;
-
-        public static IList<Point> Reduce(this IList<Point> points)
+        public static IList<Point> Reduce(this IList<Point> points, int maximumNumberOfPoints = 10000)
         {
-            if (points.Count > MaximumNumberOfPointsOnPlot)
-                points = points.Take(MaximumNumberOfPointsOnPlot).ToList();
+            if (points.Count > maximumNumberOfPoints)
+                points = points.Take(maximumNumberOfPoints).ToList();
 
             return points;
         }

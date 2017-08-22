@@ -7,7 +7,7 @@ using System.Windows.Forms;
 using CSUES.Engine.Enums;
 using CSUES.Engine.Models;
 using CSUES.Engine.Models.Constraints;
-using CSUES.Engine.Utils;
+using ES.Core.Utils;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
@@ -144,6 +144,11 @@ namespace CSUES.WinApplication
             return this;
         }
 
+        public Visualization AddNextPlot(string title = "Plot")
+        {
+            return AddNextPlot(title, _plotWidth, _plotHeight, _yAxisMin, _yAxisMax, _xAxisMin, _xAxisMax);
+        }
+
         public Visualization AddPoints(IEnumerable<Point> points, OxyColor color, MarkerType markerType = MarkerType.Circle, double pointSize = 3)
         {
             var plot = Plots.Last();
@@ -213,6 +218,23 @@ namespace CSUES.WinApplication
                 }
 
                 plot.Model.Series.Add(series);
+            }
+
+            return this;
+        }
+
+
+        public Visualization AddEvolutionSteps(IList<IList<Constraint>> evolutionSteps, int numberOfSteps)
+        {
+            var stepIncrement = evolutionSteps.Count / numberOfSteps;
+            var j = 0;
+
+            for (var i = 0; i < numberOfSteps * stepIncrement; i += stepIncrement)
+            {
+                if (i > evolutionSteps.Count) break;
+
+                var color = OxyColor.FromRgb(50, 50, (byte)(byte.MaxValue / numberOfSteps * j++));
+                AddConstraints(evolutionSteps[i], null, color);
             }
 
             return this;

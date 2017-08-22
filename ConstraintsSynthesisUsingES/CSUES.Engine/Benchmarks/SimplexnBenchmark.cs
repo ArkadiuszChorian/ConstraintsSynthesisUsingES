@@ -6,6 +6,7 @@ using CSUES.Engine.Models;
 using CSUES.Engine.Models.Constraints;
 using CSUES.Engine.Models.Terms;
 using CSUES.Engine.Utils;
+using ES.Core.Utils;
 
 namespace CSUES.Engine.Benchmarks
 {

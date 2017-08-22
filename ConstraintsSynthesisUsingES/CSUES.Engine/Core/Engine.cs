@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Accord.Statistics;
-using Accord.Statistics.Distributions.Univariate;
 using CSUES.Engine.Benchmarks;
 using CSUES.Engine.Enums;
 using CSUES.Engine.Measurement;
@@ -36,6 +34,7 @@ namespace CSUES.Engine.Core
             _pointsNormalizer = pointsNormalizer;
             Statistics = new Statistics();
             EvolutionSteps = new List<IList<Constraint>>();
+            NormalizedEvolutionSteps = new List<IList<Constraint>>();
 
             MersenneTwister.Initialize(experimentParameters.Seed);
 
@@ -59,14 +58,20 @@ namespace CSUES.Engine.Core
         public Statistics Statistics { get; }
         public MathModel MathModel { get; private set; }        
         public IList<IList<Constraint>> EvolutionSteps { get; }
-        
+        public IList<Point> NormalizedTrainingPoints { get; set; }
+        public IList<Constraint> NormalizedSynthesizedConstraints { get; set; }
+        public IList<IList<Constraint>> NormalizedEvolutionSteps { get; }
+
         public MathModel SynthesizeModel(Point[] trainingPoints)
         {
             var means = trainingPoints.Means();
             var standardDeviations = trainingPoints.StandardDeviations(means);
 
             if (Parameters.UseDataNormalization)
+            {
                 trainingPoints = _pointsNormalizer.ApplyProcessing(trainingPoints);
+                NormalizedTrainingPoints = trainingPoints.DeepCopyByExpressionTree();
+            }
 
             var evolutionEnginesFactory = new EnginesFactory();
             var evolutionEngine = evolutionEnginesFactory.Create(Parameters.EvolutionParameters);
@@ -81,6 +86,7 @@ namespace CSUES.Engine.Core
 
             if (Parameters.UseDataNormalization)
             {
+                NormalizedSynthesizedConstraints = synthesizedConstraints.DeepCopyByExpressionTree();
                 _constaintsDenormalizer = new StandardScoreConstraintsDenormalizer(means, standardDeviations);
                 synthesizedConstraints = _constaintsDenormalizer.ApplyProcessing(synthesizedConstraints);
             }
@@ -91,10 +97,13 @@ namespace CSUES.Engine.Core
 
                 foreach (var evolutionStepsAsSolution in evolutionStepsAsSolutions)
                 {
-                    var evolutionStep = _constraintsBuilder.BuildConstraints(evolutionStepsAsSolution);
+                    var evolutionStep = _constraintsBuilder.BuildConstraints(evolutionStepsAsSolution);                   
 
                     if (Parameters.UseDataNormalization)
-                        evolutionStep = _constaintsDenormalizer.ApplyProcessing(evolutionStep);
+                    {
+                        NormalizedEvolutionSteps.Add(evolutionStep.DeepCopyByExpressionTree());
+                        evolutionStep = _constaintsDenormalizer.ApplyProcessing(evolutionStep);                        
+                    }
 
                     EvolutionSteps.Add(evolutionStep);
                 }

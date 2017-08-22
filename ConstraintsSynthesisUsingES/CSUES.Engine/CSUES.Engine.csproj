@@ -105,7 +105,6 @@
     <Compile Include="PrePostProcessing\StandardScorePointsDenormalizer.cs" />
     <Compile Include="PrePostProcessing\StandardScorePointsNormalizer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utils\DeepCopyByExpressionTrees.cs" />
     <Compile Include="Utils\Defaults.cs" />
     <Compile Include="Utils\Extensions.cs" />
   </ItemGroup>
