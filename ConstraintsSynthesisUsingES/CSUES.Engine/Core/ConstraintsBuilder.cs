@@ -24,7 +24,7 @@ namespace CSUES.Engine.Core
                 var terms = referenceConstraints.First().Terms.Where(term => term.Type == TermType.Linear).ToArray();
 
                 for (var i = 0; i < _constraintsModel.Length; i++)
-                    _constraintsModel[i] = new LinearConstraint(terms, 0);
+                    _constraintsModel[i] = new LinearConstraint(terms.DeepCopyByExpressionTree(), 0);
             }            
         }
 
@@ -37,10 +37,10 @@ namespace CSUES.Engine.Core
             foreach (var constraint in constraints)
             {
                 var numberOfTerms = constraint.Terms.Length;
-                var terms = constraint.Terms;
+                //var terms = constraint.Terms;
 
-                for (var i = 0; i < numberOfTerms; i++)
-                    terms[i].Coefficient = coefficients[index++];
+                for (var j = 0; j < numberOfTerms; j++)
+                    constraint.Terms[j].Coefficient = coefficients[index++];
 
                 constraint.LimitingValue = coefficients[index++];
             }

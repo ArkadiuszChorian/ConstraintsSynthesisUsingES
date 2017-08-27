@@ -55,6 +55,9 @@ namespace ES.Core.Engine
 
             BasePopulation = PopulationGenerator.GeneratePopulation(Parameters);
 
+            var bestSolution = BasePopulation.First();
+            var numberOfGenerationBestSolutionTakenFrom = 0;
+
             for (var i = 0; i < offspringPopulationSize; i++)
                 OffspringPopulation[i] = SolutionsFactory.Create(Parameters);            
             
@@ -69,6 +72,11 @@ namespace ES.Core.Engine
 
                 Evolve(evaluator);
 
+                if (bestSolution.FitnessScore < BasePopulation.First().FitnessScore)
+                {
+                    bestSolution = BasePopulation.First();
+                    numberOfGenerationBestSolutionTakenFrom = i;
+                }
                 //MutationRuleSupervisor.EnsureRuleFullfillment(BasePopulation);
 
                 if (Parameters.TrackEvolutionSteps)
@@ -78,15 +86,27 @@ namespace ES.Core.Engine
             Console.WriteLine("###########################################################################");
             Console.WriteLine("###########################################################################");
             Console.WriteLine("###########################################################################");
-            Console.WriteLine(nameof(MutationRuleSupervisor.NumberOfHigheringScalings) + " = " + MutationRuleSupervisor.NumberOfHigheringScalings);
-            Console.WriteLine(nameof(MutationRuleSupervisor.NumberOfLoweringScalings) + " = " + MutationRuleSupervisor.NumberOfLoweringScalings);
+
+            Console.WriteLine("Best solution taken from generation " + numberOfGenerationBestSolutionTakenFrom);
+
+            Console.WriteLine("###########################################################################");
+                        
             Console.Write("Best solution stdDevs = [");
+            foreach (var stdDeviationsCoefficient in bestSolution.StdDeviationsCoefficients)
+            {
+                Console.Write(stdDeviationsCoefficient + ", ");
+            }
+            Console.WriteLine("]\n"); 
+                      
+            Console.WriteLine("###########################################################################");
+
+            Console.Write("Last evolved best solution stdDevs = [");
             foreach (var stdDeviationsCoefficient in BasePopulation.First().StdDeviationsCoefficients)
             {
                 Console.Write(stdDeviationsCoefficient + ", ");
             }
             Console.WriteLine("]\n");
-            //Console.WriteLine("Example stdDev = " + BasePopulation.First().StdDeviationsCoefficients.First());
+
             Console.WriteLine("###########################################################################");
             Console.WriteLine("###########################################################################");
             Console.WriteLine("###########################################################################");
@@ -99,7 +119,8 @@ namespace ES.Core.Engine
 
             Stoper.Reset();
             
-            return BasePopulation.First();
+            //return BasePopulation.First();
+            return bestSolution;
         }
 
         protected abstract void Evolve(IEvaluator evaluator);

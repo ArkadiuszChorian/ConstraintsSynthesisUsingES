@@ -73,7 +73,9 @@ namespace CSUES.Engine.Models
 
             //NumberOfConstraintsCoefficients = numberOfDimensions * AllowedTermsTypes.Count + 1;
 
-            NumberOfConstraintsCoefficients = allowQuadraticTerms ? numberOfDimensions * 2 + 1 : numberOfDimensions + 1;
+            NumberOfConstraintsCoefficients =  typeOfBenchmark == BenchmarkType.Balln && allowQuadraticTerms
+                ? numberOfDimensions * 2 + 1 
+                : numberOfDimensions + 1;
 
             //MaximumNumberOfConstraints = typeOfBenchmark == BenchmarkType.Other
             //    // ReSharper disable once PossibleNullReferenceException : It is checked before

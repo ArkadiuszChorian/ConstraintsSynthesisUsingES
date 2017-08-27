@@ -101,7 +101,7 @@ namespace CSUES.ConsoleApplication
 
                 globalLearningRate: Arguments.Get(nameof(EvolutionParameters.GlobalLearningRate), EvolutionDefaults.GlobalLearningRate(numberOfDimensions)),
                 individualLearningRate: Arguments.Get(nameof(EvolutionParameters.IndividualLearningRate), EvolutionDefaults.IndividualLearningRate(numberOfDimensions)),
-                stepThreshold: Arguments.Get(nameof(EvolutionParameters.StepThreshold), EvolutionDefaults.StepThreshold),
+                stepThreshold: Arguments.Get(nameof(EvolutionParameters.StepThreshold), 0.0001),
                 rotationAngle: Arguments.Get(nameof(EvolutionParameters.RotationAngle), EvolutionDefaults.RotationAngle),
                 typeOfMutation: Arguments.Get(nameof(EvolutionParameters.TypeOfMutation), EvolutionDefaults.TypeOfMutation),
 
