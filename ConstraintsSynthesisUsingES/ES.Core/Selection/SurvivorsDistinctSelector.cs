@@ -1,6 +1,7 @@
 ﻿using System;
 using ES.Core.Models;
 using ES.Core.Models.Solutions;
+using ES.Core.Utils;
 
 namespace ES.Core.Selection
 {

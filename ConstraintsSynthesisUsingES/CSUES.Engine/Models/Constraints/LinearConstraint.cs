@@ -9,7 +9,7 @@ namespace CSUES.Engine.Models.Constraints
         {
         }
 
-        public override bool IsSatisfyingConstraint(Point point)
+        public override double GetLeftSideValue(Point point)
         {
             var numberOfTerms = Terms.Length;
             var constraintSum = 0.0;
@@ -17,7 +17,7 @@ namespace CSUES.Engine.Models.Constraints
             for (var i = 0; i < numberOfTerms; i++)
                 constraintSum += Terms[i].Coefficient * Terms[i].Value(point.Coordinates[i]);
 
-            return constraintSum <= LimitingValue;
+            return constraintSum;
         }
     }
 }

@@ -7,6 +7,8 @@ namespace CSUES.Engine.Models
     {
         public int NumberOfConstraints { get; set; }
         public double MeanAngle { get; set; }
+        //public double BallCenterDistanceDifference { get; set; }
+        //public double BallRadiusDifference { get; set; }
         public double JaccardIndex => (double) TruePositives / (TruePositives + FalsePositives + FalseNegatives);
 
         public int TruePositives { get; set; }

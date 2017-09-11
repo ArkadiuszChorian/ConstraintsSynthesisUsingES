@@ -23,6 +23,7 @@ namespace CSUES.Engine.Models
             bool useRedundantConstraintsRemoving = Defaults.UseRedundantConstraintsRemoving,
             bool useDataNormalization = Defaults.UseDataNormalization,
             bool allowQuadraticTerms = Defaults.AllowQuadraticTerms,
+            bool useSeeding = Defaults.UseSeeding,
 
             ISet<TermType> allowedTermsTypes = default(ISet<TermType>),
             BenchmarkType typeOfBenchmark = Defaults.TypeOfBenchmark,
@@ -82,8 +83,9 @@ namespace CSUES.Engine.Models
             //    ? referenceConstraints.Count
             //    : GetMaximumNumberOfConstraints(numberOfDimensions, typeOfBenchmark, allowQuadraticTerms);
 
-            MaximumNumberOfConstraints = GetMaximumNumberOfConstraints(numberOfDimensions, typeOfBenchmark,
-                allowQuadraticTerms);
+            //MaximumNumberOfConstraints = GetMaximumNumberOfConstraints(numberOfDimensions, typeOfBenchmark,
+            //    allowQuadraticTerms);
+            MaximumNumberOfConstraints = numberOfDimensions * numberOfDimensions;
 
             var objectVectorSize = NumberOfConstraintsCoefficients * MaximumNumberOfConstraints;          
 
@@ -99,6 +101,7 @@ namespace CSUES.Engine.Models
             UseRedundantConstraintsRemoving = useRedundantConstraintsRemoving;
             UseDataNormalization = useDataNormalization;
             AllowQuadraticTerms = allowQuadraticTerms;
+            UseSeeding = useSeeding;
 
             TypeOfBenchmark = typeOfBenchmark;
             BallnBoundaryValue = ballnBoundaryValue;
@@ -125,6 +128,7 @@ namespace CSUES.Engine.Models
         public bool UseRedundantConstraintsRemoving { get; set; }
         public bool UseDataNormalization { get; set; }
         public bool AllowQuadraticTerms { get; set; }
+        public bool UseSeeding { get; set; }
 
 
         //Benchmark parameters        
@@ -144,25 +148,25 @@ namespace CSUES.Engine.Models
         public double DefaultDomainUpperLimit { get; set; }
         public int MaxNumberOfPointsInSingleArray { get; set; }
 
-        private static int GetMaximumNumberOfConstraints(int numberOfDimensions, BenchmarkType benchmarkType, bool allowQuadraticTerms)
-        {
-            //switch (benchmarkType)
-            //{
-            //    case BenchmarkType.Balln:
-            //        return allowQuadraticTerms ? 1 : numberOfDimensions * numberOfDimensions;
-            //    case BenchmarkType.Cuben:
-            //        return numberOfDimensions * 2;
-            //    case BenchmarkType.Simplexn:
-            //        return 4 * numberOfDimensions - 6 + 1;
-            //    default:
-            //        throw new ArgumentOutOfRangeException(nameof(benchmarkType), benchmarkType, null);
-            //}
+        //private static int GetMaximumNumberOfConstraints(int numberOfDimensions, BenchmarkType benchmarkType, bool allowQuadraticTerms)
+        //{
+        //    //switch (benchmarkType)
+        //    //{
+        //    //    case BenchmarkType.Balln:
+        //    //        return allowQuadraticTerms ? 1 : numberOfDimensions * numberOfDimensions;
+        //    //    case BenchmarkType.Cuben:
+        //    //        return numberOfDimensions * 2;
+        //    //    case BenchmarkType.Simplexn:
+        //    //        return 4 * numberOfDimensions - 6 + 1;
+        //    //    default:
+        //    //        throw new ArgumentOutOfRangeException(nameof(benchmarkType), benchmarkType, null);
+        //    //}
 
-            if (benchmarkType == BenchmarkType.Balln && allowQuadraticTerms)
-                return 2 * numberOfDimensions * 2 * numberOfDimensions;
+        //    if (benchmarkType == BenchmarkType.Balln && allowQuadraticTerms)
+        //        return 2 * numberOfDimensions * 2 * numberOfDimensions;
 
-            return numberOfDimensions * numberOfDimensions;
-        }
+        //    return numberOfDimensions * numberOfDimensions;
+        //}
     }
 }
 

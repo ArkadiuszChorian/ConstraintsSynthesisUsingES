@@ -22,14 +22,26 @@ namespace CSUES.Engine.Models.Constraints
             return Terms.Select(t => t.Coefficient).ToArray();
         }
 
-        public virtual bool IsSatisfyingConstraint(Point point)
+        public double[] GetAllCoefficients()
+        {
+            var termsCoefficients = GetTermsCoefficients().ToList();
+            termsCoefficients.Add(LimitingValue);
+            return termsCoefficients.ToArray();
+        }
+
+        public virtual double GetLeftSideValue(Point point)
         {
             var constraintSum = 0.0;
 
             foreach (var term in Terms)
                 constraintSum += term.Coefficient * term.Value(point.Coordinates);
 
-            return constraintSum <= LimitingValue;
+            return constraintSum;
+        }
+
+        public bool IsSatisfyingConstraint(Point point)
+        {           
+            return GetLeftSideValue(point) <= LimitingValue;
         }
     }
 }

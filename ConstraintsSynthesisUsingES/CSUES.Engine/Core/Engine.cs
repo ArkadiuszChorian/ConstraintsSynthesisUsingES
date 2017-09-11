@@ -10,7 +10,11 @@ using CSUES.Engine.Models.Constraints;
 using CSUES.Engine.PrePostProcessing;
 using CSUES.Engine.Utils;
 using ES.Core.Factories;
+using ES.Core.Models;
+using ES.Core.Models.Solutions;
+using ES.Core.PopulationGeneration;
 using ES.Core.Utils;
+using Statistics = CSUES.Engine.Models.Statistics;
 
 namespace CSUES.Engine.Core
 {
@@ -61,6 +65,7 @@ namespace CSUES.Engine.Core
         public IList<Point> NormalizedTrainingPoints { get; set; }
         public IList<Constraint> NormalizedSynthesizedConstraints { get; set; }
         public IList<IList<Constraint>> NormalizedEvolutionSteps { get; }
+        public IDictionary<int, EvolutionStep> CoreEvolutionSteps { get; set; }
 
         public MathModel SynthesizeModel(Point[] trainingPoints)
         {
@@ -68,7 +73,7 @@ namespace CSUES.Engine.Core
             var standardDeviations = trainingPoints.StandardDeviations(means);
 
             if (Parameters.UseDataNormalization)
-            {
+            {               
                 trainingPoints = _pointsNormalizer.ApplyProcessing(trainingPoints);
                 NormalizedTrainingPoints = trainingPoints.DeepCopyByExpressionTree();
             }
@@ -79,7 +84,44 @@ namespace CSUES.Engine.Core
             var negativeTrainingPoints = trainingPoints.Where(tp => tp.ClassificationType == ClassificationType.Negative).ToArray();
             var evaluator = new Evaluator(positiveTrainingPoints, negativeTrainingPoints, _constraintsBuilder);
 
-            var bestSolution = evolutionEngine.RunEvolution(evaluator);
+            //HACK TODO
+
+            //var numberOfConstraintsCoefficients = Parameters.MaximumNumberOfConstraints * (Parameters.NumberOfDimensions + 1);
+            //var constraintsCoefficients = new List<double>(numberOfConstraintsCoefficients);
+            //var benchmarkConstraintsIndexer = 0;
+
+            //for (var i = 0; i < Parameters.MaximumNumberOfConstraints; i++)
+            //{
+            //    if (benchmarkConstraintsIndexer >= Benchmark.Constraints.Length)
+            //        benchmarkConstraintsIndexer = 0;
+                
+            //    constraintsCoefficients.AddRange(Benchmark.Constraints[benchmarkConstraintsIndexer].Terms.Select(t => t.Coefficient));
+            //    constraintsCoefficients.Add(Benchmark.Constraints[benchmarkConstraintsIndexer++].LimitingValue);
+            //}
+
+            //PopulationGeneratorBase.ObjectCoefficients = constraintsCoefficients.ToArray();
+
+            //
+            
+            Solution bestSolution;
+
+            if (Parameters.UseSeeding)
+            {
+                var singleConstraintModel = Parameters.TypeOfBenchmark == BenchmarkType.Balln && Parameters.AllowQuadraticTerms
+                    ? Benchmark.Constraints.Take(1).DeepCopyByExpressionTree().ToArray()
+                    : new[] { new LinearConstraint(Benchmark.Constraints.First().Terms.Where(t => t.Type == TermType.Linear).ToArray(), 0) };
+                var singleConstraintBuilder = new ConstraintsBuilder(singleConstraintModel);
+                var singleConstraintEvaluator = new Evaluator(positiveTrainingPoints, negativeTrainingPoints, singleConstraintBuilder);
+                var seedingProcessor = new SeedingProcessor(singleConstraintEvaluator, _constraintsBuilder, positiveTrainingPoints);
+
+                bestSolution = evolutionEngine.RunEvolution(evaluator, seedingProcessor);
+            }
+            else
+            {
+                bestSolution = evolutionEngine.RunEvolution(evaluator);
+            }
+
+            CoreEvolutionSteps = evolutionEngine.EvolutionSteps;
 
             Statistics.EvolutionStatistics = evolutionEngine.Statistics;
             var synthesizedConstraints = _constraintsBuilder.BuildConstraints(bestSolution);
@@ -93,7 +135,7 @@ namespace CSUES.Engine.Core
 
             if (Parameters.TrackEvolutionSteps)
             {
-                var evolutionStepsAsSolutions = evolutionEngine.EvolutionSteps.ToList();
+                var evolutionStepsAsSolutions = evolutionEngine.EvolutionStepsSimple.ToList();
 
                 foreach (var evolutionStepsAsSolution in evolutionStepsAsSolutions)
                 {
@@ -110,11 +152,15 @@ namespace CSUES.Engine.Core
             }
 
             if (Parameters.UseRedundantConstraintsRemoving)
+            {
+                _stoper.Restart();
                 synthesizedConstraints = _redundantConstraintsRemover.ApplyProcessing(synthesizedConstraints);
+                _stoper.Stop();
+                Statistics.RedundantConstraintsRemovingTime = _stoper.Elapsed;
+            }               
 
             MathModel = new MathModel(synthesizedConstraints, Benchmark);
             Statistics.NumberOfConstraints = synthesizedConstraints.Length;
-
             Statistics.MeanAngle = Parameters.TypeOfBenchmark != BenchmarkType.Balln ? _meanAngleCalculator.Calculate(synthesizedConstraints, Benchmark.Constraints) : double.NaN;
             
             return MathModel;

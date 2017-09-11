@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Threading;
 using CSUES.Common;
 using CSUES.Engine.Enums;
 using CSUES.Engine.Models;
@@ -12,14 +15,12 @@ using Defaults = CSUES.Engine.Utils.Defaults;
 namespace CSUES.SlurmRunner
 {
     class Program
-    {
-        //private const string ScriptsDirPath = "../Scripts/";
-        private const string ScriptsDirPath = "../../../Scripts/";
-        //private const string DatabaseDirPath = "../Database/";
-        private const string DatabaseDirPath = "../../../Database/";
+    {       
         private const string BatchPath = "/bin/sh";
-        //private static string MainScriptFilename = "../main.sh";
-        private static readonly string MainScriptFilename = Path.GetFullPath("../../../main.sh");
+        private static readonly bool IsUnix = Environment.OSVersion.Platform == PlatformID.Unix;
+        private static readonly string ScriptsDirPath = IsUnix ? "../Scripts/" : "../../../Scripts/";
+        private static readonly string DatabaseDirPath = IsUnix ? "../Database/" : "../../../Database/";
+        private static readonly string MainScriptFilename = Path.GetFullPath(IsUnix ? "../main.sh" : "../../../main.sh");
         private static readonly string ConsoleAppPath = Path.GetFullPath("../ConsoleApp/CSUES.ConsoleApplication.exe");
         private static readonly List<string> ScriptsFullPaths = new List<string>();
 
@@ -27,32 +28,37 @@ namespace CSUES.SlurmRunner
         private static readonly int[] OffspringPopulationSizes = { 1000, 500, 200, 100 };
         private static readonly BenchmarkType[] BenchmarkTypes = { BenchmarkType.Simplexn, BenchmarkType.Cuben, BenchmarkType.Balln };
         private static readonly int[] NumbersOfPositivePoints = { 500 };
+        private static readonly bool[] UseDataNormalization = { true, false };
+        private static readonly bool[] UseSeeding = { true, false };
 
         static void Main(string[] args)
         {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+
             var path = Path.GetFullPath(DatabaseDirPath + DatabaseContext.DbFilename);
             var database = new DatabaseContext(path);           
 
             for (var seed = 1; seed <= 30; seed++){
-            for (var numberOfDimensions = 3; numberOfDimensions <= 7; numberOfDimensions++){                                          
+            for (var numberOfDimensions = 2; numberOfDimensions <= 5; numberOfDimensions++){                                          
             for (var i = 0; i < NumbersOfGenerations.Length; i++){                                          
             for (var j = 0; j < OffspringPopulationSizes.Length; j++){                                          
             for (var k = 0; k < BenchmarkTypes.Length; k++){                                          
             for (var l = 0; l < NumbersOfPositivePoints.Length; l++){              
+            for (var m = 0; m < UseDataNormalization.Length; m++){              
+            for (var n = 0; n < UseSeeding.Length; n++){              
                                                                                 
                 var experimentParameters = GetExperimentParameters(numberOfDimensions, OffspringPopulationSizes[j],
-                    NumbersOfGenerations[i], seed, BenchmarkTypes[k], false, NumbersOfPositivePoints[l],
-                    NumbersOfPositivePoints[l]);
+                    NumbersOfGenerations[i], seed, BenchmarkTypes[k], false, NumbersOfPositivePoints[n], UseDataNormalization[m], UseSeeding[n]);
 
-                if (database.Exists(experimentParameters) == false)
+                if (database.ExperimentShouldBePrepared(experimentParameters))
                     SaveSingleScript(experimentParameters);
 
                 if (BenchmarkTypes[k] == BenchmarkType.Balln)
                     experimentParameters.AllowQuadraticTerms = true;
 
-                if (database.Exists(experimentParameters) == false)
+                if (database.ExperimentShouldBePrepared(experimentParameters))
                     SaveSingleScript(experimentParameters);                                                                 
-            }}}}}}
+            }}}}}}}}
 
             var sb = new StringBuilder();
 
@@ -65,7 +71,7 @@ namespace CSUES.SlurmRunner
             Process.Start(BatchPath, MainScriptFilename);
         }
 
-        private static ExperimentParameters GetExperimentParameters(int numberOfDimensions, int offspringPopulationSize, int numberOfGenerations, int seed, BenchmarkType typeOfBenchmark, bool allowQuadraticTerms, int numberOfPositivePoints, int numberOfNegativePoints)
+        private static ExperimentParameters GetExperimentParameters(int numberOfDimensions, int offspringPopulationSize, int numberOfGenerations, int seed, BenchmarkType typeOfBenchmark, bool allowQuadraticTerms, int numberOfPositivePoints, bool useDataNormalization, bool useSeeding)
         {
             return new ExperimentParameters(
                 numberOfDimensions: numberOfDimensions,
@@ -75,10 +81,11 @@ namespace CSUES.SlurmRunner
                 seed: seed,
                 typeOfBenchmark: typeOfBenchmark,
 
-                trackEvolutionSteps: false,
+                trackEvolutionSteps: true,
                 useRedundantConstraintsRemoving: true,
-                useDataNormalization: true,
+                useDataNormalization: useDataNormalization,
                 allowQuadraticTerms: allowQuadraticTerms,
+                useSeeding: useSeeding,
 
                 ballnBoundaryValue: 2.7,
                 cubenBoundaryValue: 2.7,
@@ -87,7 +94,7 @@ namespace CSUES.SlurmRunner
                 numberOfDomainSamples: 100000,
                 numberOfTestPoints: 100000,
                 numberOfPositivePoints: numberOfPositivePoints,
-                numberOfNegativePoints: numberOfNegativePoints,
+                numberOfNegativePoints: numberOfPositivePoints * numberOfDimensions * numberOfDimensions,
                 maxNumberOfPointsInSingleArray: 800000,
 
                 globalLearningRate: EvolutionDefaults.GlobalLearningRate(numberOfDimensions),
@@ -112,18 +119,9 @@ namespace CSUES.SlurmRunner
 
         private static void SaveSingleScript(ExperimentParameters experimentParameters)
         {
-            var sb = new StringBuilder();
             var arguments = experimentParameters.ToConsoleArgumentsString();
-
-            sb.Append(experimentParameters.TypeOfBenchmark).Append("_");
-            sb.Append(experimentParameters.Seed).Append("_");
-            sb.Append(experimentParameters.NumberOfDimensions).Append("_");
-            sb.Append(experimentParameters.EvolutionParameters.NumberOfGenerations).Append("_");
-            sb.Append(experimentParameters.EvolutionParameters.OffspringPopulationSize).Append("_");
-            sb.Append(experimentParameters.NumberOfPositivePoints).Append("_");
-            sb.Append(experimentParameters.NumberOfNegativePoints).Append("_");
-            sb.Append(experimentParameters.AllowQuadraticTerms);
-            var singleScriptPath = Path.GetFullPath(ScriptsDirPath + sb.Append(".sh"));
+            var filename = experimentParameters.GetFileName(".sh");
+            var singleScriptPath = Path.GetFullPath(ScriptsDirPath + filename);
 
             ScriptsFullPaths.Add(singleScriptPath);
 
@@ -134,8 +132,8 @@ namespace CSUES.SlurmRunner
         {
             return "#!/bin/bash\n" +
                    "#SBATCH -p lab-43-student,lab-44-student,lab-ci-student\n\n" +
-                   "export LD_LIBRARY_PATH=~/gurobi751/linux64/lib/\n" +
-                   "export GRB_LICENSE_FILE=~/gurobi-$(hostname).lic\n\n" +
+                   "export LD_LIBRARY_PATH=~/mgr/gurobi751/linux64/lib/\n" +
+                   "export GRB_LICENSE_FILE=~/mgr/Licenses/gurobi-$(hostname).lic\n\n" +
                    $"srun mono {ConsoleAppPath} {arguments}";
         }
     }

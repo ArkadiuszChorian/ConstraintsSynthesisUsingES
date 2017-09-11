@@ -17,7 +17,7 @@ namespace ES.Core.Selection
         {
             var parentsLength = parentSolutions.Length;
             var offspringLength = offspringSolutions.Length;
-            var union = new int[parentsLength + offspringLength];
+            var union = new Solution[parentsLength + offspringLength];
             var survivors = new Solution[_basePopulationSize];
 
             Array.Copy(parentSolutions, union, parentsLength);

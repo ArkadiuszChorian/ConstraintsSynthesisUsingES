@@ -14,7 +14,9 @@ namespace ES.Core.Selection
 
         public override Solution Select(Solution[] parentSolutions)
         {
-            return parentSolutions[_randomGenerator.Next(parentSolutions.Length)].DeepCopyByExpressionTree();
+            var randomIndex = _randomGenerator.Next(parentSolutions.Length);
+            LastSelectedParentIndex = randomIndex;
+            return parentSolutions[randomIndex].DeepCopyByExpressionTree();
         }
     }
 }

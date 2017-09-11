@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Linq;
+using System.Threading;
 using CSUES.Engine.Models;
 using CSUES.Engine.Utils;
 using ES.Core.Models;
@@ -41,6 +41,10 @@ namespace CSUES.Engine.Core
                 if (constraints.IsSatisfyingConstraints(negativePoint))
                     numberOfNegativePointsSatisfyingConstraints++;
             }
+
+            //Console.Write($"Positive satisfying = {numberOfPositivePointsSatisfyingConstraints} ### ");
+            //Console.Write($"Negative satisfying = {numberOfNegativePointsSatisfyingConstraints}\n");
+            //Thread.Sleep(100);
 
             //TODO
             return (double)numberOfPositivePointsSatisfyingConstraints / (_positivePoints.Length + numberOfNegativePointsSatisfyingConstraints);

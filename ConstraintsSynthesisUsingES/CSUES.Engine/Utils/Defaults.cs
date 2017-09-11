@@ -13,6 +13,7 @@ namespace CSUES.Engine.Utils
         public const bool UseRedundantConstraintsRemoving = true;
         public const bool UseDataNormalization = true;       
         public const bool AllowQuadraticTerms = false;       
+        public const bool UseSeeding = true;       
         
         public const double BallnBoundaryValue = 2.7;
         public const double CubenBoundaryValue = 2.7;

@@ -11,17 +11,24 @@ namespace CSUES.Engine.Core
     {
         private readonly Constraint[] _constraintsModel;
 
+        public ConstraintsBuilder(Constraint[] referenceConstraints)
+        {
+            _constraintsModel = referenceConstraints;
+        }
+
         public ConstraintsBuilder(Constraint[] referenceConstraints, ExperimentParameters experimentParameters)
         {
-            if (experimentParameters.TypeOfBenchmark == BenchmarkType.Balln && experimentParameters.AllowQuadraticTerms
-                || experimentParameters.TypeOfBenchmark != BenchmarkType.Balln)
+            var singleReferenceConstraint = referenceConstraints.First();
+            _constraintsModel = new Constraint[experimentParameters.MaximumNumberOfConstraints];
+            
+            if (experimentParameters.TypeOfBenchmark == BenchmarkType.Balln && experimentParameters.AllowQuadraticTerms)
             {
-                _constraintsModel = referenceConstraints;
+                for (var i = 0; i < _constraintsModel.Length; i++)
+                    _constraintsModel[i] = new QuadraticConstraint(singleReferenceConstraint.Terms.DeepCopyByExpressionTree(), 0);
             }
             else
             {
-                _constraintsModel = new Constraint[experimentParameters.MaximumNumberOfConstraints];
-                var terms = referenceConstraints.First().Terms.Where(term => term.Type == TermType.Linear).ToArray();
+                var terms = singleReferenceConstraint.Terms.Where(term => term.Type == TermType.Linear).ToArray();
 
                 for (var i = 0; i < _constraintsModel.Length; i++)
                     _constraintsModel[i] = new LinearConstraint(terms.DeepCopyByExpressionTree(), 0);

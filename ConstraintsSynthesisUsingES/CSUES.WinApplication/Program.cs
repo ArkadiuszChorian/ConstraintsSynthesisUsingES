@@ -10,6 +10,7 @@ using CSUES.Engine.Measurement;
 using CSUES.Engine.Models;
 using CSUES.Engine.PointsGeneration;
 using ES.Core.Enums;
+using ES.Core.Utils;
 using OxyPlot;
 
 namespace CSUES.WinApplication
@@ -17,6 +18,8 @@ namespace CSUES.WinApplication
     class Program
     {
         private const int NumberOfEvolutionStepsToShow = 100;
+        private const int VisualDomainMin = -10000;
+        private const int VisualDomainMax = 10000;
         private static bool ShowNormalizaton = true;
         private static bool ShowEvolutionSteps = true;
         private static bool ShowReferenceModelOnTest = false;
@@ -25,14 +28,15 @@ namespace CSUES.WinApplication
             //Thread.CurrentThread.CurrentCulture = new CultureInfo("en-us");
             //CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("en-US");
             //Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
             var experimentParameters = new ExperimentParameters(
                 numberOfDimensions: 2,
                 basePopulationSize: 10,
                 offspringPopulationSize: 100,
                 numberOfGenerations: 100,
-                seed: new Random().Next(),
-                //seed: 1,
+                //seed: new Random().Next(),
+                seed: 1,
                 //seed: 1971749862,
                 //oneFifthRuleCheckInterval: 10,
                 //individualLearningRate: 0.1, //0.47287080450158792
@@ -42,14 +46,16 @@ namespace CSUES.WinApplication
                 typeOfRotationsRecombination: RecombinationType.Intermediate,
                 useRedundantConstraintsRemoving: true,
                 useDataNormalization: true,
-                allowQuadraticTerms: false,
+                allowQuadraticTerms: true,
                 useRecombination: false,
                 trackEvolutionSteps: true,
+                useSeeding: true,
                 numberOfParentsSolutionsToSelect: 5,
                 numberOfPositivePoints: 500,
                 numberOfNegativePoints: 1500,
                 //ballnBoundaryValue: 10,
-                typeOfBenchmark: BenchmarkType.Balln);
+                //simplexnBoundaryValue: 10,
+                typeOfBenchmark: BenchmarkType.Simplexn);
 
             var enginesFactory = new EnginesFactory();
 
@@ -80,7 +86,7 @@ namespace CSUES.WinApplication
             Console.WriteLine("==========================================");
             Console.WriteLine("=============== PARAMETERS ===============");
             Console.WriteLine("==========================================");
-            Console.WriteLine(experimentParameters.GetPrintableString());
+            Console.WriteLine(experimentParameters.ToPrintableString());
             Console.WriteLine();
             Console.WriteLine("==========================================");
             Console.WriteLine("============= REFERENCE MODEL ============");
@@ -95,12 +101,12 @@ namespace CSUES.WinApplication
             Console.WriteLine("==========================================");
             Console.WriteLine("=============== STATISTICS ===============");
             Console.WriteLine("==========================================");
-            Console.WriteLine(statistics.GetPrintableString());
+            Console.WriteLine(statistics.ToPrintableString());
             Console.WriteLine();
             Console.ReadKey();
         }
 
-        private static Visualization PrepareVisualisation(ExperimentParameters experimentParameters, IEngine engine, IList<Point> positiveTrainingPoints, IList<Point> negativeTrainingPoints, IList<Point> testPoints, int numberOfEvolutionStepsToShow = NumberOfEvolutionStepsToShow)
+        private static Visualization PrepareVisualisation(ExperimentParameters experimentParameters, IEngine engine, IList<Point> positiveTrainingPoints, IList<Point> negativeTrainingPoints, IList<Point> testPoints, int numberOfEvolutionStepsToShow = NumberOfEvolutionStepsToShow, int domainMin = VisualDomainMin, int domainMax = VisualDomainMax)
         {
             var visualization = new Visualization(experimentParameters.TypeOfBenchmark);
 
@@ -114,13 +120,13 @@ namespace CSUES.WinApplication
                 .AddNextPlot("Reference - Training")
                 .AddPoints(positiveTrainingPoints, OxyColors.Green)
                 .AddPoints(negativeTrainingPoints, OxyColors.DarkRed)
-                .AddConstraints(referenceConstraints, OxyPalettes.Rainbow);
+                .AddConstraints(referenceConstraints, OxyPalettes.Rainbow, xMin: domainMin, xMax: domainMax);
 
             visualization
                 .AddNextPlot("Synthesized - Training")
                 .AddPoints(positiveTrainingPoints, OxyColors.Green)
                 .AddPoints(negativeTrainingPoints, OxyColors.DarkRed)
-                .AddConstraints(synthesizedConstraints, OxyPalettes.Rainbow);
+                .AddConstraints(synthesizedConstraints, OxyPalettes.Rainbow, xMin: domainMin, xMax: domainMax);
 
             if (experimentParameters.UseDataNormalization && ShowNormalizaton)
             {

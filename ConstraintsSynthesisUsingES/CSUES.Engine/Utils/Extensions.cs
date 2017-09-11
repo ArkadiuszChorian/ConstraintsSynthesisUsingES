@@ -5,6 +5,9 @@ using System.Text;
 using CSUES.Engine.Enums;
 using CSUES.Engine.Models;
 using CSUES.Engine.Models.Constraints;
+using ES.Core.Models;
+using ES.Core.Utils;
+// ReSharper disable CompareOfFloatsByEqualityOperator
 
 namespace CSUES.Engine.Utils
 {
@@ -20,6 +23,24 @@ namespace CSUES.Engine.Utils
                     return false;
             }
 
+            //HACK TODO
+            //var partOfConstraintsCanBeNotSatisfied = 0.05;
+            //var maximumNumberOfNotSatisfiedConstraints = point.ClassificationType == ClassificationType.Positive 
+            //    ? (int)(partOfConstraintsCanBeNotSatisfied * constraints.Count) : 0;
+            //var numberOfNotSatisfiedConstraints = 0;
+
+            //for (var i = 0; i < length; i++)
+            //{
+            //    if (!constraints[i].IsSatisfyingConstraint(point))
+            //        numberOfNotSatisfiedConstraints++;
+
+            //    if (numberOfNotSatisfiedConstraints <= maximumNumberOfNotSatisfiedConstraints) continue;
+            //    //Console.WriteLine($"Not satisfied more than {MaximumNumberOfNotSatisfiedConstraints}");
+            //    return false;
+            //}
+            //
+            //Console.WriteLine($"Not satisfied = {numberOfNotSatisfiedConstraints}");
+
             return true;
         }
         
@@ -33,19 +54,29 @@ namespace CSUES.Engine.Utils
             {
                 sb.Append("\t");
                 sb.AppendFormat("c{0}: ", i);
-              
-                for (var j = 0; j < constraints[i].Terms.Length; j++)
-                {                    
-                    var term = constraints[i].Terms[j];
-                    
-                    if (term.Type == TermType.Linear)
-                        sb.AppendFormat("{0} x{1}", term.Coefficient, j);
-                    else
-                        sb.AppendFormat("{0} x{1} ^ {2}", term.Coefficient, j, 2);
 
-                    sb.Append(j == constraints[i].Terms.Length - 1 ? " <= " : " + ");
+                var quadraticTerms = constraints[i].Terms.Where(t => t.Type == TermType.Quadratic).ToArray();
+                var linearTerms = constraints[i].Terms.Where(t => t.Type == TermType.Linear).ToArray();
+
+                for (var j = 0; j < quadraticTerms.Length; j++)
+                {
+                    if (j != 0 && quadraticTerms[j].Coefficient != 0.0)
+                        sb.Append(" + ");
+
+                    if (quadraticTerms[j].Coefficient != 0.0)
+                        sb.AppendFormat("{0} x{1} ^ {2}", quadraticTerms[j].Coefficient, j, 2);
                 }
 
+                for (var j = 0; j < linearTerms.Length; j++)
+                {
+                    if ((quadraticTerms.Length != 0 || j != 0) && linearTerms[j].Coefficient != 0.0)
+                        sb.Append(" + ");
+
+                    if (linearTerms[j].Coefficient != 0.0)
+                        sb.AppendFormat("{0} x{1}", linearTerms[j].Coefficient, j);
+                }
+
+                sb.Append(" <= ");
                 sb.Append(constraints[i].LimitingValue);
                 sb.Append("\n");
             }
@@ -59,16 +90,16 @@ namespace CSUES.Engine.Utils
                 sb.Append("\n");
             }
 
-            sb.AppendLine("Generals");
-            sb.Append("\t");
+            //sb.AppendLine("Generals");
+            //sb.Append("\t");
 
-            for (var i = 0; i < domains.Count; i++)
-            {
-                sb.AppendFormat("x{0}", i);
-                sb.Append(i != domains.Count - 1 ? " " : string.Empty);
-            }
+            //for (var i = 0; i < domains.Count; i++)
+            //{
+            //    sb.AppendFormat("x{0}", i);
+            //    sb.Append(i != domains.Count - 1 ? " " : string.Empty);
+            //}
 
-            sb.Append("\n");
+            //sb.Append("\n");
             sb.Append("End");
 
             return sb.ToString();
@@ -124,6 +155,6 @@ namespace CSUES.Engine.Utils
         public static double[] Variances(this Point[] points)
         {
             return Variances(points, Means(points));
-        }
+        }        
     }
 }

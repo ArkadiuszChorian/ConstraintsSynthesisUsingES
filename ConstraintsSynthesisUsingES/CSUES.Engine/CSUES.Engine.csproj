@@ -63,6 +63,7 @@
     <Compile Include="Benchmarks\SimplexnBenchmark.cs" />
     <Compile Include="Core\ConstraintsBuilder.cs" />
     <Compile Include="Core\IConstraintsBuilder.cs" />
+    <Compile Include="Core\SeedingProcessor.cs" />
     <Compile Include="Enums\ConstraintType.cs" />
     <Compile Include="Measurement\IAngleCalculator.cs" />
     <Compile Include="Measurement\MeanAngleCalculator.cs" />

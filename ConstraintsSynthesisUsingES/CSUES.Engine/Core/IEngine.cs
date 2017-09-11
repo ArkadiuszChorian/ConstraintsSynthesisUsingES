@@ -2,6 +2,7 @@
 using CSUES.Engine.Benchmarks;
 using CSUES.Engine.Models;
 using CSUES.Engine.Models.Constraints;
+using ES.Core.Models;
 using Statistics = CSUES.Engine.Models.Statistics;
 
 namespace CSUES.Engine.Core
@@ -16,6 +17,7 @@ namespace CSUES.Engine.Core
         IList<Point> NormalizedTrainingPoints { get; }
         IList<Constraint> NormalizedSynthesizedConstraints { get; }
         IList<IList<Constraint>> NormalizedEvolutionSteps { get; }
+        IDictionary<int, EvolutionStep> CoreEvolutionSteps { get; set; }
 
         MathModel SynthesizeModel(Point[] trainingPoints);
         Statistics EvaluateModel(Point[] testPoints);

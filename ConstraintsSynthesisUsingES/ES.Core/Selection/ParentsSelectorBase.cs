@@ -5,5 +5,7 @@ namespace ES.Core.Selection
     public abstract class ParentsSelectorBase
     {
         public abstract Solution Select(Solution[] parentSolutions);
+
+        public int LastSelectedParentIndex { get; set; }
     }
 }

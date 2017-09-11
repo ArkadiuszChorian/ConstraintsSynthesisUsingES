@@ -33,6 +33,8 @@ namespace ES.Core.Selection
             if (_parentIndexes.Count == 0)
                 _parentIndexes = _parentIndexesReadonly.DeepCopyByExpressionTree();
 
+            LastSelectedParentIndex = randomParentIndex;
+
             return parentSolutions[randomParentIndex].DeepCopyByExpressionTree();
         }
     }

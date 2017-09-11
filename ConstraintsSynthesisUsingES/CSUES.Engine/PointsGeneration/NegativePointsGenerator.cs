@@ -21,7 +21,7 @@ namespace CSUES.Engine.PointsGeneration
 
             nearestNeighbourDistanceCalculator.CalculateNearestNeighbourDistances(positiveMeasurePoints);
         }
-
+        //HACK TODO - this is original method
         protected override Point GetAllowedPoint(Domain[] domains, Constraint[] constraints)
         {
             var numberOfDimensions = domains.Length;

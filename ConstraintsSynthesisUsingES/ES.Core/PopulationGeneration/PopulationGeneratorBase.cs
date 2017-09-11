@@ -6,5 +6,7 @@ namespace ES.Core.PopulationGeneration
     public abstract class PopulationGeneratorBase
     {
         public abstract Solution[] GeneratePopulation(EvolutionParameters evolutionParameters);
+        //HACK TODO
+        public static double[] ObjectCoefficients;
     }
 }

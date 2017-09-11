@@ -41,36 +41,57 @@ namespace ES.Core.Engine
 
             BasePopulation = new Solution[evolutionParameters.BasePopulationSize];
             OffspringPopulation = new Solution[evolutionParameters.OffspringPopulationSize]; 
-            EvolutionSteps = new List<Solution>(evolutionParameters.NumberOfGenerations);                              
+            EvolutionStepsSimple = new List<Solution>(evolutionParameters.NumberOfGenerations); 
+            EvolutionSteps = new Dictionary<int, EvolutionStep>(evolutionParameters.NumberOfGenerations);                           
         }
         
         public EvolutionParameters Parameters { get; set; }       
         public Statistics Statistics { get; set; }      
-        public IList<Solution> EvolutionSteps { get; }
-            
+        public IList<Solution> EvolutionStepsSimple { get; }
+        public IDictionary<int, EvolutionStep> EvolutionSteps { get; }
+
+        protected EvolutionStep CurrentEvolutionStep;
+        protected MutationStep CurrentMutation;
+
+        public Solution RunEvolution(IEvaluator evaluator, ISeedingProcessor seedingProcessor)
+        {
+            BasePopulation = InitializePopulations(evaluator, seedingProcessor);
+
+            return Evolution(evaluator);
+        }
+
         public Solution RunEvolution(IEvaluator evaluator)
         {
-            var offspringPopulationSize = Parameters.OffspringPopulationSize;
+            BasePopulation = InitializePopulations(evaluator);
+
+            return Evolution(evaluator);
+        }
+
+        private Solution Evolution(IEvaluator evaluator)
+        {            
+            var bestSolution = BasePopulation.First();
+            var numberOfGenerationBestSolutionTakenFrom = 0;                 
+
+            //if (Parameters.TrackEvolutionSteps)
+            //{
+            //    //EvolutionStepsSimple.Add(BasePopulation.First());
+            //}
+
             var numberOfGenerations = Parameters.NumberOfGenerations;
 
-            BasePopulation = PopulationGenerator.GeneratePopulation(Parameters);
-
-            var bestSolution = BasePopulation.First();
-            var numberOfGenerationBestSolutionTakenFrom = 0;
-
-            for (var i = 0; i < offspringPopulationSize; i++)
-                OffspringPopulation[i] = SolutionsFactory.Create(Parameters);            
-            
             Stoper.Restart();
-          
-            if (Parameters.TrackEvolutionSteps)
-                EvolutionSteps.Add(BasePopulation.First());
 
             for (var i = 0; i < numberOfGenerations; i++)
             {
                 //MutationRuleSupervisor.SaveBestFitness(BasePopulation.First());
 
+                if (Parameters.TrackEvolutionSteps)
+                    CurrentEvolutionStep = new EvolutionStep(BasePopulation, OffspringPopulation.Length);
+
                 Evolve(evaluator);
+
+                if (Parameters.TrackEvolutionSteps)
+                    EvolutionSteps.Add(i, CurrentEvolutionStep);
 
                 if (bestSolution.FitnessScore < BasePopulation.First().FitnessScore)
                 {
@@ -79,48 +100,77 @@ namespace ES.Core.Engine
                 }
                 //MutationRuleSupervisor.EnsureRuleFullfillment(BasePopulation);
 
-                if (Parameters.TrackEvolutionSteps)
-                    EvolutionSteps.Add(BasePopulation.First());
+                //if (Parameters.TrackEvolutionSteps)
+                //    EvolutionStepsSimple.Add(BasePopulation.First());
+                //Console.WriteLine(BasePopulation.First().FitnessScore);
             }
             
-            Console.WriteLine("###########################################################################");
-            Console.WriteLine("###########################################################################");
-            Console.WriteLine("###########################################################################");
+            //Console.WriteLine("###########################################################################");
+            //Console.WriteLine("###########################################################################");
+            //Console.WriteLine("###########################################################################");
 
-            Console.WriteLine("Best solution taken from generation " + numberOfGenerationBestSolutionTakenFrom);
+            //Console.WriteLine("Best solution taken from generation " + numberOfGenerationBestSolutionTakenFrom);
 
-            Console.WriteLine("###########################################################################");
+            //Console.WriteLine("###########################################################################");
                         
-            Console.Write("Best solution stdDevs = [");
-            foreach (var stdDeviationsCoefficient in bestSolution.StdDeviationsCoefficients)
-            {
-                Console.Write(stdDeviationsCoefficient + ", ");
-            }
-            Console.WriteLine("]\n"); 
+            //Console.Write("Best solution stdDevs = [");
+            //foreach (var stdDeviationsCoefficient in bestSolution.StdDeviationsCoefficients)
+            //{
+            //    Console.Write(stdDeviationsCoefficient + ", ");
+            //}
+            //Console.WriteLine("]\n"); 
                       
-            Console.WriteLine("###########################################################################");
+            //Console.WriteLine("###########################################################################");
 
-            Console.Write("Last evolved best solution stdDevs = [");
-            foreach (var stdDeviationsCoefficient in BasePopulation.First().StdDeviationsCoefficients)
-            {
-                Console.Write(stdDeviationsCoefficient + ", ");
-            }
-            Console.WriteLine("]\n");
+            //Console.Write("Last evolved best solution stdDevs = [");
+            //foreach (var stdDeviationsCoefficient in BasePopulation.First().StdDeviationsCoefficients)
+            //{
+            //    Console.Write(stdDeviationsCoefficient + ", ");
+            //}
+            //Console.WriteLine("]\n");
 
-            Console.WriteLine("###########################################################################");
-            Console.WriteLine("###########################################################################");
-            Console.WriteLine("###########################################################################");
+            //Console.WriteLine("###########################################################################");
+            //Console.WriteLine("###########################################################################");
+            //Console.WriteLine("###########################################################################");
 
             Stoper.Stop();
 
+            Statistics.NumberOfGenerationBestSolutionTakenFrom = numberOfGenerationBestSolutionTakenFrom;
             Statistics.TotalEvolutionTime = Stoper.Elapsed;
             Statistics.MeanSingleGenerationEvolutionTime = TimeSpan.FromTicks(Statistics.TotalEvolutionTime.Ticks / numberOfGenerations);
-            Statistics.BestFitnessScore = BasePopulation.First().FitnessScore;
+            Statistics.MeanStdDevsMutationTime = TimeSpan.FromTicks(Statistics.MeanStdDevsMutationTime.Ticks / numberOfGenerations);
+            Statistics.MeanRotationsMutationTime = TimeSpan.FromTicks(Statistics.MeanRotationsMutationTime.Ticks / numberOfGenerations);
+            Statistics.MeanObjectMutationTime = TimeSpan.FromTicks(Statistics.MeanObjectMutationTime.Ticks / numberOfGenerations);
+            Statistics.MeanEvaluationTime = TimeSpan.FromTicks(Statistics.MeanEvaluationTime.Ticks / numberOfGenerations);
+            Statistics.MeanSurvivorsSelectionTime = TimeSpan.FromTicks(Statistics.MeanSurvivorsSelectionTime.Ticks / numberOfGenerations);
+            Statistics.LastFitnessScore = BasePopulation.First().FitnessScore;
+            Statistics.BestFitnessScore = bestSolution.FitnessScore;
 
             Stoper.Reset();
             
             //return BasePopulation.First();
             return bestSolution;
+        }
+
+        protected Solution[] InitializePopulations(IEvaluator evaluator, ISeedingProcessor seedingProcessor = null)
+        {
+            var population = PopulationGenerator.GeneratePopulation(Parameters);
+
+            if (seedingProcessor != null)
+            {
+                Stoper.Restart();
+                population = seedingProcessor.Seed(population);
+                Stoper.Stop();
+                Statistics.SeedingTime = Stoper.Elapsed;
+            }
+                
+            foreach (var solution in population)
+                solution.FitnessScore = evaluator.Evaluate(solution);
+
+            for (var i = 0; i < OffspringPopulation.Length; i++)
+                OffspringPopulation[i] = SolutionsFactory.Create(Parameters);
+
+            return population;
         }
 
         protected abstract void Evolve(IEvaluator evaluator);

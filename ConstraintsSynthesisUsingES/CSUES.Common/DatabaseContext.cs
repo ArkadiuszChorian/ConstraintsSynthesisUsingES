@@ -7,6 +7,7 @@ using CSUES.Engine.Models;
 using ES.Core.Models;
 using ExperimentDatabase;
 using Statistics = CSUES.Engine.Models.Statistics;
+using EvolutionStatistics = ES.Core.Models.Statistics;
 
 namespace CSUES.Common
 {
@@ -95,7 +96,55 @@ namespace CSUES.Common
             _anyErrors = true;
         }
 
-        public bool Exists(ExperimentParameters experimentParameters)
+        public void Insert(string log)
+        {
+            _experiments.Add("EvolutionLog", log);
+        }
+
+        public bool ExperimentShouldBePrepared(ExperimentParameters experimentParameters)
+        {
+            if (HasTables(experimentParameters) == false)
+                return true;
+
+            if (IsSameVersion(experimentParameters) == false)
+                return true;
+
+            var experimentParametersPredicates = GetPredicates(experimentParameters, ExperimentParametersTableName);
+            var evolutionParametersPredicates = GetPredicates(experimentParameters.EvolutionParameters, EvolutionParametersTableName);
+
+            var getIdQuery = $"SELECT {ExperimentParametersTableName}.parent FROM {ExperimentParametersTableName} INNER JOIN {EvolutionParametersTableName} " +
+                             $"ON {ExperimentParametersTableName}.parent = {EvolutionParametersTableName}.parent " +
+                             $"WHERE {experimentParametersPredicates} AND {evolutionParametersPredicates}";
+            var id = _databaseEngine.PrepareStatement(getIdQuery).ExecuteScalar();
+
+            if (id == null)
+                return true;
+
+            var errorQuery = $"SELECT {ErrorsTableName}.{nameof(Exception.HResult)} FROM {ErrorsTableName} WHERE {ErrorsTableName}.parent = '{id}'";
+            var result = _databaseEngine.PrepareStatement(errorQuery).ExecuteScalar().ToString();
+            var hasError = string.IsNullOrEmpty(result) == false;
+
+            return hasError;
+        }
+
+        public bool HasTables(ExperimentParameters experimentParameters)
+        {
+            var controlQuery = $"SELECT name FROM sqlite_master WHERE name = '{VersionsTableName}'";
+            var result = _databaseEngine.PrepareStatement(controlQuery).ExecuteReader();
+
+            return result.HasRows;
+        }
+
+        public bool IsSameVersion(ExperimentParameters experimentParameters)
+        {
+            var implementationQuery = $"SELECT * FROM {VersionsTableName} " +
+                $"WHERE {nameof(Version.ImplementationVersion)} = '{Version.ImplementationVersion}'";
+            var result = _databaseEngine.PrepareStatement(implementationQuery).ExecuteReader();
+
+            return result.HasRows;
+        }
+
+        public bool ExistsOld(ExperimentParameters experimentParameters)
         {
             var controlQuery = $"SELECT name FROM sqlite_master WHERE name = '{VersionsTableName}'";
 
@@ -115,25 +164,31 @@ namespace CSUES.Common
         }
 
         private bool Exists<T>(T obj, string tableName)
-        {
-            var query = new StringBuilder();
-            query.Append($"SELECT * FROM {tableName} WHERE ");
+        {            
+            var predicates = GetPredicates(obj, tableName);
+            var query = $"SELECT * FROM {tableName} WHERE {predicates}";
+            
+            var result = _databaseEngine.PrepareStatement(query).ExecuteReader();
 
+            return result.HasRows;
+        }
+
+        private static string GetPredicates<T>(T obj, string tableName)
+        {
+            var predicates = new StringBuilder();
             var propertyInfos = GetDbSerializableProperties(obj).ToList();
 
             for (var i = 0; i < propertyInfos.Count; i++)
             {
                 var pi = propertyInfos[i];
 
-                query.Append($"{pi.Name} = '{pi.GetValue(obj, null)}'");
+                predicates.Append($"{tableName}.{pi.Name} = '{pi.GetValue(obj, null)}'");
 
                 if (i != propertyInfos.Count - 1)
-                    query.Append(" AND ");
+                    predicates.Append(" AND ");
             }
 
-            var result = _databaseEngine.PrepareStatement(query.ToString()).ExecuteReader();
-
-            return result.HasRows;
+            return predicates.ToString();
         }
 
         public void Save()
@@ -177,6 +232,13 @@ namespace CSUES.Common
                     continue;                    
                 }
 
+                if (propertyInfo.PropertyType == typeof(EvolutionStatistics))
+                {
+                    var obj = propertyInfo.GetValue(objectToInsert, null);
+                    Insert(obj, dataSetsToInsertIn);
+                    continue;
+                }
+
                 if (propertyInfo.PropertyType.IsEnum)
                 {
                     var numericValue = propertyInfo.GetValue(objectToInsert, null);
@@ -209,7 +271,8 @@ namespace CSUES.Common
             typeof(ValueType),
             typeof(string),           
             typeof(Enum),
-            typeof(TimeSpan)
+            typeof(TimeSpan),
+            typeof(EvolutionStatistics)
         };
 
         private static IEnumerable<PropertyInfo> GetDbSerializableProperties<T>(T obj)

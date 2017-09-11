@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using ES.Core.Factories;
 using ES.Core.Models;
@@ -7,6 +8,7 @@ using ES.Core.Mutation;
 using ES.Core.MutationSupervison;
 using ES.Core.PopulationGeneration;
 using ES.Core.Selection;
+using ES.Core.Utils;
 
 namespace ES.Core.Engine
 {
@@ -23,33 +25,59 @@ namespace ES.Core.Engine
         {
             var offspringPopulationSize = Parameters.OffspringPopulationSize;
 
+            var stdDevsMutationTime = TimeSpan.Zero;
+            var rotationsMutationTime = TimeSpan.Zero;
+            var objectMutationTime = TimeSpan.Zero;
+            var evaluationTime = TimeSpan.Zero;
+
+            var stoper = new Stopwatch();
+
             for (var i = 0; i < offspringPopulationSize; i++)
             {
                 OffspringPopulation[i] = ParentsSelector.Select(BasePopulation);
-                if (AnyNan(OffspringPopulation[i]))
-                    Debugger.Break();
 
+                if (Parameters.TrackEvolutionSteps)
+                    CurrentMutation = new MutationStep(ParentsSelector.LastSelectedParentIndex, OffspringPopulation[i]);
+
+                stoper.Restart();
                 OffspringPopulation[i] = StdDeviationsMutator.Mutate(OffspringPopulation[i]);
-                if (AnyNan(OffspringPopulation[i]))
-                    Debugger.Break();
-                OffspringPopulation[i] = RotationsMutator.Mutate(OffspringPopulation[i]);
-                if (AnyNan(OffspringPopulation[i]))
-                    Debugger.Break();
-                OffspringPopulation[i] = ObjectMutator.Mutate(OffspringPopulation[i]);
-                if (AnyNan(OffspringPopulation[i]))
-                    Debugger.Break();
+                stoper.Stop();
+                stdDevsMutationTime += stoper.Elapsed;
 
+                stoper.Restart();
+                OffspringPopulation[i] = RotationsMutator.Mutate(OffspringPopulation[i]);
+                stoper.Stop();
+                rotationsMutationTime += stoper.Elapsed;
+
+                stoper.Restart();
+                OffspringPopulation[i] = ObjectMutator.Mutate(OffspringPopulation[i]);
+                stoper.Stop();
+                objectMutationTime += stoper.Elapsed;
+
+                stoper.Restart();
                 OffspringPopulation[i].FitnessScore = evaluator.Evaluate(OffspringPopulation[i]);
-                if (AnyNan(OffspringPopulation[i]))
-                    Debugger.Break();
+                stoper.Stop();
+                evaluationTime += stoper.Elapsed;
+
+                if (Parameters.TrackEvolutionSteps)
+                {
+                    CurrentMutation.Offspring = OffspringPopulation[i].DeepCopyByExpressionTree();
+                    CurrentEvolutionStep.Mutations.Add(CurrentMutation);
+                }                   
             }
 
+            stoper.Restart();
             BasePopulation = SurvivorsSelector.Select(BasePopulation, OffspringPopulation);
-        }
+            stoper.Stop();
 
-        private bool AnyNan(Solution solution)
-        {
-            return solution.ObjectCoefficients.Any(oc => oc.Equals(double.NaN));
+            Statistics.MeanSurvivorsSelectionTime += stoper.Elapsed;
+            Statistics.MeanStdDevsMutationTime += TimeSpan.FromTicks(stdDevsMutationTime.Ticks / offspringPopulationSize);
+            Statistics.MeanRotationsMutationTime += TimeSpan.FromTicks(rotationsMutationTime.Ticks / offspringPopulationSize);
+            Statistics.MeanObjectMutationTime += TimeSpan.FromTicks(objectMutationTime.Ticks / offspringPopulationSize);
+            Statistics.MeanEvaluationTime += TimeSpan.FromTicks(evaluationTime.Ticks / offspringPopulationSize);
+
+            if (Parameters.TrackEvolutionSteps)
+                CurrentEvolutionStep.NewPopulation = BasePopulation.DeepCopyByExpressionTree();
         }
     }
 }

@@ -15,7 +15,7 @@ namespace ES.Core.PopulationGeneration
 
             for (var i = 0; i < lenght; i++)
             {
-                solution.ObjectCoefficients[i] = RandomGenerator.NextDouble();
+                solution.ObjectCoefficients[i] = RandomGenerator.NextDouble(-100, 100);
                 solution.StdDeviationsCoefficients[i] = RandomGenerator.NextDouble();
             }
 
