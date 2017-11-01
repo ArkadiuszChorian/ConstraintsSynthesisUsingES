@@ -109,22 +109,46 @@ namespace CSUES.Common
             if (IsSameVersion(experimentParameters) == false)
                 return true;
 
-            var experimentParametersPredicates = GetPredicates(experimentParameters, ExperimentParametersTableName);
-            var evolutionParametersPredicates = GetPredicates(experimentParameters.EvolutionParameters, EvolutionParametersTableName);
+            //var experimentParametersPredicates = GetPredicates(experimentParameters, ExperimentParametersTableName);
+            //var evolutionParametersPredicates = GetPredicates(experimentParameters.EvolutionParameters, EvolutionParametersTableName);
 
-            var getIdQuery = $"SELECT {ExperimentParametersTableName}.parent FROM {ExperimentParametersTableName} INNER JOIN {EvolutionParametersTableName} " +
-                             $"ON {ExperimentParametersTableName}.parent = {EvolutionParametersTableName}.parent " +
+            //var getIdQuery = $"SELECT {ExperimentParametersTableName}.parent FROM {ExperimentParametersTableName} INNER JOIN {EvolutionParametersTableName} " +
+            //                 $"ON {ExperimentParametersTableName}.parent = {EvolutionParametersTableName}.parent " +
+            //                 $"WHERE {experimentParametersPredicates} AND {evolutionParametersPredicates}";
+
+            var experimentParametersPredicates = GetPredicates(experimentParameters, ExperimentsTableName);
+            var evolutionParametersPredicates = GetPredicates(experimentParameters.EvolutionParameters, ExperimentsTableName);
+
+            var getIdQuery = $"SELECT {ExperimentsTableName}.id FROM {ExperimentsTableName} " +
                              $"WHERE {experimentParametersPredicates} AND {evolutionParametersPredicates}";
+
             var id = _databaseEngine.PrepareStatement(getIdQuery).ExecuteScalar();
 
             if (id == null)
                 return true;
 
-            var errorQuery = $"SELECT {ErrorsTableName}.{nameof(Exception.HResult)} FROM {ErrorsTableName} WHERE {ErrorsTableName}.parent = '{id}'";
-            var result = _databaseEngine.PrepareStatement(errorQuery).ExecuteScalar().ToString();
-            var hasError = string.IsNullOrEmpty(result) == false;
+            //var reader = _databaseEngine.PrepareStatement(getIdQuery).ExecuteReader();
 
-            return hasError;
+            //if (!reader.HasRows)
+            //    return true;
+
+            try
+            {
+                //var errorQuery = $"SELECT {ErrorsTableName}.{nameof(Exception.HResult)} FROM {ErrorsTableName} WHERE {ErrorsTableName}.parent = '{id}'";
+                var errorQuery = $"SELECT {ExperimentsTableName}.{nameof(Exception.HResult)} FROM {ExperimentsTableName}";
+                var result = _databaseEngine.PrepareStatement(errorQuery).ExecuteScalar();
+
+                if (result == null)
+                    return false; 
+
+                var hasError = string.IsNullOrEmpty(result.ToString()) == false;
+
+                return hasError;
+            }
+            catch (Exception exception)
+            {
+                return !exception.Message.Contains("no such column");
+            }           
         }
 
         public bool HasTables(ExperimentParameters experimentParameters)
@@ -193,16 +217,16 @@ namespace CSUES.Common
 
         public void Save()
         {
-            _experiments.Save(false);
-            _versions.Save();
-            _experimentParameters.Save();
-            _mathModels.Save();
-            _statistics.Save();
+            _experiments.Save();
+            //_versions.Save();
+            //_experimentParameters.Save();
+            //_mathModels.Save();
+            //_statistics.Save();
 
-            if (!_anyErrors) return;
+            //if (!_anyErrors) return;
 
-            _errors.Save();
-            _anyErrors = false;
+            //_errors.Save();
+            //_anyErrors = false;
         }
 
         public void Dispose()
@@ -213,7 +237,7 @@ namespace CSUES.Common
             _mathModels.Dispose();
             _statistics.Dispose();
             _errors.Dispose();
-            _experiments.Dispose();          
+            _experiments.Dispose();
             _database.Dispose();            
         }        
 

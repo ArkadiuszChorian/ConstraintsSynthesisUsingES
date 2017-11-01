@@ -61,16 +61,17 @@ namespace CSUES.Engine.PrePostProcessing
 
                     for (var k = 0; k < numberOfConstraints; k++)
                     {
-                        if (allConstraints[k].IsSatisfyingConstraint(points[j])) continue;
-
-                        if (isCutByOneConstraint)
+                        if (!allConstraints[k].IsSatisfyingConstraint(points[j]))
                         {
-                            isCutByOneConstraint = false;
-                            break;
-                        }
+                            if (isCutByOneConstraint)
+                            {
+                                isCutByOneConstraint = false;
+                                break;
+                            }
 
-                        isCutByOneConstraint = true;
-                        obligatoryConstraint = allConstraints[k];
+                            isCutByOneConstraint = true;
+                            obligatoryConstraint = allConstraints[k];
+                        }
                     }
 
                     if (isCutByOneConstraint && !reducedConstraints.Contains(obligatoryConstraint))

@@ -15,8 +15,27 @@ namespace CSUES.SlurmRunner
             var propertyInfos = GetDbSerializableProperties(experimentParameters).ToList();
 
             foreach (var pi in propertyInfos)
-                sb.Append($"{pi.Name}={pi.GetValue(experimentParameters, null)} ");
+            {
+                var valueToPrint = pi.GetValue(experimentParameters, null);
 
+                if (pi.PropertyType.IsEnum)
+                    valueToPrint = Enum.GetName(pi.PropertyType, valueToPrint);
+
+                sb.Append($"{pi.Name}={valueToPrint} ");
+            }
+                
+            propertyInfos = GetDbSerializableProperties(experimentParameters.EvolutionParameters).ToList();
+
+            foreach (var pi in propertyInfos)
+            {
+                var valueToPrint = pi.GetValue(experimentParameters.EvolutionParameters, null);
+
+                if (pi.PropertyType.IsEnum)
+                    valueToPrint = Enum.GetName(pi.PropertyType, valueToPrint);
+
+                sb.Append($"{pi.Name}={valueToPrint} ");
+            }
+                
             return sb.ToString();
         }
 

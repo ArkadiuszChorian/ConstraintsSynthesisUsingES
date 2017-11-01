@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Runtime.CompilerServices;
 using CSUES.Engine.Enums;
 using CSUES.Engine.Models.Terms;
 
@@ -19,16 +20,29 @@ namespace CSUES.Engine.Models.Constraints
 
         public double[] GetTermsCoefficients()
         {
-            return Terms.Select(t => t.Coefficient).ToArray();
+            var numberOfTerms = Terms.Length;
+            var termsCoefficients = new double[Terms.Length];
+
+            for (var i = 0; i < numberOfTerms; i++)
+                termsCoefficients[i] = Terms[i].Coefficient;
+
+            return termsCoefficients;
         }
 
         public double[] GetAllCoefficients()
         {
-            var termsCoefficients = GetTermsCoefficients().ToList();
-            termsCoefficients.Add(LimitingValue);
-            return termsCoefficients.ToArray();
+            var numberOfTerms = Terms.Length;
+            var allCoefficients = new double[Terms.Length + 1];
+
+            for (var i = 0; i < numberOfTerms; i++)
+                allCoefficients[i] = Terms[i].Coefficient;
+
+            allCoefficients[numberOfTerms] = LimitingValue;
+
+            return allCoefficients;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual double GetLeftSideValue(Point point)
         {
             var constraintSum = 0.0;
@@ -39,6 +53,7 @@ namespace CSUES.Engine.Models.Constraints
             return constraintSum;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsSatisfyingConstraint(Point point)
         {           
             return GetLeftSideValue(point) <= LimitingValue;

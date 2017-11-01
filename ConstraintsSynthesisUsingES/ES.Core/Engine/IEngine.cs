@@ -11,7 +11,7 @@ namespace ES.Core.Engine
         IList<Solution> EvolutionStepsSimple { get; }
         IDictionary<int, EvolutionStep> EvolutionSteps { get; }
 
-        Solution RunEvolution(IEvaluator evaluator, ISeedingProcessor seedingProcessor);
-        Solution RunEvolution(IEvaluator evaluator);
+        Solution RunEvolution(EvaluatorBase evaluator, ISeedingProcessor seedingProcessor);
+        Solution RunEvolution(EvaluatorBase evaluator);
     }
 }

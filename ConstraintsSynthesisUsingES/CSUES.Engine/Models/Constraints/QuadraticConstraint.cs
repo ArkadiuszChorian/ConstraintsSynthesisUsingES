@@ -1,4 +1,5 @@
-﻿using CSUES.Engine.Enums;
+﻿using System.Runtime.CompilerServices;
+using CSUES.Engine.Enums;
 using CSUES.Engine.Models.Terms;
 
 namespace CSUES.Engine.Models.Constraints
@@ -9,6 +10,7 @@ namespace CSUES.Engine.Models.Constraints
         {
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override double GetLeftSideValue(Point point)
         {
             var numberOfDimensions = point.Coordinates.Length;

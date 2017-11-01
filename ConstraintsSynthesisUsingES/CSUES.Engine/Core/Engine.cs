@@ -20,14 +20,14 @@ namespace CSUES.Engine.Core
 {
     public class Engine : IEngine
     {
-        private readonly IConstraintsBuilder _constraintsBuilder;
+        private readonly ConstraintsBuilderBase _constraintsBuilder;
         private readonly IProcessor<Point[]> _pointsNormalizer;
         private IProcessor<Constraint[]> _constaintsDenormalizer;
         private readonly IProcessor<Constraint[]> _redundantConstraintsRemover;
         private readonly IAngleCalculator _meanAngleCalculator;
         private readonly Stopwatch _stoper;
 
-        public Engine(ExperimentParameters experimentParameters, IBenchmark benchmark, IConstraintsBuilder constraintsBuilder, IProcessor<Point[]> pointsNormalizer, IProcessor<Constraint[]> redundantConstraintsRemover, IAngleCalculator meanAngleCalculator, Stopwatch stoper)
+        public Engine(ExperimentParameters experimentParameters, IBenchmark benchmark, ConstraintsBuilderBase constraintsBuilder, IProcessor<Point[]> pointsNormalizer, IProcessor<Constraint[]> redundantConstraintsRemover, IAngleCalculator meanAngleCalculator, Stopwatch stoper)
         {
             Parameters = experimentParameters;
             Benchmark = benchmark;
@@ -168,7 +168,7 @@ namespace CSUES.Engine.Core
 
         public Statistics EvaluateModel(Point[] testPoints)
         {
-            var constraints = MathModel.SynthesizedModel;
+            var constraints = MathModel.SynthesizedModel.ToArray();
 
             _stoper.Restart();
 

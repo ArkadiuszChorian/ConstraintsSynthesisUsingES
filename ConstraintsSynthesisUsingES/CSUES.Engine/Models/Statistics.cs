@@ -3,7 +3,7 @@ using EvolutionStatistics = ES.Core.Models.Statistics;
 
 namespace CSUES.Engine.Models
 {
-    public class Statistics
+    public class Statistics : IStatistics
     {
         public int NumberOfConstraints { get; set; }
         public double MeanAngle { get; set; }

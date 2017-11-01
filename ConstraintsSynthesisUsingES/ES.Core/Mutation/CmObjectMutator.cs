@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using ES.Core.Models;
 using ES.Core.Models.Solutions;
 
@@ -20,7 +21,7 @@ namespace ES.Core.Mutation
 
             for (var i = 0; i < vectorSize; i++)
             {
-                for (var j = 0; j < vectorSize; j++)
+                for (var j = i; j < vectorSize; j++)
                 {
                     if (i == j)
                     {
@@ -28,9 +29,23 @@ namespace ES.Core.Mutation
                     }
                     else
                     {
-                        covarianceMatrix[i, j] = (Math.Pow(solution.StdDeviationsCoefficients[i], 2) - Math.Pow(solution.StdDeviationsCoefficients[j], 2)) * Math.Tan(2 * solution.RotationsCoefficients[FromMatrixToVector(i, j, vectorSize)]) / 2;
+                        var value = (Math.Pow(solution.StdDeviationsCoefficients[i], 2) - Math.Pow(solution.StdDeviationsCoefficients[j], 2)) * Math.Tan(2 * solution.RotationsCoefficients[FromMatrixToVector(i, j, vectorSize)]) / 2;
+                        covarianceMatrix[i, j] = value;
+                        covarianceMatrix[j, i] = -value;
                     }
                 }
+
+                //for (var j = 0; j < vectorSize; j++)
+                //{
+                //    if (i == j)
+                //    {
+                //        covarianceMatrix[i, j] = Math.Pow(solution.StdDeviationsCoefficients[i], 2);
+                //    }
+                //    else
+                //    {
+                //        covarianceMatrix[i, j] = (Math.Pow(solution.StdDeviationsCoefficients[i], 2) - Math.Pow(solution.StdDeviationsCoefficients[j], 2)) * Math.Tan(2 * solution.RotationsCoefficients[FromMatrixToVector(i, j, vectorSize)]) / 2;
+                //    }
+                //}
             }
 
             var mutationVector = new RobustMultivariateNormalDistribution(_zeroMeans, covarianceMatrix).Generate();
@@ -43,6 +58,7 @@ namespace ES.Core.Mutation
             return solution;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int FromMatrixToVector(int i, int j, int n)
         {
             if (i <= j)

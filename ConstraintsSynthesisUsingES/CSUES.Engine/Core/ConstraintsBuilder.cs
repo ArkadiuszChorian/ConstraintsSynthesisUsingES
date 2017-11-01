@@ -7,7 +7,7 @@ using ES.Core.Utils;
 
 namespace CSUES.Engine.Core
 {
-    public class ConstraintsBuilder : IConstraintsBuilder
+    public class ConstraintsBuilder : ConstraintsBuilderBase
     {
         private readonly Constraint[] _constraintsModel;
 
@@ -35,9 +35,9 @@ namespace CSUES.Engine.Core
             }            
         }
 
-        public Constraint[] BuildConstraints(Solution solution)
+        public override Constraint[] BuildConstraints(Solution solution)
         {
-            var constraints = _constraintsModel.DeepCopyByExpressionTree();
+            var constraints = _constraintsModel;
             var coefficients = solution.ObjectCoefficients;
             var index = 0;
 

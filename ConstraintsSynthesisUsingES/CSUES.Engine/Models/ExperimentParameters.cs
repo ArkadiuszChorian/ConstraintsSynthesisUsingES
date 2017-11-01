@@ -10,7 +10,32 @@ using Defaults = CSUES.Engine.Utils.Defaults;
 namespace CSUES.Engine.Models
 {
     public class ExperimentParameters
-    {                
+    {
+        public ExperimentParameters(int numberOfDimensions, int maximumNumberOfConstraints, int numberOfConstraintsCoefficients, EvolutionParameters evolutionParameters, int seed, bool trackEvolutionSteps, bool useRedundantConstraintsRemoving, bool useDataNormalization, bool allowQuadraticTerms, bool useSeeding, BenchmarkType typeOfBenchmark, double ballnBoundaryValue, double cubenBoundaryValue, double simplexnBoundaryValue, long numberOfDomainSamples, int numberOfTestPoints, int numberOfPositivePoints, int numberOfNegativePoints, double defaultDomainLowerLimit, double defaultDomainUpperLimit, int maxNumberOfPointsInSingleArray)
+        {
+            NumberOfDimensions = numberOfDimensions;
+            MaximumNumberOfConstraints = maximumNumberOfConstraints;
+            NumberOfConstraintsCoefficients = numberOfConstraintsCoefficients;
+            EvolutionParameters = evolutionParameters;
+            Seed = seed;
+            TrackEvolutionSteps = trackEvolutionSteps;
+            UseRedundantConstraintsRemoving = useRedundantConstraintsRemoving;
+            UseDataNormalization = useDataNormalization;
+            AllowQuadraticTerms = allowQuadraticTerms;
+            UseSeeding = useSeeding;
+            TypeOfBenchmark = typeOfBenchmark;
+            BallnBoundaryValue = ballnBoundaryValue;
+            CubenBoundaryValue = cubenBoundaryValue;
+            SimplexnBoundaryValue = simplexnBoundaryValue;
+            NumberOfDomainSamples = numberOfDomainSamples;
+            NumberOfTestPoints = numberOfTestPoints;
+            NumberOfPositivePoints = numberOfPositivePoints;
+            NumberOfNegativePoints = numberOfNegativePoints;
+            DefaultDomainLowerLimit = defaultDomainLowerLimit;
+            DefaultDomainUpperLimit = defaultDomainUpperLimit;
+            MaxNumberOfPointsInSingleArray = maxNumberOfPointsInSingleArray;
+        }
+
         public ExperimentParameters(
             int numberOfDimensions,
             

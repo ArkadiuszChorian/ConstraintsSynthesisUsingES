@@ -53,21 +53,21 @@ namespace ES.Core.Engine
         protected EvolutionStep CurrentEvolutionStep;
         protected MutationStep CurrentMutation;
 
-        public Solution RunEvolution(IEvaluator evaluator, ISeedingProcessor seedingProcessor)
+        public Solution RunEvolution(EvaluatorBase evaluator, ISeedingProcessor seedingProcessor)
         {
             BasePopulation = InitializePopulations(evaluator, seedingProcessor);
 
             return Evolution(evaluator);
         }
 
-        public Solution RunEvolution(IEvaluator evaluator)
+        public Solution RunEvolution(EvaluatorBase evaluator)
         {
             BasePopulation = InitializePopulations(evaluator);
 
             return Evolution(evaluator);
         }
 
-        private Solution Evolution(IEvaluator evaluator)
+        private Solution Evolution(EvaluatorBase evaluator)
         {            
             var bestSolution = BasePopulation.First();
             var numberOfGenerationBestSolutionTakenFrom = 0;                 
@@ -138,11 +138,11 @@ namespace ES.Core.Engine
             Statistics.NumberOfGenerationBestSolutionTakenFrom = numberOfGenerationBestSolutionTakenFrom;
             Statistics.TotalEvolutionTime = Stoper.Elapsed;
             Statistics.MeanSingleGenerationEvolutionTime = TimeSpan.FromTicks(Statistics.TotalEvolutionTime.Ticks / numberOfGenerations);
-            Statistics.MeanStdDevsMutationTime = TimeSpan.FromTicks(Statistics.MeanStdDevsMutationTime.Ticks / numberOfGenerations);
-            Statistics.MeanRotationsMutationTime = TimeSpan.FromTicks(Statistics.MeanRotationsMutationTime.Ticks / numberOfGenerations);
-            Statistics.MeanObjectMutationTime = TimeSpan.FromTicks(Statistics.MeanObjectMutationTime.Ticks / numberOfGenerations);
-            Statistics.MeanEvaluationTime = TimeSpan.FromTicks(Statistics.MeanEvaluationTime.Ticks / numberOfGenerations);
-            Statistics.MeanSurvivorsSelectionTime = TimeSpan.FromTicks(Statistics.MeanSurvivorsSelectionTime.Ticks / numberOfGenerations);
+            //Statistics.MeanStdDevsMutationTime = TimeSpan.FromTicks(Statistics.MeanStdDevsMutationTime.Ticks / numberOfGenerations);
+            //Statistics.MeanRotationsMutationTime = TimeSpan.FromTicks(Statistics.MeanRotationsMutationTime.Ticks / numberOfGenerations);
+            //Statistics.MeanObjectMutationTime = TimeSpan.FromTicks(Statistics.MeanObjectMutationTime.Ticks / numberOfGenerations);
+            //Statistics.MeanEvaluationTime = TimeSpan.FromTicks(Statistics.MeanEvaluationTime.Ticks / numberOfGenerations);
+            //Statistics.MeanSurvivorsSelectionTime = TimeSpan.FromTicks(Statistics.MeanSurvivorsSelectionTime.Ticks / numberOfGenerations);
             Statistics.LastFitnessScore = BasePopulation.First().FitnessScore;
             Statistics.BestFitnessScore = bestSolution.FitnessScore;
 
@@ -152,7 +152,7 @@ namespace ES.Core.Engine
             return bestSolution;
         }
 
-        protected Solution[] InitializePopulations(IEvaluator evaluator, ISeedingProcessor seedingProcessor = null)
+        protected Solution[] InitializePopulations(EvaluatorBase evaluator, ISeedingProcessor seedingProcessor = null)
         {
             var population = PopulationGenerator.GeneratePopulation(Parameters);
 
@@ -173,6 +173,6 @@ namespace ES.Core.Engine
             return population;
         }
 
-        protected abstract void Evolve(IEvaluator evaluator);
+        protected abstract void Evolve(EvaluatorBase evaluator);
     }
 }

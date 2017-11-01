@@ -293,3 +293,4 @@ __pycache__/
 Scripts/
 Database/
 /ConstraintsSynthesisUsingES/Logs
+/ConstraintsSynthesisUsingES/ToCopy

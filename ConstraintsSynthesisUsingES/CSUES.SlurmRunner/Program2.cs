@@ -23,7 +23,7 @@ using Version = CSUES.Common.Version;
 
 namespace CSUES.SlurmRunner
 {
-    class Program
+    class Program2
     {       
         private const string BatchPath = "/bin/sh";
         private static readonly bool IsUnix = Environment.OSVersion.Platform == PlatformID.Unix;
@@ -35,37 +35,36 @@ namespace CSUES.SlurmRunner
         private static readonly string DatabaseFullPath = Path.GetFullPath(DatabaseDirPath);
         private static readonly List<string> ScriptsFullPaths = new List<string>();
 
-        //private static readonly int[] NumbersOfGenerations = { 100, 200, 500, 1000 };
-        //private static readonly int[] OffspringPopulationSizes = { 1000, 500, 200, 100 };
+        private static readonly int[] NumbersOfGenerations = { 100, 200, 500, 1000 };
+        private static readonly int[] OffspringPopulationSizes = { 1000, 500, 200, 100 };
         private static readonly BenchmarkType[] BenchmarkTypes = { BenchmarkType.Simplexn, BenchmarkType.Cuben, BenchmarkType.Balln };
-        private static readonly int[] NumbersOfPositivePoints = { 300, 400 };
-        //private static readonly bool[] UseDataNormalization = { true, false };
-        //private static readonly bool[] UseSeeding = { true, false };
+        private static readonly int[] NumbersOfPositivePoints = { 500 };
+        private static readonly bool[] UseDataNormalization = { true, false };
+        private static readonly bool[] UseSeeding = { true, false };
 
-        static void Main(string[] args)
+        static void Main2(string[] args)
         {
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
             Console.WriteLine($">>> Database path: {DatabaseFullPath}");
             var database = new DatabaseContext(DatabaseFullPath);
             //DatabaseContext database = null;
-            var preparedExperiments = 0;
 
-            for (var seed = 1; seed <= 30; seed++){
-            //for (var seed = 1; seed <= 2; seed++){
+            //for (var seed = 1; seed <= 30; seed++){
+            for (var seed = 1; seed <= 2; seed++){
             for (var numberOfDimensions = 2; numberOfDimensions <= 5; numberOfDimensions++){                                          
-            //for (var i = 0; i < NumbersOfGenerations.Length; i++){                                          
+            for (var i = 0; i < NumbersOfGenerations.Length; i++){                                          
             //for (var j = 0; j < OffspringPopulationSizes.Length; j++){                                          
             for (var k = 0; k < BenchmarkTypes.Length; k++){                                          
             for (var l = 0; l < NumbersOfPositivePoints.Length; l++){              
-            //for (var m = 0; m < UseDataNormalization.Length; m++){              
-            //for (var n = 0; n < UseSeeding.Length; n++){
-                                                                               
-                Console.WriteLine($">>> Enter the loop <<<");                                                                               
+            for (var m = 0; m < UseDataNormalization.Length; m++){              
+            for (var n = 0; n < UseSeeding.Length; n++){
+                var tmp = seed;                                     
+                seed = seed == 1 ? 13 : 28;                                     
+                //Console.WriteLine($">>> Enter the loop <<<");                                                                               
                 //database = database ?? new DatabaseContext(DatabaseFullPath);
-                var experimentParameters = GetExperimentParameters(numberOfDimensions, seed, BenchmarkTypes[k], false, NumbersOfPositivePoints[l]);
-                //var experimentParameters = GetExperimentParameters(numberOfDimensions, OffspringPopulationSizes[i],
-                //    NumbersOfGenerations[i], seed, BenchmarkTypes[k], false, NumbersOfPositivePoints[l], UseDataNormalization[m], UseSeeding[n]);
+                var experimentParameters = GetExperimentParameters(numberOfDimensions, OffspringPopulationSizes[i],
+                    NumbersOfGenerations[i], seed, BenchmarkTypes[k], false, NumbersOfPositivePoints[l], UseDataNormalization[m], UseSeeding[n]);
 
                 //Console.WriteLine($"Seed:{seed} NumOfDim:{numberOfDimensions} NumOfGen:{NumbersOfGenerations[i]} OffspringSize:{OffspringPopulationSizes[i]} Bench:{BenchmarkTypes[k]} UseNorm:{UseDataNormalization[m]} Seeding:{UseSeeding[n]}");
 
@@ -90,15 +89,13 @@ namespace CSUES.SlurmRunner
                         Console.WriteLine($">>> Experiment  finished <<<\n{experimentName}\n");
                         Console.WriteLine($">>>>>>>>>>>>>><<<<<<<<<<<<<<\n");
                         //Thread.Sleep(10);
-                    }
-                    preparedExperiments++;
+                    }                        
                 }
 
                 if (BenchmarkTypes[k] == BenchmarkType.Balln)
-                    experimentParameters = GetExperimentParameters(numberOfDimensions, seed, BenchmarkTypes[k], true, NumbersOfPositivePoints[l]);
-                    //experimentParameters = GetExperimentParameters(numberOfDimensions, OffspringPopulationSizes[i],
-                    //    NumbersOfGenerations[i], seed, BenchmarkTypes[k], true, NumbersOfPositivePoints[l],
-                    //    UseDataNormalization[m], UseSeeding[n]);
+                    experimentParameters = GetExperimentParameters(numberOfDimensions, OffspringPopulationSizes[i],
+                        NumbersOfGenerations[i], seed, BenchmarkTypes[k], true, NumbersOfPositivePoints[l],
+                        UseDataNormalization[m], UseSeeding[n]);
                 else
                 {
                     //database.Dispose();
@@ -129,20 +126,14 @@ namespace CSUES.SlurmRunner
                         Console.WriteLine($">>>>>>>>>>>>>><<<<<<<<<<<<<<\n");
                         //Thread.Sleep(10);
                     }
-                    preparedExperiments++;
                 } 
 
                 //database.Dispose();
+                seed = tmp;
 
-            }}}}//}}}}
-
+            }}}}}}}//}
+            
             //database.Dispose();
-
-            Console.WriteLine($">>>>>>>>>>>>>><<<<<<<<<<<<<<\n");
-            Console.WriteLine($">>>>>>>>>>>>>><<<<<<<<<<<<<<\n");
-            Console.WriteLine($">>>>>>>>>>>>>><<<<<<<<<<<<<<\n");
-            Console.WriteLine($"Prepared experiments = {preparedExperiments}\n");
-            Console.WriteLine($">>>>>>>>>>>>>><<<<<<<<<<<<<<\n");
 
             if (!IsUnix) return;
 
@@ -157,22 +148,13 @@ namespace CSUES.SlurmRunner
             Process.Start(BatchPath, MainScriptFilename);
         }
 
-        private static ExperimentParameters GetExperimentParameters(int numberOfDimensions, int seed, BenchmarkType typeOfBenchmark, bool allowQuadraticTerms, int numberOfPositivePoints)
+        private static ExperimentParameters GetExperimentParameters(int numberOfDimensions, int offspringPopulationSize, int numberOfGenerations, int seed, BenchmarkType typeOfBenchmark, bool allowQuadraticTerms, int numberOfPositivePoints, bool useDataNormalization, bool useSeeding)
         {
-            var useSeeding = false;
-            var useDataNormalization = true;           
-
-            if (typeOfBenchmark == BenchmarkType.Balln && allowQuadraticTerms)
-            {
-                useSeeding = true;
-                useDataNormalization = false;
-            }
-
             return new ExperimentParameters(
                 numberOfDimensions: numberOfDimensions,
                 basePopulationSize: 100,
-                offspringPopulationSize: 1000,
-                numberOfGenerations: 100,
+                offspringPopulationSize: offspringPopulationSize,
+                numberOfGenerations: numberOfGenerations,
                 seed: seed,
                 typeOfBenchmark: typeOfBenchmark,
 

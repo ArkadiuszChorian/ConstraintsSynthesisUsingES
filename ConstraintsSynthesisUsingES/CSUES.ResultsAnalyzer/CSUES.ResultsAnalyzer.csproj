@@ -5,11 +5,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{38E94DDF-3FD1-4423-B38F-7ED4C5CD8B0A}</ProjectGuid>
+    <ProjectGuid>{03AAB441-01B4-435A-87C3-80D885D8385B}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CSUES.SlurmRunner</RootNamespace>
-    <AssemblyName>CSUES.SlurmRunner</AssemblyName>
+    <RootNamespace>CSUES.ResultsAnalyzer</RootNamespace>
+    <AssemblyName>CSUES.ResultsAnalyzer</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -36,6 +36,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ExperimentDatabase">
+      <HintPath>..\CSUES.Database\ExperimentDatabase.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Data.Sqlite, Version=1.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Data.Sqlite.1.1.1\lib\net451\Microsoft.Data.Sqlite.dll</HintPath>
       <Private>True</Private>
@@ -66,10 +69,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions.cs" />
-    <Compile Include="Program2.cs" />
+    <Compile Include="Experiment.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Statistics.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -77,11 +80,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CSUES.Common\CSUES.Common.csproj">
-      <Project>{0B82A7A6-C481-474B-8ACC-74B857FC85D8}</Project>
+      <Project>{0b82a7a6-c481-474b-8acc-74b857fc85d8}</Project>
       <Name>CSUES.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\CSUES.Engine\CSUES.Engine.csproj">
-      <Project>{623F5515-96C7-4A15-BD5B-65FCE100DB98}</Project>
+      <Project>{623f5515-96c7-4a15-bd5b-65fce100db98}</Project>
       <Name>CSUES.Engine</Name>
     </ProjectReference>
     <ProjectReference Include="..\ES.Core\ES.Core.csproj">

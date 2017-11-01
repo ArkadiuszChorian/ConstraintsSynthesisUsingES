@@ -64,6 +64,8 @@ namespace CSUES.Common
             string value;
             if (Instance._dictionary.TryGetValue(key, out value))
             {
+                if (typeof(T).BaseType == typeof(Enum))
+                    return (T)Enum.Parse(typeof(T), value);
                 @default = (T)Convert.ChangeType(value, typeof(T));
             }
             return @default;

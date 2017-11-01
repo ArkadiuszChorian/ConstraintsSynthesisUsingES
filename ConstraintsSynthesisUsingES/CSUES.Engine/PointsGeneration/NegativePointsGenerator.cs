@@ -38,9 +38,11 @@ namespace CSUES.Engine.PointsGeneration
 
                 for (var j = 0; j < _positiveMeasurePoints.Length; j++)
                 {
-                    if (IsOutsideNeighbourhood(point, _positiveMeasurePoints[j])) continue;
-                    isSatisfyingNearestNeighbourConstraints = false;
-                    break;
+                    if (!IsOutsideNeighbourhood(point, _positiveMeasurePoints[j]))
+                    {
+                        isSatisfyingNearestNeighbourConstraints = false;
+                        break;
+                    }
                 }
             }
 

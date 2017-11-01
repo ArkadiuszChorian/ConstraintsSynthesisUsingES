@@ -21,16 +21,16 @@ namespace ES.Core.Engine
             RotationsMutator = rotationsMutator;
         }
         //HACKS TODO
-        protected override void Evolve(IEvaluator evaluator)
+        protected override void Evolve(EvaluatorBase evaluator)
         {
             var offspringPopulationSize = Parameters.OffspringPopulationSize;
 
-            var stdDevsMutationTime = TimeSpan.Zero;
-            var rotationsMutationTime = TimeSpan.Zero;
-            var objectMutationTime = TimeSpan.Zero;
-            var evaluationTime = TimeSpan.Zero;
+            //var stdDevsMutationTime = TimeSpan.Zero;
+            //var rotationsMutationTime = TimeSpan.Zero;
+            //var objectMutationTime = TimeSpan.Zero;
+            //var evaluationTime = TimeSpan.Zero;
 
-            var stoper = new Stopwatch();
+            //var stoper = new Stopwatch();
 
             for (var i = 0; i < offspringPopulationSize; i++)
             {
@@ -39,25 +39,25 @@ namespace ES.Core.Engine
                 if (Parameters.TrackEvolutionSteps)
                     CurrentMutation = new MutationStep(ParentsSelector.LastSelectedParentIndex, OffspringPopulation[i]);
 
-                stoper.Restart();
+                //stoper.Restart();
                 OffspringPopulation[i] = StdDeviationsMutator.Mutate(OffspringPopulation[i]);
-                stoper.Stop();
-                stdDevsMutationTime += stoper.Elapsed;
+                //stoper.Stop();
+                //stdDevsMutationTime += stoper.Elapsed;
 
-                stoper.Restart();
+                //stoper.Restart();
                 OffspringPopulation[i] = RotationsMutator.Mutate(OffspringPopulation[i]);
-                stoper.Stop();
-                rotationsMutationTime += stoper.Elapsed;
+                //stoper.Stop();
+                //rotationsMutationTime += stoper.Elapsed;
 
-                stoper.Restart();
+                //stoper.Restart();
                 OffspringPopulation[i] = ObjectMutator.Mutate(OffspringPopulation[i]);
-                stoper.Stop();
-                objectMutationTime += stoper.Elapsed;
+                //stoper.Stop();
+                //objectMutationTime += stoper.Elapsed;
 
-                stoper.Restart();
+                //stoper.Restart();
                 OffspringPopulation[i].FitnessScore = evaluator.Evaluate(OffspringPopulation[i]);
-                stoper.Stop();
-                evaluationTime += stoper.Elapsed;
+                //stoper.Stop();
+                //evaluationTime += stoper.Elapsed;
 
                 if (Parameters.TrackEvolutionSteps)
                 {
@@ -66,15 +66,15 @@ namespace ES.Core.Engine
                 }                   
             }
 
-            stoper.Restart();
+            //stoper.Restart();
             BasePopulation = SurvivorsSelector.Select(BasePopulation, OffspringPopulation);
-            stoper.Stop();
+            //stoper.Stop();
 
-            Statistics.MeanSurvivorsSelectionTime += stoper.Elapsed;
-            Statistics.MeanStdDevsMutationTime += TimeSpan.FromTicks(stdDevsMutationTime.Ticks / offspringPopulationSize);
-            Statistics.MeanRotationsMutationTime += TimeSpan.FromTicks(rotationsMutationTime.Ticks / offspringPopulationSize);
-            Statistics.MeanObjectMutationTime += TimeSpan.FromTicks(objectMutationTime.Ticks / offspringPopulationSize);
-            Statistics.MeanEvaluationTime += TimeSpan.FromTicks(evaluationTime.Ticks / offspringPopulationSize);
+            //Statistics.MeanSurvivorsSelectionTime += stoper.Elapsed;
+            //Statistics.MeanStdDevsMutationTime += TimeSpan.FromTicks(stdDevsMutationTime.Ticks / offspringPopulationSize);
+            //Statistics.MeanRotationsMutationTime += TimeSpan.FromTicks(rotationsMutationTime.Ticks / offspringPopulationSize);
+            //Statistics.MeanObjectMutationTime += TimeSpan.FromTicks(objectMutationTime.Ticks / offspringPopulationSize);
+            //Statistics.MeanEvaluationTime += TimeSpan.FromTicks(evaluationTime.Ticks / offspringPopulationSize);
 
             if (Parameters.TrackEvolutionSteps)
                 CurrentEvolutionStep.NewPopulation = BasePopulation.DeepCopyByExpressionTree();

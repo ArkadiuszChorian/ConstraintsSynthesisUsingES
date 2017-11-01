@@ -21,7 +21,7 @@ namespace ES.Core.Engine
             RotationsRecombiner = rotationsRecombiner;
         }
 
-        protected override void Evolve(IEvaluator evaluator)
+        protected override void Evolve(EvaluatorBase evaluator)
         {
             var offspringPopulationSize = Parameters.OffspringPopulationSize;
             var numberOfParentsSolutionsToSelect = Parameters.NumberOfParentsSolutionsToSelect;

@@ -4,8 +4,8 @@ using ES.Core.Models.Solutions;
 
 namespace CSUES.Engine.Core
 {
-    public interface IConstraintsBuilder
+    public abstract class ConstraintsBuilderBase
     {
-        Constraint[] BuildConstraints(Solution solution);
+        public abstract Constraint[] BuildConstraints(Solution solution);
     }
 }

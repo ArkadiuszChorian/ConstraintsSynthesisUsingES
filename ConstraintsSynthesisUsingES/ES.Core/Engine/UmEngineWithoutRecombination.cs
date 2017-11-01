@@ -15,7 +15,7 @@ namespace ES.Core.Engine
         {
         }    
 
-        protected override void Evolve(IEvaluator evaluator)
+        protected override void Evolve(EvaluatorBase evaluator)
         {
             var offspringPopulationSize = Parameters.OffspringPopulationSize;
 

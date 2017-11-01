@@ -10,11 +10,11 @@ namespace ES.Core.Models
 
         public TimeSpan TotalEvolutionTime { get; set; }
         public TimeSpan MeanSingleGenerationEvolutionTime { get; set; }
-        public TimeSpan MeanStdDevsMutationTime { get; set; }
-        public TimeSpan MeanRotationsMutationTime { get; set; }
-        public TimeSpan MeanObjectMutationTime { get; set; }
-        public TimeSpan MeanEvaluationTime { get; set; }
-        public TimeSpan MeanSurvivorsSelectionTime { get; set; }
+        //public TimeSpan MeanStdDevsMutationTime { get; set; }
+        //public TimeSpan MeanRotationsMutationTime { get; set; }
+        //public TimeSpan MeanObjectMutationTime { get; set; }
+        //public TimeSpan MeanEvaluationTime { get; set; }
+        //public TimeSpan MeanSurvivorsSelectionTime { get; set; }
         public TimeSpan SeedingTime { get; set; }
     }
 }

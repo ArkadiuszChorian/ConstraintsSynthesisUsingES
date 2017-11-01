@@ -117,7 +117,7 @@
     <Compile Include="Recombination\OsmStdDevsDiscreteRecombiner.cs" />
     <Compile Include="Selection\ParentsRandomSelector.cs" />
     <Compile Include="Selection\SurvivorsDistinctSelector.cs" />
-    <Compile Include="Models\IEvaluator.cs" />
+    <Compile Include="Models\EvaluatorBase.cs" />
     <Compile Include="Utils\DeepCopyByExpressionTrees.cs" />
     <Compile Include="Utils\Defaults.cs" />
     <Compile Include="Utils\Extensions.cs" />

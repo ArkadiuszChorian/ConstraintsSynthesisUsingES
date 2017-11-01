@@ -62,7 +62,7 @@
     <Compile Include="Benchmarks\IBenchmark.cs" />
     <Compile Include="Benchmarks\SimplexnBenchmark.cs" />
     <Compile Include="Core\ConstraintsBuilder.cs" />
-    <Compile Include="Core\IConstraintsBuilder.cs" />
+    <Compile Include="Core\ConstraintsBuilderBase.cs" />
     <Compile Include="Core\SeedingProcessor.cs" />
     <Compile Include="Enums\ConstraintType.cs" />
     <Compile Include="Measurement\IAngleCalculator.cs" />
@@ -88,6 +88,7 @@
     <Compile Include="Models\Constraints\LinearConstraint.cs" />
     <Compile Include="Models\Domain.cs" />
     <Compile Include="Models\ExperimentParameters.cs" />
+    <Compile Include="Models\IStatistics.cs" />
     <Compile Include="Models\MathModel.cs" />
     <Compile Include="Models\Point.cs" />
     <Compile Include="Models\Statistics.cs" />
@@ -108,6 +109,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\Defaults.cs" />
     <Compile Include="Utils\Extensions.cs" />
+    <Compile Include="Utils\StringCompressor.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ES.Core\ES.Core.csproj">
